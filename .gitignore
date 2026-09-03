@@ -35,3 +35,8 @@ data/kg/*.graphml
 *.joblib
 .cache/
 outputs/
+
+# ---- 本地运行时（JDK/Neo4j 等大体积工具，不入库）----
+.runtime/
+data/kg/neo4j-data/
+data/kg/neo4j-logs/

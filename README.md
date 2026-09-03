@@ -134,7 +134,7 @@ make build-llm      # 用 DeepSeek 从文本抽取再建图
 ```bash
 make query          # 内置示例问题
 # 或自定义
-python scripts/query.py "诺兰导演了哪些电影？"
+python scripts/query.py "克里斯托弗·诺兰（Christopher Nolan）导演了哪些电影？"
 ```
 
 ### 6. 一键演示 / 测试
@@ -148,11 +148,14 @@ make test           # 离线单元测试
 
 ## 🧪 演示问题（可在答辩时使用）
 
+> 内置示例数据的实体名为英文（如 `Christopher Nolan`），提问时请包含英文实体名以便图谱检索命中：
+
 | 问题 | 覆盖能力 |
 | --- | --- |
-| 克里斯托弗·诺兰导演了哪些电影？ | 单实体关系查询 |
-| 莱昂纳多·迪卡普里奥参演过哪些电影？ | 实体关系查询 |
-| 肖申克的救赎是什么类型的电影？ | 属性/关系查询 |
+| Christopher Nolan 导演了哪些电影？ | 单实体关系查询 |
+| Leonardo DiCaprio 参演过哪些电影？ | 实体关系查询 |
+| The Shawshank Redemption 是什么类型的电影？ | 属性/关系查询 |
+| The Dark Knight 的导演还导演过哪些电影？ | 两跳（多跳）关系查询 |
 
 > 在 `http://localhost:7474` 执行 `MATCH (n:Entity) RETURN n LIMIT 25` 可看到图谱可视化。
 

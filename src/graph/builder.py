@@ -53,8 +53,8 @@ class GraphBuilder:
         self.client.run(
             f"""
             MERGE (n:Entity {{name: $name}})
-            SET n:{label}
-            ON CREATE SET n.created_at = datetime()
+            ON CREATE SET n:{label}, n.created_at = datetime()
+            ON MATCH SET n:{label}
             """,
             {"name": name},
         )

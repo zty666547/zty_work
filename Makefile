@@ -19,7 +19,7 @@ build-llm:
 
 # 交互式问答
 query:
-	python scripts/query.py "克里斯托弗·诺兰导演了哪些电影？"
+	python scripts/query.py "克里斯托弗·诺兰（Christopher Nolan）导演了哪些电影？"
 
 # 一键演示（建图 + 问答）
 demo:
