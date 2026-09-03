@@ -1,220 +1,122 @@
-<h1 align="center">基于知识图谱的 RAG 系统构建</h1>
+# 基于知识图谱的人工智能专业培养方案智能问答系统
 
-<p align="center">
-  知识工程实践任务 · 电影领域知识图谱 · Graph RAG 问答
-</p>
+本项目面向人工智能专业学生在培养方案查询和课程规划中的实际需求，设计并实现了一套基于 Graph RAG 的智能问答原型系统。当前以 2023 级培养方案为数据基础，验证自然语言查询、课程关系检索、培养路径分析及证据溯源等功能，为后续扩展至更多年级和实际教学服务场景提供基础。
 
-<p align="center">
-  <b>Neo4j</b> · <b>Python</b> · <b>DeepSeek API</b>
-</p>
+> 当前知识库只对应 **2023级人工智能专业**。不同年级的培养方案可能不同，系统不会把当前数据泛化为其他年级的正式选课规则。
 
----
+## 项目解决什么问题
 
-## 📌 项目简介
+培养方案信息密集、表格较多，新生和低年级学生常见的问题包括：
 
-本项目实现一个 **基于知识图谱的 RAG（Graph RAG）问答系统**。与传统的「向量数据库 RAG」不同，它把领域知识组织成**知识图谱**（实体 + 关系），查询时先在图上做**结构化检索**（实体链接 + 邻域扩展），再把检索到的**子图**作为上下文交给大模型生成回答。
+- “知识工程是多少学分，建议什么时候修？”
+- “第四学期有哪些专业核心课？”
+- “第六学期有哪些专业选修课？”
+- “人工智能专业有哪些毕业要求？”
 
-相比纯向量检索，Graph RAG 的优势在于：
+本项目采用 Graph RAG 路线：先将培养方案组织为实体与关系，再进行实体链接和图邻域检索，最后把检索证据组织成答案。回答同时标注适用范围与来源，便于学生核对，也便于答辩展示系统如何降低幻觉。
 
-- ✅ 能建模并回答**多跳关系**问题（如「诺兰的演员还演过哪些电影？」）
-- ✅ 检索结果**结构化、可解释**，方便答辩展示
-- ✅ 借助图谱约束，显著**降低幻觉**
+## 当前完成度
 
-内置一套**电影领域示例数据**（Person / Movie / Genre 三类实体），开箱即用、可直接演示。
+- 知识图谱构建：6 类实体、6 类关系，当前数据含 70 个实体和 170 条关系。
+- 图检索：支持中文别名、学期俗称（如“大二下”）、课程简称（如“NLP”）和多条件交集查询。
+- 问答：提供无需 API 的离线答案生成；保留 DeepSeek 生成链路。
+- 产品界面：提供 Streamlit 学生端网页，展示答案、培养路径、课程关系图、适用范围、来源和图谱证据。
+- 数据质量：构建前执行 Schema、重复实体、悬空关系和类型校验。
+- 可验证性：包含单元测试与 5 个检索评测问题。
 
----
+## 系统结构
 
-## 🏗️ 系统架构
-
-```
-数据层(data/)                    抽取层(src/extraction/)
-├─ movies_structured.json   →   ├─ LLMClient（DeepSeek 封装）
-└─ movie_docs.txt               └─ EntityRelationExtractor（文本→三元组）
-        │                                   │
-        └────────────┬──────────────────────┘
-                     ▼
-        图谱层(src/graph/)  ──►  Neo4j 图数据库(7687 Bolt)
-        ├─ Neo4jClient（连接/Cypher）
-        └─ GraphBuilder（MERGE 写入/建索引）
-                     │
-                     ▼
-        检索层(src/rag/)
-        ├─ GraphRetriever（实体链接→邻域扩展→子图上下文）
-        └─ GraphRAGChain（检索 + Prompt + LLM 生成）
-                     │
-                     ▼
-              用户问题 → 最终回答 + 可解释上下文
+```text
+培养方案 PDF
+    ↓ 人工核对 / LLM 抽取
+结构化实体与关系
+    ↓ Schema 校验
+Neo4j 图数据库 ────── 内存图（离线演示）
+    ↓                      ↓
+实体链接 → 1 跳邻域检索 → 多条件证据筛选
+    ↓
+离线答案 / DeepSeek 生成
+    ↓
+学生端网页：答案 + 版本范围 + 来源 + 图谱证据
 ```
 
-详细说明见 [docs/architecture.md](docs/architecture.md)。
+更详细的设计见 [系统架构](docs/architecture.md)。
 
----
+## 知识图谱 Schema
 
-## ✨ 功能特性
+| 类型 | 内容 |
+| --- | --- |
+| 实体 | Program、Course、CourseCategory、Semester、Department、GraduationRequirement |
+| 关系 | HAS_COURSE、HAS_REQUIREMENT、BELONGS_TO_CATEGORY、OFFERED_IN、TAUGHT_BY、SUPPORTS_REQUIREMENT |
 
-- **两种图谱构建模式**：
-  - `structured`：直接读取整理好的三元组建图（确定性、无需 LLM）
-  - `llm`：让 DeepSeek 从自然语言文本**自动抽取**实体与关系（展示 LLM 信息抽取能力）
-- **Graph RAG 检索**：实体链接 → 邻域扩展（N 跳）→ 子图上下文组装
-- **防幻觉**：仅允许基于图谱上下文回答，无相关上下文则明确拒答
-- **多形态使用**：CLI 问答、一键 Demo、Jupyter Notebook
-- **可维护**：模块解耦、集中配置、离线单元测试
+课程节点还保存课程代码、学分、总学时、是否必修等属性。`SUPPORTS_REQUIREMENT` 已保留在 Schema 中，但在没有可靠课程—毕业要求映射依据前不写入数据，避免编造关系。
 
----
+## 快速体验（无需 Neo4j 和 API Key）
 
-## 📁 目录结构
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-```
-kg-rag-system/
-├── config/settings.py          # 全局配置（读取 .env）
-├── data/
-│   ├── raw/                    # 输入数据（结构化 JSON + 文本语料）
-│   ├── processed/              # 抽取/处理产物（gitignore）
-│   └── kg/                     # 图谱导出/Neo4j 数据卷
-├── src/
-│   ├── data/loader.py          # 数据加载
-│   ├── extraction/             # llm_client + extractor（信息抽取）
-│   ├── graph/                  # neo4j_client + builder（图谱构建）
-│   ├── rag/                    # retriever + chain + prompts（检索生成）
-│   └── utils/logger.py         # 日志
-├── scripts/                    # build_kg / query / run_demo
-├── notebooks/demo.ipynb        # 答辩演示 Notebook
-├── tests/                      # 离线单元测试
-├── docs/                       # architecture.md + report_outline.md（报告提纲）
-├── docker-compose.yml          # Neo4j 容器编排
-├── Makefile                    # 一键命令
-├── requirements.txt
-└── .env.example                # 环境变量模板
+python scripts/inspect_data.py
+python scripts/offline_demo.py
+python scripts/evaluate_retrieval.py
+streamlit run app.py
 ```
 
----
+打开终端显示的本地网址，即可使用学生端问答页面。
 
-## 🚀 快速开始
+## 完整 Graph RAG 模式
 
-### 0. 前置条件
-
-- Python ≥ 3.9
-- Neo4j 5.x（**本机直接安装** 或 **Docker**，见下方「启动 Neo4j」）
-- DeepSeek API Key（[申请地址](https://platform.deepseek.com)）
-
-### 1. 环境变量
+1. 复制配置模板并填写 DeepSeek 与 Neo4j 信息：
 
 ```bash
 cp .env.example .env
-# 编辑 .env，填入 DEEPSEEK_API_KEY 与 Neo4j 密码
 ```
 
-### 2. 启动 Neo4j
+2. 启动 Neo4j（任选一种方式）：
 
-**方式 A：Docker（推荐，一条命令）**
 ```bash
 docker compose up -d neo4j
-# 浏览器控制台：http://localhost:7474  用户名 neo4j / 密码 12345678
 ```
 
-**方式 B：本机安装**
-从 [Neo4j 官网](https://neo4j.com/download-center/) 下载，启动后设置密码为 `12345678`（或同步到 `.env`）。
-
-### 3. 安装依赖
+3. 构建图谱并提问：
 
 ```bash
-pip install -r requirements.txt
+python scripts/build_kg.py
+python scripts/query.py "知识工程是多少学分，建议在哪个学期修读？"
 ```
 
-### 4. 构建知识图谱
+设置 `EXTRACTION_MODE=llm` 后可使用 DeepSeek 从文本语料抽取实体和关系；默认 `structured` 模式使用人工核对后的结构化数据，更适合稳定答辩。
 
-```bash
-make build          # 结构化模式（无需 LLM，最稳）
-# 或
-make build-llm      # 用 DeepSeek 从文本抽取再建图
-```
+## 常用命令
 
-### 5. 问答
+| 命令 | 用途 | 外部依赖 |
+| --- | --- | --- |
+| `make inspect` | 校验知识库规模与 Schema | 无 |
+| `make offline-demo` | 显示实体链接和图谱证据 | 无 |
+| `make evaluate` | 运行检索评测 | 无 |
+| `make test` | 运行单元测试 | 无 |
+| `make app` | 启动学生端网页 | 无 |
+| `make build` | 将结构化数据写入 Neo4j | Neo4j |
+| `make demo` | Neo4j + DeepSeek 完整问答 | Neo4j、API Key |
 
-```bash
-make query          # 内置示例问题
-# 或自定义
-python scripts/query.py "克里斯托弗·诺兰（Christopher Nolan）导演了哪些电影？"
-```
+## 数据与来源
 
-### 6. 一键演示 / 测试
+- 原始依据：天津大学《2023级人工智能专业培养方案》。
+- 结构化知识库：`data/raw/curriculum_structured.json`。
+- 文本抽取语料：`data/raw/curriculum_docs.txt`。
+- 评测集：`data/evaluation/questions.json`。
 
-```bash
-make demo           # 建图 + 示例问答（适合答辩现场）
-make test           # 离线单元测试
-```
+目前录入的是适合 MVP 演示的代表性课程，而不是教务系统的完整替代品。课程先修关系没有出现在现有依据中，因此系统不回答或推断先修课。
 
----
-
-## 🧪 演示问题（可在答辩时使用）
-
-> 内置示例数据的实体名为英文（如 `Christopher Nolan`），提问时请包含英文实体名以便图谱检索命中：
-
-| 问题 | 覆盖能力 |
-| --- | --- |
-| Christopher Nolan 导演了哪些电影？ | 单实体关系查询 |
-| Leonardo DiCaprio 参演过哪些电影？ | 实体关系查询 |
-| The Shawshank Redemption 是什么类型的电影？ | 属性/关系查询 |
-| The Dark Knight 的导演还导演过哪些电影？ | 两跳（多跳）关系查询 |
-
-> 在 `http://localhost:7474` 执行 `MATCH (n:Entity) RETURN n LIMIT 25` 可看到图谱可视化。
-
----
-
-## 🔧 GitHub 仓库创建与推送
-
-**第一步：在 GitHub 手动创建空仓库**
-
-到 <https://github.com/new>：
-- Repository name：`kg-rag-system`
-- 建议选 **Public**（答辩/作品集展示），不要勾选「Add README / .gitignore / license」（避免冲突）
-- 点击 **Create repository**
-
-**第二步：进入项目目录后初始化并推送**
-
-> 先在终端 `cd` 到本项目的根目录（即本 README 所在的 `kg-rag-system/` 目录），再执行：
-
-```bash
-# 初始化仓库
-git init
-
-# 把所有文件加入暂存区（.gitignore 会过滤 .env 与密钥等敏感文件）
-git add .
-git status          # 确认没有把 .env 加进去！
-
-# 首次提交（可使用 GitHub 提示的账号邮箱）
-git commit -m "feat: 基于知识图谱的 RAG 系统（Graph RAG）初始化
-- 电影领域示例数据与两个抽取模式
-- Neo4j 图谱构建 + Graph RAG 检索问答链路
-- CLI / Notebook / Makefile 一键运行
-- 架构文档与答辩报告提纲"
-
-# 关联远端仓库（把 URL 替换成你的仓库地址）
-git remote add origin https://github.com/<你的用户名>/kg-rag-system.git
-
-# 默认分支命名为 main 并推送
-git branch -M main
-git push -u origin main
-```
-
-**第三步：验证**
-
-刷新 GitHub 页面即可看到仓库内容。记得**确保 `.env` 没有被提交**（`.gitignore` 已处理；若误提交请立即删除并更换 API Key）。
-
----
-
-## 🛡️ 安全提示
-
-- `.env` 含 DeepSeek Key 与 Neo4j 密码，**已被 `.gitignore` 排除**，切勿手动强制提交。
-- 演示前建议在 Neo4j 中用 `MATCH (n) DETACH DELETE n` 清空，再用 `make build` 重建，确保数据干净。
-
----
-
-## 📚 文档
+## 项目文档
 
 - [系统架构说明](docs/architecture.md)
-- [期末答辩报告提纲](docs/report_outline.md)
+- [数据字典](docs/data_dictionary.md)
+- [期中答辩方案](docs/midterm_defense.md)
+- [最终答辩提纲](docs/report_outline.md)
 
-## 📄 许可证
+## 安全
 
-本项目用于学习与课程实践。
+`.env` 已被 Git 忽略。不要提交 DeepSeek API Key、Neo4j 密码或其他个人凭据。

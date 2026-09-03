@@ -1,4 +1,4 @@
-.PHONY: install setup build-llm build query demo test clean up down
+.PHONY: install setup inspect offline-demo evaluate build-llm build query demo app test clean up down
 
 # 依赖安装
 install:
@@ -19,7 +19,7 @@ build-llm:
 
 # 交互式问答
 query:
-	python scripts/query.py "克里斯托弗·诺兰（Christopher Nolan）导演了哪些电影？"
+	python scripts/query.py "知识工程是多少学分，建议在哪个学期修读？"
 
 # 一键演示（建图 + 问答）
 demo:
@@ -38,3 +38,18 @@ down:
 
 clean:
 	rm -rf data/processed/* data/kg/*.csv __pycache__
+# 离线检查数据与 Schema（无需 Neo4j / DeepSeek）
+inspect:
+	python scripts/inspect_data.py
+
+# 无需 Neo4j / DeepSeek 的检索演示
+offline-demo:
+	python scripts/offline_demo.py
+
+# 离线检索评测（无需 Neo4j / DeepSeek）
+evaluate:
+	python scripts/evaluate_retrieval.py
+
+# 启动学生端网页
+app:
+	streamlit run app.py

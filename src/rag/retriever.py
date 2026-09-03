@@ -25,22 +25,30 @@ class GraphRetriever:
     def __init__(self, client: Neo4jClient):
         self.client = client
 
-    def all_entity_names(self) -> list[str]:
-        """获取图谱全部实体名，用于实体链接。"""
-        rows = self.client.run("MATCH (n:Entity) RETURN n.name AS name")
-        return [r["name"] for r in rows]
+    def all_entity_catalog(self) -> list[dict]:
+        """获取实体名与别名，用于可解释的离线实体链接。"""
+        if hasattr(self.client, "entity_catalog"):
+            return self.client.entity_catalog()
+        return self.client.run(
+            "MATCH (n:Entity) RETURN n.name AS name, "
+            "coalesce(n.aliases, []) AS aliases"
+        )
 
     def link_entities(self, question: str, max_entities: int = 5) -> list[str]:
         """把问题中指称的实体匹配到图谱已有实体，返回命中的实体名。"""
         q_lower = question.lower()
         matched: list[str] = []
-        for name in self.all_entity_names():
-            name_lower = name.lower()
-            # 实体名是问题的子串，或问题包含实体名
-            if name_lower and (name_lower in q_lower or q_lower in name_lower):
+        scored: list[tuple[int, str]] = []
+        for item in self.all_entity_catalog():
+            name = item["name"]
+            mentions = [name, *(item.get("aliases") or [])]
+            lengths = [len(mention) for mention in mentions if mention.lower() in q_lower]
+            if lengths:
+                scored.append((max(lengths), name))
+        scored.sort(key=lambda pair: (-pair[0], pair[1]))
+        for _, name in scored:
+            if name not in matched:
                 matched.append(name)
-        # 简单按名称长度排序，优先保留更具体的实体
-        matched.sort(key=len, reverse=True)
         return matched[:max_entities]
 
     def expand_neighborhood(self, entity_name: str, hop: int = 2) -> list[dict]:
@@ -48,13 +56,19 @@ class GraphRetriever:
 
         使用 Neo4j 可变长路径查询获取 (源, 关系, 目标) 三元组。
         """
+        if hasattr(self.client, "expand_neighborhood"):
+            return self.client.expand_neighborhood(entity_name, hop=hop)
+
         query = f"""
         MATCH path = (start:Entity {{name: $name}})-[*1..{hop}]-(neighbor:Entity)
         UNWIND relationships(path) AS r
         RETURN collect(DISTINCT {{
             source: startNode(r).name,
+            source_props: properties(startNode(r)),
             rel: type(r),
-            target: endNode(r).name
+            rel_props: properties(r),
+            target: endNode(r).name,
+            target_props: properties(endNode(r))
         }}) AS triples
         """
         rows = self.client.run(query, {"name": entity_name})
@@ -75,17 +89,22 @@ class GraphRetriever:
             key = (t["source"], t["rel"], t["target"])
             if key not in seen:
                 seen.add(key)
-                result.append({"source": t["source"], "rel": t["rel"], "target": t["target"]})
+                result.append(t)
         return result
 
-    def retrieve(self, question: str, hop: int = 2) -> dict:
+    def retrieve(self, question: str, hop: int = 1, max_triples: int = 80) -> dict:
         """检索入口：返回 {entities, context_text, triples}。"""
         entities = self.link_entities(question)
         logger.info("问题「%s」链接到实体：%s", question, entities)
 
         triples: list[dict] = []
-        for ent in entities:
-            triples.extend(self.expand_neighborhood(ent, hop=hop))
+        node_seed_hits: dict[str, set[int]] = {}
+        for seed_index, ent in enumerate(entities):
+            neighborhood = self.expand_neighborhood(ent, hop=hop)
+            triples.extend(neighborhood)
+            for triple in neighborhood:
+                for node in (triple["source"], triple["target"]):
+                    node_seed_hits.setdefault(node, set()).add(seed_index)
 
         # 三元组去重
         seen: set[tuple] = set()
@@ -95,6 +114,26 @@ class GraphRetriever:
             if key not in seen:
                 seen.add(key)
                 unique.append(t)
+
+        # 多实体问题中，优先保留同时连接多个查询实体的课程节点。
+        def relevance(triple: dict) -> int:
+            return max(
+                len(node_seed_hits.get(triple["source"], set())),
+                len(node_seed_hits.get(triple["target"], set())),
+            )
+
+        if len(entities) > 1 and any(relevance(triple) > 1 for triple in unique):
+            unique = [triple for triple in unique if relevance(triple) > 1]
+
+        unique.sort(
+            key=lambda triple: (
+                -relevance(triple),
+                triple["source"],
+                triple["rel"],
+                triple["target"],
+            )
+        )
+        unique = unique[:max_triples]
 
         context_text = build_context_text(unique)
         return {"entities": entities, "triples": unique, "context_text": context_text}

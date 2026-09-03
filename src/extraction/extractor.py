@@ -30,7 +30,7 @@ def _build_user_prompt(text: str, entity_types: list[str], relation_types: list[
 
 要求：
 1. 实体名使用文本中的原语言名称。
-2. 关系方向必须符合语义（如 导演 -> 电影，用 DIRECTED）。
+2. 关系方向必须符合语义（如 课程 -> 学期，用 OFFERED_IN）。
 3. 同一实体在不同文档中出现时保持名称一致。
 
 请严格按以下 JSON 格式输出，不要多余内容：

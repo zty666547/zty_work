@@ -5,8 +5,8 @@
     python scripts/build_kg.py
 
 会根据 `.env` 的 EXTRACTION_MODE 选择：
-    structured -> 从 data/raw/movies_structured.json 直接建图（无需 LLM）
-    llm        -> 用 DeepSeek 从 data/raw/movie_docs.txt 抽取实体关系后再建图
+    structured -> 从 data/raw/curriculum_structured.json 直接建图（无需 LLM）
+    llm        -> 用 DeepSeek 从 data/raw/curriculum_docs.txt 抽取实体关系后再建图
 """
 from __future__ import annotations
 

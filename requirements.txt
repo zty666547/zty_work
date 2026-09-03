@@ -18,6 +18,9 @@ requests>=2.31.0
 pandas>=2.0.0
 tqdm>=4.66.0
 
+# ---- 学生端交互界面 ----
+streamlit>=1.38.0
+
 # ---- 可视化（可选，用于绘图/报告）----
 networkx>=3.1.0
 matplotlib>=3.7.0

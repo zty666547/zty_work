@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import logging
+import re
 
 from config.settings import Settings
 from src.graph.neo4j_client import Neo4jClient
@@ -16,9 +17,14 @@ from src.utils.logger import get_logger
 logger = get_logger("kg_rag.builder")
 
 
-def _quote(label: str) -> str:
-    """把实体类型转成安全的 Cypher 标签（来自允许清单，安全性可控）。"""
-    return label.replace("`", "")
+_CYPHER_IDENTIFIER = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
+
+
+def _quote(identifier: str) -> str:
+    """只允许安全的 Cypher 标签、关系类型和属性名。"""
+    if not _CYPHER_IDENTIFIER.fullmatch(identifier):
+        raise ValueError(f"非法 Cypher 标识符：{identifier!r}")
+    return identifier
 
 
 class GraphBuilder:
@@ -60,8 +66,9 @@ class GraphBuilder:
         )
         # 追加非结构性属性（如出生年份、年份、评分）
         if props:
-            set_clause = ", ".join(f"n.`{k}` = $prop_{k}" for k in props.keys())
-            params = {f"prop_{k}": v for k, v in props.items()}
+            safe_keys = [_quote(str(key)) for key in props]
+            set_clause = ", ".join(f"n.{key} = $prop_{key}" for key in safe_keys)
+            params = {f"prop_{key}": props[key] for key in safe_keys}
             if set_clause:
                 self.client.run(
                     f"MATCH (n:Entity {{name: $name}}) SET {set_clause}",
@@ -80,13 +87,21 @@ class GraphBuilder:
         """匹配两端实体节点并建立/更新关系。"""
         rel_type = _quote(rtype)
         # 两端实体按 name 匹配；若是特定类型，则加上标签约束以加快匹配
-        self.client.run(
-            f"""
+        query = f"""
             MATCH (s:Entity {{name: $source}})
             MATCH (t:Entity {{name: $target}})
             MERGE (s)-[r:{rel_type}]->(t)
-            """,
-            {"source": source, "target": target},
+        """
+        params = {"source": source, "target": target}
+        if props:
+            safe_keys = [_quote(str(key)) for key in props]
+            query += " SET " + ", ".join(
+                f"r.{key} = $rel_prop_{key}" for key in safe_keys
+            )
+            params.update({f"rel_prop_{key}": props[key] for key in safe_keys})
+        self.client.run(
+            query,
+            params,
         )
 
     def build(
@@ -104,6 +119,10 @@ class GraphBuilder:
         self.ensure_constraints()
 
         for ent in entities:
+            if not ent.get("name") or not ent.get("type"):
+                raise ValueError(f"实体缺少 name/type：{ent}")
+            if ent["type"] not in self.settings.entity_types:
+                raise ValueError(f"实体类型不在 Schema 中：{ent['type']}")
             self._merge_entity(
                 ent.get("name", ""),
                 ent.get("type", ""),
@@ -111,6 +130,8 @@ class GraphBuilder:
             )
 
         for rel in relations:
+            if rel.get("type") not in self.settings.relation_types:
+                raise ValueError(f"关系类型不在 Schema 中：{rel.get('type')}")
             self._merge_relation(
                 rel.get("source", ""),
                 rel.get("target", ""),

@@ -19,13 +19,12 @@ from src.utils.logger import get_logger  # noqa: E402
 
 logger = get_logger("kg_rag.demo")
 
-# 建议在答辩时演示的问题（覆盖图谱多跳查询）
-# 注意：示例数据实体为英文名，问题中请包含英文实体以便链接
+# 建议在答辩时演示的问题（覆盖属性、关系和组合条件查询）
 DEMO_QUESTIONS = [
-    "克里斯托弗·诺兰（Christopher Nolan）导演了哪些电影？",
-    "莱昂纳多·迪卡普里奥（Leonardo DiCaprio）参演过哪些电影？",
-    "肖申克的救赎（The Shawshank Redemption）是什么类型的电影？",
-    "The Dark Knight 的导演还导演过哪些电影？",
+    "知识工程是多少学分，建议在哪个学期修读？",
+    "第四学期有哪些专业核心课？",
+    "NLP 属于什么类型的课程？",
+    "第六学期有哪些专业选修课？",
 ]
 
 

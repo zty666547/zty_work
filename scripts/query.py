@@ -2,8 +2,8 @@
 """交互式问答 CLI。
 
 用法：
-    python scripts/query.py "诺兰导演了哪些电影？"
-    echo "诺兰导演了哪些电影？" | python scripts/query.py
+    python scripts/query.py "知识工程是多少学分？"
+    echo "第六学期有哪些专业选修课？" | python scripts/query.py
 """
 from __future__ import annotations
 

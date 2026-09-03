@@ -24,11 +24,49 @@ class StructuredGraph:
         return names
 
 
+def validate_structured(graph: StructuredGraph) -> list[str]:
+    """验证实体、关系和端点完整性，返回所有错误。"""
+    errors: list[str] = []
+    names: set[str] = set()
+    for entity_type, items in graph.entities.items():
+        if not entity_type.strip():
+            errors.append("存在空实体类型")
+        for index, item in enumerate(items):
+            name = str(item.get("name", "")).strip()
+            if not name:
+                errors.append(f"{entity_type}[{index}] 缺少 name")
+            elif name in names:
+                errors.append(f"实体名称重复：{name}")
+            names.add(name)
+
+    seen_relations: set[tuple[str, str, str]] = set()
+    for index, relation in enumerate(graph.relations):
+        source = str(relation.get("source", "")).strip()
+        target = str(relation.get("target", "")).strip()
+        relation_type = str(relation.get("type", "")).strip()
+        if source not in names:
+            errors.append(f"relations[{index}] 源实体不存在：{source}")
+        if target not in names:
+            errors.append(f"relations[{index}] 目标实体不存在：{target}")
+        if not relation_type:
+            errors.append(f"relations[{index}] 缺少 type")
+        key = (source, target, relation_type)
+        if key in seen_relations:
+            errors.append(f"关系重复：{source} -[{relation_type}]-> {target}")
+        seen_relations.add(key)
+    return errors
+
+
 def load_structured(path: Path) -> StructuredGraph:
-    """读取 `movies_structured.json` 得到图谱三元组。"""
+    """读取结构化 JSON，并在返回前检查图谱完整性。"""
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
-    return StructuredGraph(entities=data["entities"], relations=data["relations"])
+    graph = StructuredGraph(entities=data["entities"], relations=data["relations"])
+    errors = validate_structured(graph)
+    if errors:
+        preview = "\n".join(f"- {error}" for error in errors[:20])
+        raise ValueError(f"结构化图谱校验失败：\n{preview}")
+    return graph
 
 
 def load_documents(path: Path) -> list[str]:
@@ -55,8 +93,8 @@ def load_input(settings: Settings) -> tuple[StructuredGraph | None, list[str]]:
 
     返回 (结构化图谱或 None, 文档列表)。
     """
-    structured_path = settings.raw_dir / "movies_structured.json"
-    docs_path = settings.raw_dir / "movie_docs.txt"
+    structured_path = settings.raw_dir / settings.structured_filename
+    docs_path = settings.raw_dir / settings.documents_filename
 
     if settings.extraction_mode == "structured" and structured_path.exists():
         return load_structured(structured_path), []

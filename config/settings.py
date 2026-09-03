@@ -25,8 +25,22 @@ if load_dotenv is not None:
 
 
 # 可抽取的实体/关系类型（约束 DeepSeek 输出，避免自由发挥）
-DEFAULT_ENTITY_TYPES = ["Person", "Movie", "Genre"]
-DEFAULT_RELATION_TYPES = ["DIRECTED", "ACTED_IN", "HAS_GENRE"]
+DEFAULT_ENTITY_TYPES = [
+    "Program",
+    "Course",
+    "CourseCategory",
+    "Semester",
+    "Department",
+    "GraduationRequirement",
+]
+DEFAULT_RELATION_TYPES = [
+    "HAS_COURSE",
+    "HAS_REQUIREMENT",
+    "BELONGS_TO_CATEGORY",
+    "OFFERED_IN",
+    "TAUGHT_BY",
+    "SUPPORTS_REQUIREMENT",
+]
 
 
 @dataclass
@@ -51,6 +65,10 @@ class Settings:
     extraction_mode: str = "structured"  # structured | llm
     entity_types: list[str] = field(default_factory=lambda: list(DEFAULT_ENTITY_TYPES))
     relation_types: list[str] = field(default_factory=lambda: list(DEFAULT_RELATION_TYPES))
+
+    # --- 数据文件 ---
+    structured_filename: str = "curriculum_structured.json"
+    documents_filename: str = "curriculum_docs.txt"
 
     # --- 路径 ---
     raw_dir: Path = ROOT_DIR / "data" / "raw"
@@ -83,6 +101,10 @@ def load_settings() -> Settings:
         extraction_mode=os.getenv("EXTRACTION_MODE", "structured"),
         entity_types=_split_csv(os.getenv("ENTITY_TYPES"), DEFAULT_ENTITY_TYPES),
         relation_types=_split_csv(os.getenv("RELATION_TYPES"), DEFAULT_RELATION_TYPES),
+        structured_filename=os.getenv(
+            "STRUCTURED_FILENAME", "curriculum_structured.json"
+        ),
+        documents_filename=os.getenv("DOCUMENTS_FILENAME", "curriculum_docs.txt"),
     )
 
 

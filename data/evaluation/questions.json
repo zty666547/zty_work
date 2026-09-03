@@ -1,0 +1,27 @@
+[
+  {
+    "question": "知识工程是多少学分，建议在哪个学期修读？",
+    "expected_entities": ["知识工程"],
+    "expected_context": ["credits=3.5", "OFFERED_IN"]
+  },
+  {
+    "question": "第四学期有哪些专业核心课？",
+    "expected_entities": ["第4学期", "专业核心课"],
+    "expected_context": ["知识工程", "机器学习与深度学习"]
+  },
+  {
+    "question": "NLP属于什么类型的课程？",
+    "expected_entities": ["自然语言处理"],
+    "expected_context": ["BELONGS_TO_CATEGORY", "专业核心课"]
+  },
+  {
+    "question": "第六学期有哪些专业选修课？",
+    "expected_entities": ["第6学期", "专业选修课"],
+    "expected_context": ["知识图谱", "信息检索与智能问答"]
+  },
+  {
+    "question": "计算机视觉与模式识别由哪个单位开课？",
+    "expected_entities": ["计算机视觉与模式识别"],
+    "expected_context": ["TAUGHT_BY", "智能与计算学部"]
+  }
+]
