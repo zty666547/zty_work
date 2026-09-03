@@ -1,0 +1,23 @@
+# 电影知识图谱 —— 原始文档语料
+# 该文件用于 `EXTRACTION_MODE=llm`：让 DeepSeek 从自然语言文本中抽取实体与关系。
+# 每段用空行分隔，作为一条待抽取文档。
+
+《肖申克的救赎》（The Shawshank Redemption）是弗兰克·达拉邦特（Frank Darabont）执导的剧情片，于1994年上映，IMDb评分9.3。主演包括蒂姆·罗宾斯（Tim Robbins）饰演安迪·杜佛兰，摩根·弗里曼（Morgan Freeman）饰演瑞德。
+
+《教父》（The Godfather）是弗朗西斯·福特·科波拉（Francis Ford Coppola）执导的犯罪片，1972年上映，评分9.2。马龙·白兰度（Marlon Brando）饰演维托·柯里昂，阿尔·帕西诺（Al Pacino）饰演迈克尔·柯里昂。
+
+《蝙蝠侠：黑暗骑士》（The Dark Knight）是克里斯托弗·诺兰（Christopher Nolan）执导的动作犯罪片，2008年上映，评分9.0。克里斯蒂安·贝尔（Christian Bale）饰演布鲁斯·韦恩，希斯·莱杰（Heath Ledger）饰演小丑。
+
+《盗梦空间》（Inception）是诺兰执导的科幻惊悚片，2010年上映，评分8.8。莱昂纳多·迪卡普里奥（Leonardo DiCaprio）饰演多姆·柯布。
+
+《星际穿越》（Interstellar）是诺兰执导的科幻片，2014年上映，评分8.7。马修·麦康纳（Matthew McConaughey）饰演库珀，安妮·海瑟薇（Anne Hathaway）饰演阿米莉亚·布兰德。
+
+《低俗小说》（Pulp Fiction）是昆汀·塔伦蒂诺（Quentin Tarantino）执导的犯罪片，1994年上映，评分8.9。约翰·特拉沃尔塔（John Travolta）饰演文森特·维加，乌玛·瑟曼（Uma Thurman）饰演米娅·华莱士。
+
+《阿甘正传》（Forrest Gump）是罗伯特·泽米吉斯（Robert Zemeckis）执导的剧情爱情片，1994年上映，评分8.8。汤姆·汉克斯（Tom Hanks）饰演阿甘。
+
+《泰坦尼克号》（Titanic）是詹姆斯·卡梅隆（James Cameron）执导的爱情片，1997年上映，评分7.9。莱昂纳多·迪卡普里奥饰演杰克·道森，凯特·温丝莱特（Kate Winslet）饰演露丝。
+
+《黑客帝国》（The Matrix）是一部科幻动作片，1999年上映，评分8.7。基努·里维斯（Keanu Reeves）饰演尼奥。
+
+《寄生虫》（Parasite）是奉俊昊（Bong Joon-ho）执导的惊悚剧情片，2019年上映，评分8.5。宋康昊（Song Kang-ho）饰演金基泽。

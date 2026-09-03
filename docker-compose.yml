@@ -1,0 +1,17 @@
+# Neo4j 图数据库（开发/演示用）
+# 启动：docker compose up -d neo4j
+# 浏览器控制台：http://localhost:7474  （用户名 neo4j / 密码与下方一致）
+services:
+  neo4j:
+    image: neo4j:5-community
+    container_name: kg_rag_neo4j
+    ports:
+      - "7474:7474"   # HTTP 控制台
+      - "7687:7687"   # Bolt 驱动接口
+    environment:
+      NEO4J_AUTH: neo4j/12345678
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512M
+    volumes:
+      - ./data/kg/neo4j-data:/data
+      - ./data/kg/neo4j-logs:/logs

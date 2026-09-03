@@ -1,0 +1,37 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.whl
+.venv/
+venv/
+env/
+
+# ---- 环境变量（含密钥，严禁提交）----
+.env
+.env.*
+!.env.example
+
+# ---- 数据产物（可从原始数据重建，不入库）----
+data/processed/*.json
+data/processed/*.jsonl
+data/kg/*.csv
+data/kg/*.gexf
+data/kg/*.graphml
+*.db
+*.sqlite3
+
+# ---- IDE / 系统 ----
+.idea/
+.vscode/
+.DS_Store
+*.log
+
+# ---- 运行产物 ----
+*.pkl
+*.joblib
+.cache/
+outputs/
