@@ -31,6 +31,8 @@ def main() -> None:
         result = retriever.retrieve(question, hop=1)
         print(f"\n【问题】{question}")
         print(f"【命中实体】{', '.join(result['entities']) or '无'}")
+        print(f"【识别意图】{', '.join(result['intents']) or '通用查询'}")
+        print(f"【关系过滤】{', '.join(result['relation_filter']) or '无'}")
         print("【检索证据】")
         print(result["context_text"])
 

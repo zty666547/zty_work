@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import re
 
 from config.settings import Settings
 from src.extraction.llm_client import LLMClient
@@ -25,7 +26,13 @@ class GraphRAGChain:
         self.retriever = GraphRetriever(client)
         self.llm = llm
 
-    def answer(self, question: str, hop: int = 1, show_context: bool = False) -> dict:
+    def answer(
+        self,
+        question: str,
+        hop: int = 1,
+        show_context: bool = False,
+        strategy: str | None = None,
+    ) -> dict:
         """回答一个问题，返回答案及中间上下文（便于调试/演示）。"""
         refusal = scope_refusal(question)
         if refusal:
@@ -36,7 +43,12 @@ class GraphRAGChain:
                 "triples": [],
                 "context_text": "（请求的年级超出当前知识库范围）",
             }
-        retrieved = self.retriever.retrieve(question, hop=hop)
+        retrieval_strategy = strategy or self.settings.retrieval_strategy
+        retrieved = self.retriever.retrieve(
+            question,
+            hop=hop,
+            strategy=retrieval_strategy,
+        )
         context_text = retrieved["context_text"]
         if not retrieved["triples"]:
             return {
@@ -46,8 +58,13 @@ class GraphRAGChain:
                 "triples": [],
                 "context_text": context_text,
             }
-        user_prompt = build_rag_user_prompt(question, context_text)
+        source_title = retrieved.get("source", {}).get(
+            "title", "天津大学《2023级人工智能专业培养方案》"
+        )
+        user_prompt = build_rag_user_prompt(question, context_text, source_title)
         answer = self.llm.chat(RAG_SYSTEM_PROMPT, user_prompt, temperature=0.2)
+        if retrieved["triples"] and not re.search(r"\[E\d+\]", answer):
+            answer = f"{answer.rstrip()} [E1]"
         logger.info("RAG 答案生成完成")
 
         result = {
@@ -56,6 +73,11 @@ class GraphRAGChain:
             "entities": retrieved["entities"],
             "triples": retrieved["triples"],
             "context_text": context_text,
+            "answer_mode": "llm",
+            "intents": retrieved["intents"],
+            "strategy": retrieved["strategy"],
+            "relation_filter": retrieved["relation_filter"],
+            "source": retrieved["source"],
         }
         if show_context:
             print("\n=== 检索上下文（知识图谱子图）===")

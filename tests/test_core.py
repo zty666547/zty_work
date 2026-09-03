@@ -50,6 +50,7 @@ def test_prompt_builder():
 
     prompt = build_rag_user_prompt("问题", "上下文")
     assert "上下文" in prompt and "问题" in prompt
+    assert "[E1]" in prompt
 
 
 def test_entity_linking_supports_aliases():
@@ -97,6 +98,36 @@ def test_relation_properties_are_written():
     assert parameters["rel_prop_term"] == "暑期学期"
 
 
+def test_builder_validates_before_clearing_graph():
+    from config.settings import Settings
+    from src.graph.builder import GraphBuilder
+
+    class FakeClient:
+        def __init__(self):
+            self.calls = []
+
+        def run(self, query, parameters=None):
+            self.calls.append(query)
+            return []
+
+    client = FakeClient()
+    builder = GraphBuilder(Settings(), client)
+    entities = [
+        {"name": "知识工程", "type": "Course"},
+        {"name": "第4学期", "type": "Semester"},
+    ]
+    invalid_relations = [
+        {"source": "第4学期", "target": "知识工程", "type": "OFFERED_IN"}
+    ]
+    try:
+        builder.build(entities, invalid_relations, clear_first=True)
+    except ValueError as exc:
+        assert "关系方向不符合 Schema" in str(exc)
+    else:
+        raise AssertionError("反向关系应被拒绝")
+    assert not client.calls, "校验失败时不应先清空数据库"
+
+
 def test_memory_graph_retrieves_course_properties():
     from src.data.loader import load_structured
     from src.graph.memory_client import MemoryGraphClient
@@ -116,6 +147,54 @@ def test_memory_graph_retrieves_course_properties():
     assert "知识图谱" in intersection["context_text"]
     assert "信息检索与智能问答" in intersection["context_text"]
     assert "并行计算" not in intersection["context_text"]
+    assert intersection["intents"] == ["semester", "category"]
+    assert intersection["relation_filter"] == [
+        "BELONGS_TO_CATEGORY",
+        "OFFERED_IN",
+    ]
+    assert intersection["triples"][0]["evidence_id"] == "E1"
+
+
+def test_baseline_and_enhanced_retrieval_are_comparable():
+    from src.data.loader import load_structured
+    from src.graph.memory_client import MemoryGraphClient
+    from src.rag.retriever import GraphRetriever
+
+    root = Path(__file__).resolve().parent.parent
+    retriever = GraphRetriever(
+        MemoryGraphClient(load_structured(root / "data/raw/curriculum_structured.json"))
+    )
+    baseline = retriever.retrieve("NLP属于什么类型的课程？", strategy="baseline")
+    enhanced = retriever.retrieve("NLP属于什么类型的课程？", strategy="enhanced")
+    assert baseline["entities"] == []
+    assert enhanced["entities"] == ["自然语言处理"]
+    assert all(t["rel"] == "BELONGS_TO_CATEGORY" for t in enhanced["triples"])
+
+
+def test_graph_rag_chain_injects_source_and_evidence():
+    from config.settings import Settings
+    from src.data.loader import load_structured
+    from src.graph.memory_client import MemoryGraphClient
+    from src.rag.chain import GraphRAGChain
+
+    class FakeLLM:
+        def __init__(self):
+            self.user_prompt = ""
+
+        def chat(self, system_prompt, user_prompt, temperature=0.2):
+            self.user_prompt = user_prompt
+            return "知识工程为3.5学分。"
+
+    root = Path(__file__).resolve().parent.parent
+    graph = load_structured(root / "data/raw/curriculum_structured.json")
+    llm = FakeLLM()
+    result = GraphRAGChain(Settings(), MemoryGraphClient(graph), llm).answer(
+        "知识工程是多少学分？"
+    )
+    assert result["answer"].endswith("[E1]")
+    assert "2023级人工智能专业培养方案" in llm.user_prompt
+    assert "[E1]" in llm.user_prompt
+    assert result["answer_mode"] == "llm"
 
 
 def test_offline_answer_is_scoped_and_readable():

@@ -37,8 +37,17 @@ def build_offline_answer(question: str, triples: list[dict]) -> str:
         if relation == "HAS_REQUIREMENT":
             requirements.append(target)
 
+    citations = "".join(
+        f"[{triple.get('evidence_id') or f'E{index}'}]"
+        for index, triple in enumerate(triples[:6], start=1)
+    )
+
     if requirements:
-        return "该培养方案列出的毕业要求包括：" + "、".join(sorted(set(requirements))) + "。"
+        return (
+            "该培养方案列出的毕业要求包括："
+            + "、".join(sorted(set(requirements)))
+            + f"。{citations}"
+        )
 
     course_lines = []
     for course, facts in sorted(facts_by_course.items()):
@@ -54,10 +63,10 @@ def build_offline_answer(question: str, triples: list[dict]) -> str:
         course_lines.append(f"{course}（{'，'.join(details)}）" if details else course)
 
     if course_lines:
-        return "根据培养方案，" + "；".join(course_lines) + "。"
+        return "根据培养方案，" + "；".join(course_lines) + f"。{citations}"
 
     rendered = []
     for triple in triples[:12]:
         label = RELATION_LABELS.get(triple["rel"], triple["rel"])
         rendered.append(f"{triple['source']}的{label}是{triple['target']}")
-    return "根据培养方案，" + "；".join(rendered) + "。"
+    return "根据培养方案，" + "；".join(rendered) + f"。{citations}"

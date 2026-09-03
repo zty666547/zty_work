@@ -12,6 +12,8 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from src.graph.schema import ENTITY_TYPES, RELATION_TYPES
+
 # dotenv 为可选项：未安装时不会阻塞项目运行，只是不自动加载 .env
 try:
     from dotenv import load_dotenv
@@ -25,22 +27,8 @@ if load_dotenv is not None:
 
 
 # 可抽取的实体/关系类型（约束 DeepSeek 输出，避免自由发挥）
-DEFAULT_ENTITY_TYPES = [
-    "Program",
-    "Course",
-    "CourseCategory",
-    "Semester",
-    "Department",
-    "GraduationRequirement",
-]
-DEFAULT_RELATION_TYPES = [
-    "HAS_COURSE",
-    "HAS_REQUIREMENT",
-    "BELONGS_TO_CATEGORY",
-    "OFFERED_IN",
-    "TAUGHT_BY",
-    "SUPPORTS_REQUIREMENT",
-]
+DEFAULT_ENTITY_TYPES = ENTITY_TYPES
+DEFAULT_RELATION_TYPES = RELATION_TYPES
 
 
 @dataclass
@@ -49,6 +37,8 @@ class Settings:
 
     # --- 运行 ---
     app_env: str = "dev"
+    answer_mode: str = "offline"  # offline | llm
+    retrieval_strategy: str = "enhanced"  # baseline | enhanced
 
     # --- DeepSeek ---
     deepseek_api_key: str = ""
@@ -91,6 +81,8 @@ def load_settings() -> Settings:
     """从环境变量构建 Settings。"""
     return Settings(
         app_env=os.getenv("APP_ENV", "dev"),
+        answer_mode=os.getenv("ANSWER_MODE", "offline"),
+        retrieval_strategy=os.getenv("RETRIEVAL_STRATEGY", "enhanced"),
         deepseek_api_key=os.getenv("DEEPSEEK_API_KEY", ""),
         deepseek_base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
         deepseek_model=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),

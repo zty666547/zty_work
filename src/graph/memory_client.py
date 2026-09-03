@@ -10,6 +10,7 @@ class MemoryGraphClient:
     """把 StructuredGraph 转成轻量邻接表，不依赖 Neo4j。"""
 
     def __init__(self, graph: StructuredGraph):
+        self.source = dict(graph.source)
         self.nodes: dict[str, dict] = {}
         for entity_type, items in graph.entities.items():
             for item in items:

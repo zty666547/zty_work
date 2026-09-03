@@ -19,6 +19,29 @@ from src.utils.logger import get_logger
 logger = get_logger("kg_rag.retriever")
 
 
+INTENT_RELATIONS = {
+    "semester": {"OFFERED_IN"},
+    "category": {"BELONGS_TO_CATEGORY"},
+    "department": {"TAUGHT_BY"},
+    "graduation_requirement": {"HAS_REQUIREMENT", "SUPPORTS_REQUIREMENT"},
+}
+
+
+def infer_intents(question: str) -> list[str]:
+    """用可解释规则识别培养方案查询意图。"""
+    keyword_groups = {
+        "semester": ("学期", "大一", "大二", "大三", "大四", "什么时候", "何时"),
+        "category": ("类别", "类型", "核心课", "选修课", "基础课", "实践课"),
+        "department": ("开课单位", "哪个单位", "哪个学院", "谁开课", "学院", "学部"),
+        "graduation_requirement": ("毕业要求", "培养要求", "支撑要求"),
+    }
+    return [
+        intent
+        for intent, keywords in keyword_groups.items()
+        if any(keyword in question for keyword in keywords)
+    ]
+
+
 class GraphRetriever:
     """基于 Cypher 的图检索器。"""
 
@@ -34,14 +57,21 @@ class GraphRetriever:
             "coalesce(n.aliases, []) AS aliases"
         )
 
-    def link_entities(self, question: str, max_entities: int = 5) -> list[str]:
+    def link_entities(
+        self,
+        question: str,
+        max_entities: int = 5,
+        use_aliases: bool = True,
+    ) -> list[str]:
         """把问题中指称的实体匹配到图谱已有实体，返回命中的实体名。"""
         q_lower = question.lower()
         matched: list[str] = []
         scored: list[tuple[int, str]] = []
         for item in self.all_entity_catalog():
             name = item["name"]
-            mentions = [name, *(item.get("aliases") or [])]
+            mentions = [name]
+            if use_aliases:
+                mentions.extend(item.get("aliases") or [])
             lengths = [len(mention) for mention in mentions if mention.lower() in q_lower]
             if lengths:
                 scored.append((max(lengths), name))
@@ -92,9 +122,18 @@ class GraphRetriever:
                 result.append(t)
         return result
 
-    def retrieve(self, question: str, hop: int = 1, max_triples: int = 80) -> dict:
+    def retrieve(
+        self,
+        question: str,
+        hop: int = 1,
+        max_triples: int = 80,
+        strategy: str = "enhanced",
+    ) -> dict:
         """检索入口：返回 {entities, context_text, triples}。"""
-        entities = self.link_entities(question)
+        if strategy not in {"baseline", "enhanced"}:
+            raise ValueError(f"未知检索策略：{strategy}")
+        intents = infer_intents(question)
+        entities = self.link_entities(question, use_aliases=strategy == "enhanced")
         logger.info("问题「%s」链接到实体：%s", question, entities)
 
         triples: list[dict] = []
@@ -122,8 +161,23 @@ class GraphRetriever:
                 len(node_seed_hits.get(triple["target"], set())),
             )
 
-        if len(entities) > 1 and any(relevance(triple) > 1 for triple in unique):
+        if (
+            strategy == "enhanced"
+            and len(entities) > 1
+            and any(relevance(triple) > 1 for triple in unique)
+        ):
             unique = [triple for triple in unique if relevance(triple) > 1]
+
+        # 根据问题意图只保留必要的关系，减少注入 LLM 的无关上下文。
+        allowed_relations: set[str] = set()
+        for intent in intents:
+            allowed_relations.update(INTENT_RELATIONS.get(intent, set()))
+        if strategy == "enhanced" and allowed_relations:
+            filtered = [
+                triple for triple in unique if triple["rel"] in allowed_relations
+            ]
+            if filtered:
+                unique = filtered
 
         unique.sort(
             key=lambda triple: (
@@ -135,5 +189,16 @@ class GraphRetriever:
         )
         unique = unique[:max_triples]
 
+        for index, triple in enumerate(unique, start=1):
+            triple["evidence_id"] = f"E{index}"
+
         context_text = build_context_text(unique)
-        return {"entities": entities, "triples": unique, "context_text": context_text}
+        return {
+            "entities": entities,
+            "intents": intents,
+            "strategy": strategy,
+            "relation_filter": sorted(allowed_relations),
+            "triples": unique,
+            "context_text": context_text,
+            "source": getattr(self.client, "source", {}),
+        }

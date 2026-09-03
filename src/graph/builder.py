@@ -12,6 +12,7 @@ import re
 
 from config.settings import Settings
 from src.graph.neo4j_client import Neo4jClient
+from src.graph.schema import RELATION_SIGNATURES
 from src.utils.logger import get_logger
 
 logger = get_logger("kg_rag.builder")
@@ -114,15 +115,12 @@ class GraphBuilder:
 
         entities: [{name, type, props}]；relations: [{source, target, type, props}]
         """
+        self._validate_input(entities, relations)
         if clear_first:
             self.clear_all()
         self.ensure_constraints()
 
         for ent in entities:
-            if not ent.get("name") or not ent.get("type"):
-                raise ValueError(f"实体缺少 name/type：{ent}")
-            if ent["type"] not in self.settings.entity_types:
-                raise ValueError(f"实体类型不在 Schema 中：{ent['type']}")
             self._merge_entity(
                 ent.get("name", ""),
                 ent.get("type", ""),
@@ -130,8 +128,6 @@ class GraphBuilder:
             )
 
         for rel in relations:
-            if rel.get("type") not in self.settings.relation_types:
-                raise ValueError(f"关系类型不在 Schema 中：{rel.get('type')}")
             self._merge_relation(
                 rel.get("source", ""),
                 rel.get("target", ""),
@@ -144,6 +140,37 @@ class GraphBuilder:
         stats = self.graph_stats()
         logger.info("图谱构建完成：%s", stats)
         return stats
+
+    def _validate_input(self, entities: list[dict], relations: list[dict]) -> None:
+        """在清库前校验输入，避免错误数据破坏已有图谱。"""
+        entity_type_by_name: dict[str, str] = {}
+        for entity in entities:
+            name = str(entity.get("name", "")).strip()
+            entity_type = str(entity.get("type", "")).strip()
+            if not name or not entity_type:
+                raise ValueError(f"实体缺少 name/type：{entity}")
+            if entity_type not in self.settings.entity_types:
+                raise ValueError(f"实体类型不在 Schema 中：{entity_type}")
+            if name in entity_type_by_name:
+                raise ValueError(f"实体名称重复：{name}")
+            entity_type_by_name[name] = entity_type
+
+        for relation in relations:
+            source = relation.get("source")
+            target = relation.get("target")
+            relation_type = relation.get("type")
+            if relation_type not in self.settings.relation_types:
+                raise ValueError(f"关系类型不在 Schema 中：{relation_type}")
+            if source not in entity_type_by_name or target not in entity_type_by_name:
+                raise ValueError(f"关系端点不存在：{source} -> {target}")
+            expected = RELATION_SIGNATURES.get(relation_type)
+            actual = (entity_type_by_name[source], entity_type_by_name[target])
+            if expected and actual != expected:
+                raise ValueError(
+                    f"关系方向不符合 Schema：{source}({actual[0]}) "
+                    f"-[{relation_type}]-> {target}({actual[1]})，"
+                    f"应为 {expected[0]} -> {expected[1]}"
+                )
 
     def clear_all(self) -> None:
         """清空整库（在开发/演示阶段安全；生产务必谨慎）。"""

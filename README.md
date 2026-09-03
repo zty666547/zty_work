@@ -17,12 +17,12 @@
 
 ## 当前完成度
 
-- 知识图谱构建：6 类实体、6 类关系，当前数据含 70 个实体和 170 条关系。
-- 图检索：支持中文别名、学期俗称（如“大二下”）、课程简称（如“NLP”）和多条件交集查询。
-- 问答：提供无需 API 的离线答案生成；保留 DeepSeek 生成链路。
+- 知识图谱构建：6 类实体、6 类关系，当前数据含 70 个实体和 170 条关系；构建前校验实体类型、关系方向、端点和资料来源。
+- 图检索：提供基础/增强两种策略；增强策略支持别名、意图识别、关系过滤和多条件交集查询。
+- 问答：网页可在离线证据回答与 DeepSeek Graph RAG 之间切换；LLM答案要求引用 `[E1]` 形式的图谱证据。
 - 产品界面：提供 Streamlit 学生端网页，展示答案、培养路径、课程关系图、适用范围、来源和图谱证据。
 - 数据质量：构建前执行 Schema、重复实体、悬空关系和类型校验。
-- 可验证性：包含单元测试与 5 个检索评测问题。
+- 可验证性：包含 12 项单元测试与基础/增强检索对比评测。
 
 ## 系统结构
 
@@ -33,7 +33,7 @@
     ↓ Schema 校验
 Neo4j 图数据库 ────── 内存图（离线演示）
     ↓                      ↓
-实体链接 → 1 跳邻域检索 → 多条件证据筛选
+实体链接 → 意图识别 → 1 跳邻域检索 → 关系过滤/多条件筛选
     ↓
 离线答案 / DeepSeek 生成
     ↓
@@ -66,21 +66,27 @@ streamlit run app.py
 
 打开终端显示的本地网址，即可使用学生端问答页面。
 
-## 完整 Graph RAG 模式
+## DeepSeek Graph RAG 模式
 
-1. 复制配置模板并填写 DeepSeek 与 Neo4j 信息：
+网页的 DeepSeek 模式可以直接使用内存图完成 Graph RAG，不强制要求 Neo4j。复制配置模板并填写 API Key：
 
 ```bash
 cp .env.example .env
 ```
 
-2. 启动 Neo4j（任选一种方式）：
+```dotenv
+DEEPSEEK_API_KEY=你的密钥
+ANSWER_MODE=llm
+RETRIEVAL_STRATEGY=enhanced
+```
+
+随后运行 `streamlit run app.py`，侧栏会出现“DeepSeek Graph RAG”。如果需要演示 Neo4j 图存储，再启动 Neo4j：
 
 ```bash
 docker compose up -d neo4j
 ```
 
-3. 构建图谱并提问：
+构建 Neo4j 图谱并在命令行提问：
 
 ```bash
 python scripts/build_kg.py
@@ -100,6 +106,8 @@ python scripts/query.py "知识工程是多少学分，建议在哪个学期修�
 | `make app` | 启动学生端网页 | 无 |
 | `make build` | 将结构化数据写入 Neo4j | Neo4j |
 | `make demo` | Neo4j + DeepSeek 完整问答 | Neo4j、API Key |
+
+当前 5 题小型评测用于验证代码回归，而不是通用性能结论。现有结果为：基础策略实体链接 40%、证据检索 60%；增强策略两项均为 100%。最终答辩前需要扩充评测规模。
 
 ## 数据与来源
 

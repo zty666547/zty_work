@@ -7,8 +7,10 @@ from config.settings import settings
 from src.data.loader import load_structured
 from src.graph.memory_client import MemoryGraphClient
 from src.rag.offline_answerer import build_offline_answer
+from src.rag.chain import GraphRAGChain
 from src.rag.retriever import GraphRetriever
 from src.rag.scope import SOURCE_NAME
+from src.extraction.llm_client import LLMClient
 
 
 SAMPLE_QUESTIONS = [
@@ -20,7 +22,7 @@ SAMPLE_QUESTIONS = [
 
 
 @st.cache_resource
-def load_services() -> tuple[MemoryGraphClient, GraphRetriever]:
+def load_services_v2() -> tuple[MemoryGraphClient, GraphRetriever]:
     graph = load_structured(settings.raw_dir / settings.structured_filename)
     client = MemoryGraphClient(graph)
     return client, GraphRetriever(client)
@@ -87,8 +89,30 @@ def main() -> None:
         st.divider()
         st.markdown(f"**依据来源**  \n{SOURCE_NAME}")
         st.markdown("**回答方式**  \n实体链接 → 图谱检索 → 证据组织")
+        st.divider()
+        answer_options = ["离线证据回答"]
+        if settings.deepseek_api_key:
+            answer_options.append("DeepSeek Graph RAG")
+        default_answer_index = (
+            1
+            if settings.answer_mode == "llm" and len(answer_options) > 1
+            else 0
+        )
+        answer_mode = st.radio(
+            "答案生成",
+            answer_options,
+            index=default_answer_index,
+        )
+        if not settings.deepseek_api_key:
+            st.caption("填写 .env 中的 DEEPSEEK_API_KEY 后可启用大模型回答。")
+        strategy_label = st.selectbox(
+            "检索策略",
+            ["增强检索", "基础检索"],
+            help="基础检索用于最终答辩的对比实验。",
+        )
+        strategy = "enhanced" if strategy_label == "增强检索" else "baseline"
 
-    client, retriever = load_services()
+    client, retriever = load_services_v2()
     qa_tab, path_tab, coverage_tab = st.tabs(["智能问答", "培养路径", "数据范围"])
 
     with qa_tab:
@@ -101,11 +125,30 @@ def main() -> None:
         else:
             with st.chat_message("user"):
                 st.write(question)
-            result = retriever.retrieve(question, hop=1)
-            answer = build_offline_answer(question, result["triples"])
+            if answer_mode == "DeepSeek Graph RAG":
+                try:
+                    result = GraphRAGChain(
+                        settings,
+                        client,
+                        LLMClient(settings),
+                    ).answer(question, hop=1, strategy=strategy)
+                    answer = result["answer"]
+                except Exception as exc:  # noqa: BLE001
+                    st.warning(f"DeepSeek 调用失败，已回退到离线证据回答：{exc}")
+                    result = retriever.retrieve(question, hop=1, strategy=strategy)
+                    answer = build_offline_answer(question, result["triples"])
+            else:
+                result = retriever.retrieve(question, hop=1, strategy=strategy)
+                answer = build_offline_answer(question, result["triples"])
             with st.chat_message("assistant"):
                 st.write(answer)
                 st.caption(f"适用范围：2023级人工智能专业｜依据：{SOURCE_NAME}")
+                st.caption(
+                    "检索说明："
+                    f"策略={result.get('strategy', strategy)}；"
+                    f"意图={','.join(result.get('intents', [])) or '通用查询'}；"
+                    f"关系过滤={','.join(result.get('relation_filter', [])) or '无'}"
+                )
                 with st.expander("查看课程关系图"):
                     if result["triples"]:
                         st.graphviz_chart(build_dot(result["triples"]), width="stretch")
