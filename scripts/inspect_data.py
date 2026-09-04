@@ -9,14 +9,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from config.settings import settings  # noqa: E402
-from src.data.loader import load_structured  # noqa: E402
+from src.data.loader import load_knowledge_base  # noqa: E402
 
 
 def main() -> None:
     path = settings.raw_dir / settings.structured_filename
-    graph = load_structured(path)
+    graph = load_knowledge_base(path, settings.raw_dir / settings.rules_filename)
     print(f"资料来源：{graph.source.get('title', '未标注')}")
-    print(f"修订时间：{graph.source.get('revision_date', '未标注')}")
+    source_date = graph.source.get("revision_date") or graph.source.get(
+        "official_page_date", "未标注"
+    )
+    print(f"来源日期：{source_date}")
     entity_counts = {name: len(items) for name, items in graph.entities.items()}
     relation_counts = Counter(item["type"] for item in graph.relations)
 

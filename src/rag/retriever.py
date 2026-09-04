@@ -24,6 +24,17 @@ INTENT_RELATIONS = {
     "category": {"BELONGS_TO_CATEGORY"},
     "department": {"TAUGHT_BY"},
     "graduation_requirement": {"HAS_REQUIREMENT", "SUPPORTS_REQUIREMENT"},
+    "concept_comparison": {"CATEGORY_IN_DOMAIN", "HAS_NATURE", "DEFINED_BY"},
+    "rule": {
+        "HAS_RULE",
+        "GOVERNS_CATEGORY",
+        "GOVERNS_GROUP",
+        "GOVERNS_CONCEPT",
+        "ALLOWS_OPTION",
+        "SUPPORTED_BY",
+        "CONTAINS_GROUP",
+        "COUNTS_TOWARD",
+    },
 }
 
 
@@ -34,6 +45,21 @@ def infer_intents(question: str) -> list[str]:
         "category": ("类别", "类型", "核心课", "选修课", "基础课", "实践课"),
         "department": ("开课单位", "哪个单位", "哪个学院", "谁开课", "学院", "学部"),
         "graduation_requirement": ("毕业要求", "培养要求", "支撑要求"),
+        "concept_comparison": ("区别", "关系", "怎么区分", "有什么不同", "一样吗"),
+        "rule": (
+            "必须",
+            "必修吗",
+            "强制",
+            "一定要",
+            "需要多少",
+            "修满",
+            "至少",
+            "能否",
+            "可以",
+            "计入",
+            "算不算",
+            "要求",
+        ),
     }
     return [
         intent
@@ -54,7 +80,8 @@ class GraphRetriever:
             return self.client.entity_catalog()
         return self.client.run(
             "MATCH (n:Entity) RETURN n.name AS name, "
-            "coalesce(n.aliases, []) AS aliases"
+            "coalesce(n.aliases, []) AS aliases, "
+            "[label IN labels(n) WHERE label <> 'Entity'][0] AS entity_type"
         )
 
     def link_entities(
@@ -66,17 +93,40 @@ class GraphRetriever:
         """把问题中指称的实体匹配到图谱已有实体，返回命中的实体名。"""
         q_lower = question.lower()
         matched: list[str] = []
-        scored: list[tuple[int, str]] = []
+        scored: list[tuple[int, str, str, str]] = []
         for item in self.all_entity_catalog():
             name = item["name"]
             mentions = [name]
             if use_aliases:
                 mentions.extend(item.get("aliases") or [])
-            lengths = [len(mention) for mention in mentions if mention.lower() in q_lower]
-            if lengths:
-                scored.append((max(lengths), name))
-        scored.sort(key=lambda pair: (-pair[0], pair[1]))
-        for _, name in scored:
+            hits = [mention for mention in mentions if mention.lower() in q_lower]
+            if hits:
+                best_mention = max(hits, key=len)
+                scored.append(
+                    (
+                        len(best_mention),
+                        name,
+                        item.get("entity_type", ""),
+                        best_mention,
+                    )
+                )
+
+        # 若问题已命中更具体的课程类别（如“专业选修课”），抑制其内部
+        # 泛化词“选修课”再次链接到 Concept，避免破坏多条件交集检索。
+        filtered_scored = []
+        for candidate in scored:
+            length, _, entity_type, mention = candidate
+            shadowed = entity_type == "Concept" and any(
+                other_type != "Concept"
+                and other_length > length
+                and mention.lower() in other_mention.lower()
+                for other_length, _, other_type, other_mention in scored
+            )
+            if not shadowed:
+                filtered_scored.append(candidate)
+
+        filtered_scored.sort(key=lambda pair: (-pair[0], pair[1]))
+        for _, name, _, _ in filtered_scored:
             if name not in matched:
                 matched.append(name)
         return matched[:max_entities]
@@ -136,10 +186,15 @@ class GraphRetriever:
         entities = self.link_entities(question, use_aliases=strategy == "enhanced")
         logger.info("问题「%s」链接到实体：%s", question, entities)
 
+        # 概念解释和规则判断通常需要“概念/课程组 -> 规则 -> 来源”两跳证据。
+        effective_hop = hop
+        if strategy == "enhanced" and {"concept_comparison", "rule"} & set(intents):
+            effective_hop = max(hop, 2)
+
         triples: list[dict] = []
         node_seed_hits: dict[str, set[int]] = {}
         for seed_index, ent in enumerate(entities):
-            neighborhood = self.expand_neighborhood(ent, hop=hop)
+            neighborhood = self.expand_neighborhood(ent, hop=effective_hop)
             triples.extend(neighborhood)
             for triple in neighborhood:
                 for node in (triple["source"], triple["target"]):
@@ -164,6 +219,7 @@ class GraphRetriever:
         if (
             strategy == "enhanced"
             and len(entities) > 1
+            and not {"concept_comparison", "rule"} & set(intents)
             and any(relevance(triple) > 1 for triple in unique)
         ):
             unique = [triple for triple in unique if relevance(triple) > 1]
@@ -172,6 +228,10 @@ class GraphRetriever:
         allowed_relations: set[str] = set()
         for intent in intents:
             allowed_relations.update(INTENT_RELATIONS.get(intent, set()))
+        if "rule" in intents:
+            allowed_relations = set(INTENT_RELATIONS["rule"])
+        elif "concept_comparison" in intents:
+            allowed_relations = set(INTENT_RELATIONS["concept_comparison"])
         if strategy == "enhanced" and allowed_relations:
             filtered = [
                 triple for triple in unique if triple["rel"] in allowed_relations
@@ -197,6 +257,7 @@ class GraphRetriever:
             "entities": entities,
             "intents": intents,
             "strategy": strategy,
+            "hop": effective_hop,
             "relation_filter": sorted(allowed_relations),
             "triples": unique,
             "context_text": context_text,

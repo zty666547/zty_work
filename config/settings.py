@@ -58,6 +58,7 @@ class Settings:
 
     # --- 数据文件 ---
     structured_filename: str = "curriculum_structured.json"
+    rules_filename: str = "curriculum_rules.json"
     documents_filename: str = "curriculum_docs.txt"
 
     # --- 路径 ---
@@ -96,6 +97,7 @@ def load_settings() -> Settings:
         structured_filename=os.getenv(
             "STRUCTURED_FILENAME", "curriculum_structured.json"
         ),
+        rules_filename=os.getenv("RULES_FILENAME", "curriculum_rules.json"),
         documents_filename=os.getenv("DOCUMENTS_FILENAME", "curriculum_docs.txt"),
     )
 

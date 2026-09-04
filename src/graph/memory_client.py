@@ -26,7 +26,11 @@ class MemoryGraphClient:
 
     def entity_catalog(self) -> list[dict]:
         return [
-            {"name": name, "aliases": props.get("aliases", [])}
+            {
+                "name": name,
+                "aliases": props.get("aliases", []),
+                "entity_type": props.get("entity_type", ""),
+            }
             for name, props in self.nodes.items()
         ]
 

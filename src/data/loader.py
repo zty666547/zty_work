@@ -95,6 +95,42 @@ def load_structured(path: Path) -> StructuredGraph:
     return graph
 
 
+def load_knowledge_base(
+    curriculum_path: Path,
+    rules_path: Path | None = None,
+) -> StructuredGraph:
+    """合并课程事实与规则图谱，再对整体执行一次 Schema 校验。"""
+    paths = [curriculum_path]
+    if rules_path and rules_path.exists():
+        paths.append(rules_path)
+
+    merged = StructuredGraph()
+    supplemental_sources: list[dict] = []
+    for path in paths:
+        with path.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not merged.description:
+            merged.description = data.get("description", "")
+        elif data.get("description"):
+            merged.description += " " + data["description"]
+        source = data.get("source") or {}
+        if not merged.source:
+            merged.source = dict(source)
+        elif source:
+            supplemental_sources.append(dict(source))
+        for entity_type, items in data.get("entities", {}).items():
+            merged.entities.setdefault(entity_type, []).extend(items)
+        merged.relations.extend(data.get("relations", []))
+
+    if supplemental_sources:
+        merged.source["supplemental_sources"] = supplemental_sources
+    errors = validate_structured(merged)
+    if errors:
+        preview = "\n".join(f"- {error}" for error in errors[:20])
+        raise ValueError(f"合并知识库校验失败：\n{preview}")
+    return merged
+
+
 def load_documents(path: Path) -> list[str]:
     """读取原始文本语料，按空行切分为若干条文档（供 LLM 抽取）。"""
     text = path.read_text(encoding="utf-8")
@@ -123,6 +159,9 @@ def load_input(settings: Settings) -> tuple[StructuredGraph | None, list[str]]:
     docs_path = settings.raw_dir / settings.documents_filename
 
     if settings.extraction_mode == "structured" and structured_path.exists():
-        return load_structured(structured_path), []
+        return load_knowledge_base(
+            structured_path,
+            settings.raw_dir / settings.rules_filename,
+        ), []
 
     return None, load_documents(docs_path)

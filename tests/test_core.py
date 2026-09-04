@@ -25,6 +25,20 @@ def test_load_documents():
     assert len(docs) >= 5, f"应至少有 5 条文档，实际 {len(docs)}"
 
 
+def test_load_knowledge_base_merges_rules():
+    from src.data.loader import load_knowledge_base
+
+    root = Path(__file__).resolve().parent.parent
+    graph = load_knowledge_base(
+        root / "data/raw/curriculum_structured.json",
+        root / "data/raw/curriculum_rules.json",
+    )
+    assert "Rule" in graph.entities
+    assert "四史类课程" in graph.entity_names()
+    assert "文化素质选修课" in graph.entity_names()
+    assert len(graph.relations) >= 200
+
+
 def test_context_text_formatting():
     from src.rag.prompts import build_context_text
 
@@ -192,7 +206,7 @@ def test_graph_rag_chain_injects_source_and_evidence():
         "知识工程是多少学分？"
     )
     assert result["answer"].endswith("[E1]")
-    assert "2023级人工智能专业培养方案" in llm.user_prompt
+    assert "2024级人工智能专业培养方案" in llm.user_prompt
     assert "[E1]" in llm.user_prompt
     assert result["answer_mode"] == "llm"
 
@@ -200,7 +214,7 @@ def test_graph_rag_chain_injects_source_and_evidence():
 def test_offline_answer_is_scoped_and_readable():
     from src.rag.offline_answerer import build_offline_answer
 
-    assert "2023 级" in build_offline_answer("未知问题", [])
+    assert "2024 级" in build_offline_answer("未知问题", [])
     answer = build_offline_answer(
         "知识工程是多少学分？",
         [
@@ -216,8 +230,13 @@ def test_offline_answer_is_scoped_and_readable():
     assert "3.5 学分" in answer
     assert "第4学期" in answer
     refusal = build_offline_answer("2025级知识工程是多少学分？", [])
-    assert "只收录 2023 级" in refusal
+    assert "只收录 2024 级" in refusal
     assert "无法可靠回答2025级" in refusal
+
+    from src.rag.scope import scope_refusal
+
+    assert scope_refusal("2024级知识工程是多少学分？") is None
+    assert "无法可靠回答2023级" in scope_refusal("2023级知识工程是多少学分？")
 
 
 def test_course_overview_rows():
@@ -232,3 +251,75 @@ def test_course_overview_rows():
     knowledge_engineering = next(row for row in rows if row["课程"] == "知识工程")
     assert knowledge_engineering["建议学期"] == "第4学期"
     assert knowledge_engineering["课程类别"] == "专业核心课"
+
+
+def test_rule_retrieval_supports_explanatory_questions():
+    from src.data.loader import load_knowledge_base
+    from src.graph.memory_client import MemoryGraphClient
+    from src.rag.retriever import GraphRetriever
+
+    root = Path(__file__).resolve().parent.parent
+    graph = load_knowledge_base(
+        root / "data/raw/curriculum_structured.json",
+        root / "data/raw/curriculum_rules.json",
+    )
+    retriever = GraphRetriever(MemoryGraphClient(graph))
+
+    concept = retriever.retrieve("选修课和通识课是什么关系？")
+    assert concept["hop"] == 2
+    assert "CATEGORY_IN_DOMAIN" in concept["context_text"]
+    assert "HAS_NATURE" in concept["context_text"]
+
+    four_histories = retriever.retrieve("四史类课程是每一门都必修吗？")
+    assert "minimum_courses=1" in four_histories["context_text"]
+    assert "习近平新时代中国特色社会主义思想系列课程" in four_histories["context_text"]
+    assert "verification_status=校内资料已整理，待原始通知复核" in four_histories["context_text"]
+
+
+def test_offline_rule_answer_distinguishes_scope_and_evidence_status():
+    from src.data.loader import load_knowledge_base
+    from src.graph.memory_client import MemoryGraphClient
+    from src.rag.offline_answerer import build_offline_answer
+    from src.rag.retriever import GraphRetriever
+
+    root = Path(__file__).resolve().parent.parent
+    graph = load_knowledge_base(
+        root / "data/raw/curriculum_structured.json",
+        root / "data/raw/curriculum_rules.json",
+    )
+    retriever = GraphRetriever(MemoryGraphClient(graph))
+
+    result = retriever.retrieve("四史类课程是每一门都必修吗？")
+    answer = build_offline_answer("四史类课程是每一门都必修吗？", result["triples"])
+    assert "至少选修1门" in answer
+    assert "待原始通知复核" in answer
+
+    result = retriever.retrieve("选修课和通识课是什么关系？")
+    answer = build_offline_answer("选修课和通识课是什么关系？", result["triples"])
+    assert "不是同一个分类维度" in answer
+
+    result = retriever.retrieve("专业核心与专业选修有什么区别？")
+    answer = build_offline_answer("专业核心与专业选修有什么区别？", result["triples"])
+    assert "两者都属于专业教育" in answer
+    assert "专业核心课是培养方案指定的必修模块，共21学分" in answer
+    assert "专业选修课允许从课程清单中选择，但累计须完成16学分" in answer
+
+
+def test_rule_overview_rows():
+    from app import build_rule_rows
+    from src.data.loader import load_knowledge_base
+    from src.graph.memory_client import MemoryGraphClient
+
+    root = Path(__file__).resolve().parent.parent
+    graph = load_knowledge_base(
+        root / "data/raw/curriculum_structured.json",
+        root / "data/raw/curriculum_rules.json",
+    )
+    rows = build_rule_rows(MemoryGraphClient(graph))
+    assert len(rows) == 5
+    professional_elective = next(
+        row for row in rows if row["规则"] == "2024级专业选修学分要求"
+    )
+    assert professional_elective["依据来源"] == "2024级人工智能专业培养方案原文"
+    assert professional_elective["来源等级"] == "A-官方培养方案"
+    assert professional_elective["来源链接"].startswith("https://")

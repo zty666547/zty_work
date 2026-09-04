@@ -59,7 +59,7 @@ class GraphRAGChain:
                 "context_text": context_text,
             }
         source_title = retrieved.get("source", {}).get(
-            "title", "天津大学《2023级人工智能专业培养方案》"
+            "title", "天津大学《2024级人工智能专业培养方案》"
         )
         user_prompt = build_rag_user_prompt(question, context_text, source_title)
         answer = self.llm.chat(RAG_SYSTEM_PROMPT, user_prompt, temperature=0.2)

@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from config.settings import settings  # noqa: E402
-from src.data.loader import load_structured  # noqa: E402
+from src.data.loader import load_knowledge_base  # noqa: E402
 from src.graph.memory_client import MemoryGraphClient  # noqa: E402
 from src.rag.retriever import GraphRetriever  # noqa: E402
 
@@ -48,7 +48,10 @@ def evaluate(cases: list[dict], retriever: GraphRetriever, strategy: str) -> dic
 
 def main() -> None:
     cases = json.loads((ROOT / "data/evaluation/questions.json").read_text())
-    graph = load_structured(settings.raw_dir / settings.structured_filename)
+    graph = load_knowledge_base(
+        settings.raw_dir / settings.structured_filename,
+        settings.raw_dir / settings.rules_filename,
+    )
     retriever = GraphRetriever(MemoryGraphClient(graph))
     results = {}
 

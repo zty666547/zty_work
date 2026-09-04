@@ -1,0 +1,232 @@
+{
+  "description": "2024级人工智能专业培养规则补充图谱。规则事实保留适用范围、来源等级与核验状态；学期性通知不泛化为永久规定。",
+  "source": {
+    "title": "培养方案与选课规则补充资料",
+    "institution": "天津大学",
+    "scope_note": "2024级人工智能专业规则，以及带明确时间范围的选课说明"
+  },
+  "entities": {
+    "Concept": [
+      {
+        "name": "通识教育",
+        "props": {
+          "aliases": ["通识课", "通识课程", "文化素质教育"],
+          "dimension": "培养领域",
+          "definition": "描述课程在人才培养体系中的教育领域；其中既可以包含必修模块，也可以包含选修模块。"
+        }
+      },
+      {
+        "name": "专业教育",
+        "props": {
+          "aliases": ["专业课程", "专业课"],
+          "dimension": "培养领域",
+          "definition": "面向本专业知识与能力培养的课程领域，包括专业核心和专业选修等模块。"
+        }
+      },
+      {
+        "name": "选修课程性质",
+        "props": {
+          "aliases": ["选修课", "选修性质"],
+          "dimension": "修读性质",
+          "definition": "描述学生在规定范围内具有课程选择空间；仍需满足培养方案规定的课程组、门数或学分要求。"
+        }
+      },
+      {
+        "name": "必修课程性质",
+        "props": {
+          "aliases": ["必修课", "必修性质"],
+          "dimension": "修读性质",
+          "definition": "描述培养方案要求学生完成的课程或课程模块。"
+        }
+      },
+      {
+        "name": "建议修读学期",
+        "props": {
+          "aliases": ["推荐修读学期", "建议学期"],
+          "dimension": "培养路径",
+          "definition": "培养方案给出的推荐学习时间；与课程是否必修是两个独立字段，实际调整还受开课、容量、先修条件和当学期通知约束。"
+        }
+      }
+    ],
+    "CourseCategory": [
+      {
+        "name": "文化素质教育必修",
+        "props": {
+          "aliases": ["文化素质必修", "通识必修"],
+          "required": true,
+          "required_credits": 4,
+          "description": "2024级人工智能培养方案中的文化素质教育必修模块。"
+        }
+      },
+      {
+        "name": "文化素质选修课",
+        "props": {
+          "aliases": ["文化素质选修", "通识选修", "通识选修课", "全校性任选课", "校任选课", "校任选"],
+          "required": false,
+          "required_credits": 8,
+          "description": "也称全校性任选课；2024级人工智能专业要求累计完成8学分，其中培养方案表格列出艺术与美学2学分。"
+        }
+      }
+    ],
+    "CourseGroup": [
+      {
+        "name": "2024级思政选修课程组",
+        "props": {
+          "aliases": ["思政选修课程组"],
+          "selection_mode": "二类课程中至少选择一门"
+        }
+      },
+      {
+        "name": "四史类课程",
+        "props": {
+          "aliases": ["四史", "四史课", "四史类选修课"],
+          "definition": "围绕党史、新中国史、改革开放史、社会主义发展史设置的课程组。"
+        }
+      },
+      {
+        "name": "习近平新时代中国特色社会主义思想系列课程",
+        "props": {
+          "aliases": ["习近平系列课程", "习思想系列课程"],
+          "definition": "培养方案和相关选课说明列出的习近平新时代中国特色社会主义思想系列选修课程。"
+        }
+      }
+    ],
+    "Rule": [
+      {
+        "name": "2024级文化素质选修学分要求",
+        "props": {
+          "aliases": ["通识选修学分要求", "校任选学分要求"],
+          "rule_type": "minimum_credits",
+          "minimum_credits": 8,
+          "scope": "2024级人工智能专业",
+          "statement": "2024级人工智能专业文化素质选修累计应修8学分；培养方案表格列出艺术与美学2学分。",
+          "verification_status": "官方2024版页面已确认；课程明细待PDF逐项复核"
+        }
+      },
+      {
+        "name": "2024级专业选修学分要求",
+        "props": {
+          "aliases": ["专业选修需要多少学分", "专业选修学分要求"],
+          "rule_type": "minimum_credits",
+          "minimum_credits": 16,
+          "scope": "2024级人工智能专业",
+          "statement": "2024级人工智能专业的专业选修课程应修学分为16学分。",
+          "verification_status": "官方2024版页面已确认；课程明细待PDF逐项复核"
+        }
+      },
+      {
+        "name": "2024级思政选修课程组要求",
+        "props": {
+          "aliases": ["四史必修要求", "四史修读要求"],
+          "rule_type": "course_group_requirement",
+          "minimum_courses": 1,
+          "scope": "2024级全日制本科生，马克思主义学院除外；具体以本专业培养方案和选课系统为准",
+          "statement": "北洋维基根据相关通知整理：2024级学生毕业前需从习近平新时代中国特色社会主义思想系列课程或四史类课程中至少选修1门，可计入全校性选修课8学分。",
+          "verification_status": "校内资料已整理，待原始通知复核"
+        }
+      },
+      {
+        "name": "建议修读学期与必修性质规则",
+        "props": {
+          "aliases": ["建议修读学期规则", "推荐学期规则"],
+          "rule_type": "recommendation",
+          "scope": "2024级人工智能专业",
+          "statement": "培养方案把建议修读学期与是否必修分别列示，因此建议学期不等同于课程必修性质；调整学习时间仍需核对开课、先修条件和当学期选课要求。",
+          "verification_status": "2024版页面已确认；培养方案字段待PDF复核，操作限制需按学期核验"
+        }
+      },
+      {
+        "name": "2026至2027学年第一学期计划外选课规则",
+        "props": {
+          "aliases": ["计划外选课", "跨年级选课", "跨专业选课"],
+          "rule_type": "semester_operation",
+          "scope": "2026至2027学年第一学期本科生",
+          "statement": "该学期在注册期后选课和退选补选阶段开放计划外选课，允许跨班级、跨年级、跨专业选课；同时要求优先完成培养方案建议课程并咨询学院或班导师。",
+          "verification_status": "北洋维基选课必读已核验，限定该学期使用"
+        }
+      }
+    ],
+    "DocumentSource": [
+      {
+        "name": "2024级人工智能专业培养方案原文",
+        "props": {
+          "aliases": ["培养方案原文"],
+          "publisher": "天津大学人工智能学院",
+          "source_tier": "A-官方培养方案",
+          "published_at": "2026-01-08",
+          "verification_note": "官方2024版页面已确认；当前课程明细按用户确认的两届无变动结论迁移，待PDF逐项复核",
+          "url": "https://sai.tju.edu.cn/info/1221/1451.htm"
+        }
+      },
+      {
+        "name": "北洋维基四史类选修课说明",
+        "props": {
+          "publisher": "北洋维基",
+          "source_tier": "B-校内资料聚合",
+          "updated_at": "2024-03-06",
+          "scope": "按年级整理",
+          "url": "https://wiki.tjubot.cn/courses/history-electives"
+        }
+      },
+      {
+        "name": "2026至2027学年第一学期选课必读整理",
+        "props": {
+          "publisher": "北洋维基",
+          "source_tier": "B-官方通知整理",
+          "updated_at": "2026-07-15",
+          "scope": "2026至2027学年第一学期",
+          "url": "https://wiki.tjubot.cn/courses/selection-instruction-202601"
+        }
+      },
+      {
+        "name": "天津大学本科生选课管理办法整理",
+        "props": {
+          "publisher": "天津大学相关规章，由北洋维基整理",
+          "source_tier": "B-规章转载",
+          "url": "https://wiki.tjubot.cn/regulations/undergraduates-course-selection-management-rules"
+        }
+      }
+    ]
+  },
+  "relations": [
+    {"source": "专业核心课", "target": "专业教育", "type": "CATEGORY_IN_DOMAIN"},
+    {"source": "专业核心课", "target": "必修课程性质", "type": "HAS_NATURE"},
+    {"source": "专业选修课", "target": "专业教育", "type": "CATEGORY_IN_DOMAIN"},
+    {"source": "专业选修课", "target": "选修课程性质", "type": "HAS_NATURE"},
+    {"source": "文化素质教育必修", "target": "通识教育", "type": "CATEGORY_IN_DOMAIN"},
+    {"source": "文化素质教育必修", "target": "必修课程性质", "type": "HAS_NATURE"},
+    {"source": "文化素质选修课", "target": "通识教育", "type": "CATEGORY_IN_DOMAIN"},
+    {"source": "文化素质选修课", "target": "选修课程性质", "type": "HAS_NATURE"},
+
+    {"source": "2024级人工智能专业", "target": "2024级文化素质选修学分要求", "type": "HAS_RULE"},
+    {"source": "2024级文化素质选修学分要求", "target": "文化素质选修课", "type": "GOVERNS_CATEGORY"},
+    {"source": "2024级文化素质选修学分要求", "target": "2024级人工智能专业培养方案原文", "type": "SUPPORTED_BY"},
+
+    {"source": "2024级人工智能专业", "target": "2024级专业选修学分要求", "type": "HAS_RULE"},
+    {"source": "2024级专业选修学分要求", "target": "专业选修课", "type": "GOVERNS_CATEGORY"},
+    {"source": "2024级专业选修学分要求", "target": "2024级人工智能专业培养方案原文", "type": "SUPPORTED_BY"},
+
+    {"source": "2024级人工智能专业", "target": "2024级思政选修课程组要求", "type": "HAS_RULE"},
+    {"source": "2024级思政选修课程组要求", "target": "2024级思政选修课程组", "type": "GOVERNS_GROUP"},
+    {"source": "2024级思政选修课程组要求", "target": "四史类课程", "type": "ALLOWS_OPTION"},
+    {"source": "2024级思政选修课程组要求", "target": "习近平新时代中国特色社会主义思想系列课程", "type": "ALLOWS_OPTION"},
+    {"source": "2024级思政选修课程组要求", "target": "北洋维基四史类选修课说明", "type": "SUPPORTED_BY"},
+    {"source": "2024级思政选修课程组", "target": "四史类课程", "type": "CONTAINS_GROUP"},
+    {"source": "2024级思政选修课程组", "target": "习近平新时代中国特色社会主义思想系列课程", "type": "CONTAINS_GROUP"},
+    {"source": "四史类课程", "target": "文化素质选修课", "type": "COUNTS_TOWARD"},
+    {"source": "习近平新时代中国特色社会主义思想系列课程", "target": "文化素质选修课", "type": "COUNTS_TOWARD"},
+
+    {"source": "2024级人工智能专业", "target": "建议修读学期与必修性质规则", "type": "HAS_RULE"},
+    {"source": "建议修读学期与必修性质规则", "target": "建议修读学期", "type": "GOVERNS_CONCEPT"},
+    {"source": "建议修读学期与必修性质规则", "target": "2024级人工智能专业培养方案原文", "type": "SUPPORTED_BY"},
+
+    {"source": "2024级人工智能专业", "target": "2026至2027学年第一学期计划外选课规则", "type": "HAS_RULE", "props": {"scope_warning": "仅作后续学期操作示例，不代表2024级所有学期"}},
+    {"source": "2026至2027学年第一学期计划外选课规则", "target": "建议修读学期", "type": "GOVERNS_CONCEPT"},
+    {"source": "2026至2027学年第一学期计划外选课规则", "target": "2026至2027学年第一学期选课必读整理", "type": "SUPPORTED_BY"},
+
+    {"source": "通识教育", "target": "2024级人工智能专业培养方案原文", "type": "DEFINED_BY"},
+    {"source": "专业教育", "target": "2024级人工智能专业培养方案原文", "type": "DEFINED_BY"},
+    {"source": "选修课程性质", "target": "天津大学本科生选课管理办法整理", "type": "DEFINED_BY"},
+    {"source": "建议修读学期", "target": "2024级人工智能专业培养方案原文", "type": "DEFINED_BY"}
+  ]
+}

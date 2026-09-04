@@ -4,8 +4,8 @@ from __future__ import annotations
 import re
 
 
-SUPPORTED_COHORT = "2023"
-SOURCE_NAME = "天津大学《2023级人工智能专业培养方案》"
+SUPPORTED_COHORT = "2024"
+SOURCE_NAME = "天津大学《2024级人工智能专业培养方案》"
 
 
 def unsupported_cohorts(question: str) -> list[str]:
@@ -20,7 +20,6 @@ def scope_refusal(question: str) -> str | None:
         return None
     requested = "、".join(f"{cohort}级" for cohort in cohorts)
     return (
-        f"当前知识库只收录 2023 级人工智能专业培养方案，无法可靠回答{requested}的问题。"
+        f"当前知识库只收录 2024 级人工智能专业培养方案，无法可靠回答{requested}的问题。"
         "请查阅对应年级的正式培养方案。"
     )
-
