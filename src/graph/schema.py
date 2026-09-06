@@ -5,6 +5,7 @@ ENTITY_TYPES = [
     "Issue", "Cause", "Observation", "DiagnosticQuestion",
     "DiagnosticCheck", "RepairAction", "Package", "Platform",
     "VersionConstraint", "Risk", "DocumentSource",
+    "EvidenceChunk",
 ]
 
 RELATION_SIGNATURES = {
@@ -22,6 +23,10 @@ RELATION_SIGNATURES = {
     "CAUSE_SUPPORTED_BY": ("Cause", "DocumentSource"),
     "CHECK_SUPPORTED_BY": ("DiagnosticCheck", "DocumentSource"),
     "REPAIR_SUPPORTED_BY": ("RepairAction", "DocumentSource"),
+    "SOURCE_CONTAINS_CHUNK": ("DocumentSource", "EvidenceChunk"),
+    "CHUNK_SUPPORTS_CAUSE": ("EvidenceChunk", "Cause"),
+    "CHUNK_SUPPORTS_CHECK": ("EvidenceChunk", "DiagnosticCheck"),
+    "CHUNK_SUPPORTS_REPAIR": ("EvidenceChunk", "RepairAction"),
 }
 
 RELATION_TYPES = list(RELATION_SIGNATURES)

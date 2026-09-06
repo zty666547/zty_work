@@ -50,6 +50,22 @@ def _render_candidates(snapshot: dict) -> None:
     st.bar_chart({row["候选原因"]: row["当前概率"] for row in rows}, horizontal=True)
 
 
+def _render_evidence(snapshot: dict) -> None:
+    evidence = snapshot["state"].get("evidence") or []
+    if not evidence:
+        return
+    with st.expander("本次召回的文本证据", expanded=True):
+        for item in evidence:
+            source = item.get("source_title") or "未命名来源"
+            score = float(item.get("score", 0.0))
+            title = f"{item['chunk_id']} · {source} · 相关度 {score:.0%}"
+            if item.get("url"):
+                st.markdown(f"**[{title}]({item['url']})**")
+            else:
+                st.markdown(f"**{title}**")
+            st.caption(item.get("text", ""))
+
+
 def main() -> None:
     st.set_page_config(page_title="DebugPath", page_icon="🧭", layout="wide")
     st.title("🧭 DebugPath")
@@ -94,6 +110,7 @@ def main() -> None:
             c1.metric("候选原因", len(snapshot["candidates"]))
             c2.metric("已追问", len(state["asked_questions"]))
             c3.metric("最高概率", f"{snapshot['candidates'][0]['probability']:.1%}")
+            _render_evidence(snapshot)
             _render_candidates(snapshot)
             question = snapshot.get("question")
             if state["status"] == "questioning" and question:

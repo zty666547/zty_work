@@ -3,23 +3,33 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from config.settings import ROOT_DIR, Settings
-from src.data.loader import load_structured
+from config.settings import Settings
+from src.data.loader import load_knowledge_base
 from src.diagnosis.engine import DiagnosisEngine
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.planner import PlanBuilder, verify_plan
+from src.retrieval.bm25 import EvidenceRetriever
 
 
 class DiagnosisService:
     def __init__(self, settings: Settings | None = None, knowledge_path: Path | None = None):
         self.settings = settings or Settings()
-        path = knowledge_path or ROOT_DIR / "data" / "raw" / self.settings.structured_filename
-        self.graph = load_structured(path)
+        path = knowledge_path or self.settings.raw_dir / self.settings.structured_filename
+        evidence_path = path.parent / self.settings.evidence_filename
+        self.graph = load_knowledge_base(path, evidence_path)
         self.engine = DiagnosisEngine(self.graph, self.settings)
         self.planner = PlanBuilder(self.graph)
+        self.retriever = EvidenceRetriever(self.graph)
 
     def start(self, report: str) -> dict:
-        return self.snapshot(self.engine.start(report))
+        state = self.engine.start(report)
+        hits = (
+            self.retriever.search(report, top_k=self.settings.evidence_top_k)
+            if self.settings.enable_evidence_retrieval
+            else []
+        )
+        self.retriever.apply_to_state(state, hits, weight=self.settings.evidence_weight)
+        return self.snapshot(state)
 
     def answer(self, state_value: dict, question_name: str, answer: str) -> dict:
         state = DiagnosisState.from_dict(state_value)

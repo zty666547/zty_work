@@ -31,6 +31,25 @@ def test_knowledge_graph_is_valid_and_substantial():
     assert len(graph.entities["DocumentSource"]) >= 8
 
 
+def test_evidence_layer_is_merged_into_runtime_graph(service):
+    assert len(service.graph.entities["EvidenceChunk"]) == 30
+    assert sum(map(len, service.graph.entities.values())) == 130
+    assert len(service.graph.relations) == 338
+
+
+def test_bm25_evidence_changes_initial_ranking(service):
+    snapshot = service.start("macOS Apple Silicon上CUDA不可用")
+    assert snapshot["state"]["evidence"][0]["chunk_id"] == "E017"
+    assert snapshot["candidates"][0]["name"] == "当前平台不提供CUDA"
+
+
+def test_evidence_survives_question_round_trip(service):
+    snapshot = service.start("Neo4j Connection refused localhost:7687")
+    evidence = snapshot["state"]["evidence"]
+    snapshot = service.answer(snapshot["state"], snapshot["question"]["name"], "yes")
+    assert snapshot["state"]["evidence"] == evidence
+
+
 @pytest.mark.parametrize(
     ("report", "issue"),
     [
@@ -180,3 +199,14 @@ def test_benchmark_is_balanced_and_source_traceable(service):
         for cause in causes
     }
     assert {item["expected_top_cause"] for item in cases} == expected_causes
+
+
+def test_hybrid_ablation_improves_initial_ranking():
+    from scripts.evaluate_ablation import evaluate_ablation
+    from scripts.evaluate_diagnosis import load_cases
+
+    report = evaluate_ablation(load_cases())
+    metrics = {item["strategy"]: item for item in report["metrics"]}
+    assert metrics["hybrid_no_question"]["top1"] > metrics["graph_prior_only"]["top1"]
+    assert metrics["hybrid_active"]["top1"] == 1.0
+    assert metrics["hybrid_active"]["avg_questions"] < metrics["graph_active"]["avg_questions"]

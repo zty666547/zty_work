@@ -14,9 +14,16 @@ def render_offline(snapshot: dict) -> str:
     top = candidates[0]
     lines = [
         f"当前最可能的原因是 **{top['name']}**（{top['probability']:.1%}）。",
-        "",
-        "建议按以下顺序检查，检查结果不符合时再考虑下一项：",
     ]
+    evidence = snapshot.get("state", {}).get("evidence") or []
+    if evidence:
+        lines.extend(["", "本次召回的文本证据："])
+        for item in evidence[:3]:
+            source = item.get("source_title") or "未命名来源"
+            lines.append(
+                f"- [{item['chunk_id']}] [{source}]({item.get('url', '')})：{item.get('text', '')}"
+            )
+    lines.extend(["", "建议按以下顺序检查，检查结果不符合时再考虑下一项："])
     source_ids: dict[str, str] = {}
     for index, item in enumerate(snapshot["plan"], start=1):
         for source in item["sources"]:
@@ -45,13 +52,18 @@ def render_with_llm(snapshot: dict, llm) -> str:
     if snapshot.get("plan_errors"):
         return render_offline(snapshot)
     context = json.dumps(
-        {"candidates": snapshot["candidates"], "verified_plan": snapshot["plan"]},
+        {
+            "retrieved_evidence": snapshot.get("state", {}).get("evidence", []),
+            "candidates": snapshot["candidates"],
+            "verified_plan": snapshot["plan"],
+        },
         ensure_ascii=False,
         default=list,
     )
     system_prompt = (
         "你是DebugPath的答案解释器。只能改写给定的候选原因和已验证计划；"
-        "不得新增命令、原因或操作，不得声称已确定根因；保留风险提示和来源标题。"
+        "不得新增命令、原因、证据或操作，不得声称已确定根因；"
+        "引用证据时必须保留chunk_id、风险提示和来源标题。"
     )
     answer = llm.chat(system_prompt, f"请用简洁中文解释以下诊断结果：\n{context}", temperature=0.1)
     allowed_text = "\n".join(

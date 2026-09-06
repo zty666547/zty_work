@@ -11,4 +11,4 @@
 | [PyTorch MPS](https://docs.pytorch.org/docs/stable/notes/mps.html) | macOS上的MPS后端 |
 | [Neo4j Python连接手册](https://neo4j.com/docs/python-manual/current/connect/) | URI、认证与`verify_connectivity()` |
 
-`data/raw/debugpath_knowledge.json`记录了原因、检查、修复与这些来源之间的显式关系。当前版本没有把论坛回答当成事实来源。
+`data/raw/debugpath_knowledge.json`记录原因、检查、修复与来源之间的关系；`data/raw/debugpath_evidence.json`进一步保存30条可检索证据片段，并连接到对应原因、检查和处理。公开GitHub Issue仅用于保留真实错误表达和环境组合，不把个别用户推测直接当成通用事实。

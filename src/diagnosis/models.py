@@ -13,6 +13,7 @@ class DiagnosisState:
     session_id: str = field(default_factory=lambda: uuid4().hex[:12])
     asked_questions: list[str] = field(default_factory=list)
     answers: dict[str, str] = field(default_factory=dict)
+    evidence: list[dict] = field(default_factory=list)
     status: str = "questioning"
 
     def to_dict(self) -> dict:

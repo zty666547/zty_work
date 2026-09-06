@@ -9,12 +9,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from config.settings import settings  # noqa: E402
-from src.data.loader import load_structured  # noqa: E402
+from src.data.loader import load_knowledge_base  # noqa: E402
 
 
 def main() -> None:
     path = settings.raw_dir / settings.structured_filename
-    graph = load_structured(path)
+    evidence_path = settings.raw_dir / settings.evidence_filename
+    graph = load_knowledge_base(path, evidence_path)
     entity_counts = {name: len(items) for name, items in graph.entities.items()}
     relation_counts = Counter(item["type"] for item in graph.relations)
     print(f"资料来源：{graph.source.get('title', '未标注')}")

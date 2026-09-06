@@ -5,9 +5,10 @@
 ```text
 官方文档与人工复核案例
   → 受控Schema与版本条件
-  → 内存图 / Neo4j
+  → DocumentSource与EvidenceChunk
+  → BM25文本证据召回
   → 场景识别
-  → 候选原因先验
+  → 文本证据分布与图谱先验融合
   → 信息增益选问
   → 观察结果与贝叶斯更新
   → 有向排查计划
@@ -21,11 +22,16 @@
 |---|---|
 | `src/graph/schema.py` | 冻结实体类型、关系类型及方向 |
 | `src/data/loader.py` | 加载并在使用前验证图谱 |
+| `src/retrieval/bm25.py` | 中英文分词、BM25证据召回和候选原因融合 |
 | `src/diagnosis/engine.py` | 场景识别、信息增益、贝叶斯更新和停止策略 |
 | `src/diagnosis/planner.py` | 从首要原因形成检查—修复计划并执行安全验证 |
 | `src/diagnosis/service.py` | 为网页、CLI和评测提供统一状态接口 |
 | `src/diagnosis/generator.py` | 确定性离线答案和受约束LLM解释 |
-| `app.py` | 展示候选概率、选问理由、诊断子图和最终计划 |
+| `app.py` | 展示文本证据、候选概率、选问理由、诊断子图和最终计划 |
+
+## 图文混合检索
+
+用户错误描述首先与30条`EvidenceChunk`执行离线BM25匹配。每个片段通过`CHUNK_SUPPORTS_CAUSE`连接候选原因；系统把归一化文本证据分布与图谱先验按0.45权重融合，再进入主动询问。BM25保证离线可复现，Neo4j仍作为可选持久化与可视化后端。
 
 ## 主动询问
 

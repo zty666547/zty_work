@@ -33,7 +33,11 @@ class Settings:
     entity_types: list[str] = field(default_factory=lambda: list(ENTITY_TYPES))
     relation_types: list[str] = field(default_factory=lambda: list(RELATION_TYPES))
     structured_filename: str = "debugpath_knowledge.json"
+    evidence_filename: str = "debugpath_evidence.json"
     documents_filename: str = "debugpath_docs.txt"
+    evidence_top_k: int = 5
+    evidence_weight: float = 0.45
+    enable_evidence_retrieval: bool = True
     confidence_threshold: float = 0.78
     max_questions: int = 4
     min_information_gain: float = 0.01
@@ -60,7 +64,12 @@ def load_settings() -> Settings:
         neo4j_database=os.getenv("NEO4J_DATABASE", "neo4j"),
         extraction_mode=os.getenv("EXTRACTION_MODE", "structured"),
         structured_filename=os.getenv("STRUCTURED_FILENAME", "debugpath_knowledge.json"),
+        evidence_filename=os.getenv("EVIDENCE_FILENAME", "debugpath_evidence.json"),
         documents_filename=os.getenv("DOCUMENTS_FILENAME", "debugpath_docs.txt"),
+        evidence_top_k=int(os.getenv("EVIDENCE_TOP_K", "5")),
+        evidence_weight=float(os.getenv("EVIDENCE_WEIGHT", "0.45")),
+        enable_evidence_retrieval=os.getenv("ENABLE_EVIDENCE_RETRIEVAL", "true").lower()
+        not in {"0", "false", "no"},
         confidence_threshold=float(os.getenv("CONFIDENCE_THRESHOLD", "0.78")),
         max_questions=int(os.getenv("MAX_QUESTIONS", "4")),
         min_information_gain=float(os.getenv("MIN_INFORMATION_GAIN", "0.01")),

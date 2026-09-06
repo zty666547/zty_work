@@ -156,9 +156,10 @@ def load_input(settings: Settings) -> tuple[StructuredGraph | None, list[str]]:
     返回 (结构化图谱或 None, 文档列表)。
     """
     structured_path = settings.raw_dir / settings.structured_filename
+    evidence_path = settings.raw_dir / settings.evidence_filename
     docs_path = settings.raw_dir / settings.documents_filename
 
     if settings.extraction_mode == "structured" and structured_path.exists():
-        return load_knowledge_base(structured_path), []
+        return load_knowledge_base(structured_path, evidence_path), []
 
     return None, load_documents(docs_path)
