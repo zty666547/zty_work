@@ -57,6 +57,7 @@ src/diagnosis/
   generator.py         离线答案与受约束LLM解释
 src/graph/
   schema.py            实体、关系及方向约束
+  artifact.py          确定性排序、统计与内容指纹
   builder.py           DebugPath子图写入Neo4j
 src/retrieval/
   bm25.py              中英文分词、BM25召回与图文分数融合
@@ -81,6 +82,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 python scripts/inspect_data.py
+python scripts/prepare_graph.py
 python scripts/offline_demo.py
 python scripts/evaluate_diagnosis.py
 python scripts/evaluate_ablation.py
@@ -117,12 +119,13 @@ cp .env.example .env
 配置 `DEEPSEEK_API_KEY` 后，页面可以切换到 DeepSeek 解释模式。需要展示持久化图谱时：
 
 ```bash
+python scripts/prepare_graph.py
 docker compose up -d neo4j
 python scripts/build_kg.py
 python scripts/check_neo4j.py
 ```
 
-构建脚本只更新带 `project=DebugPath` 标记的节点，不清空数据库中的其他图谱。
+`prepare_graph.py`会生成可重建、不入库的`data/processed/debugpath_graph.json`，其中记录稳定排序后的节点、关系、分类型统计和SHA-256内容指纹。构建脚本只更新带`project=DebugPath`标记的节点，不清空数据库中的其他图谱；检查脚本会只读核对本地与数据库中的节点、关系、标签和关系类型。可直接用于答辩的查询见[Neo4j演示](docs/neo4j_demo.md)。
 
 ## 4. 评测
 

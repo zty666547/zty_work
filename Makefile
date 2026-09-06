@@ -1,4 +1,4 @@
-.PHONY: install setup inspect offline-demo evaluate build query demo app test up down
+.PHONY: install setup inspect prepare offline-demo evaluate ablation build check-neo4j query demo app test up down
 
 install:
 	pip install -r requirements.txt
@@ -10,11 +10,17 @@ setup:
 inspect:
 	python scripts/inspect_data.py
 
+prepare:
+	python scripts/prepare_graph.py
+
 offline-demo:
 	python scripts/offline_demo.py
 
 evaluate:
 	python scripts/evaluate_diagnosis.py
+
+ablation:
+	python scripts/evaluate_ablation.py
 
 test:
 	pytest -q
@@ -30,6 +36,9 @@ demo:
 
 build:
 	python scripts/build_kg.py
+
+check-neo4j:
+	python scripts/check_neo4j.py
 
 up:
 	docker compose up -d neo4j

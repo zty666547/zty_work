@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from config.settings import Settings
-from src.data.loader import load_structured
+from src.data.loader import load_knowledge_base, load_structured
 from src.diagnosis.engine import DiagnosisEngine, UnknownIssueError
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState, PlanItem
@@ -16,6 +16,7 @@ from src.diagnosis.service import DiagnosisService
 
 ROOT = Path(__file__).resolve().parent.parent
 KNOWLEDGE = ROOT / "data/raw/debugpath_knowledge.json"
+EVIDENCE = ROOT / "data/raw/debugpath_evidence.json"
 
 
 @pytest.fixture(scope="module")
@@ -35,6 +36,47 @@ def test_evidence_layer_is_merged_into_runtime_graph(service):
     assert len(service.graph.entities["EvidenceChunk"]) == 30
     assert sum(map(len, service.graph.entities.values())) == 130
     assert len(service.graph.relations) == 338
+
+
+def test_processed_graph_artifact_is_deterministic():
+    from src.graph.artifact import create_graph_artifact
+
+    graph = load_knowledge_base(KNOWLEDGE, EVIDENCE)
+    first = create_graph_artifact(graph, ["knowledge", "evidence"])
+    second = create_graph_artifact(graph, ["evidence", "knowledge"])
+    assert first == second
+    assert first["stats"]["nodes"] == 130
+    assert first["stats"]["relationships"] == 338
+    assert len(first["content_sha256"]) == 64
+
+
+def test_neo4j_read_only_inspection_matches_artifact():
+    from scripts.check_neo4j import inspect_remote
+    from src.graph.artifact import create_graph_artifact
+
+    expected = create_graph_artifact(
+        load_knowledge_base(KNOWLEDGE, EVIDENCE)
+    )["stats"]
+
+    class FakeClient:
+        def run(self, query, parameters=None):
+            if "RETURN count(n) AS count" in query:
+                return [{"count": expected["nodes"]}]
+            if "RETURN count(r) AS count" in query:
+                return [{"count": expected["relationships"]}]
+            if "RETURN entity_type" in query:
+                return [
+                    {"entity_type": name, "count": count}
+                    for name, count in expected["entity_types"].items()
+                ]
+            if "RETURN type(r) AS relation_type" in query:
+                return [
+                    {"relation_type": name, "count": count}
+                    for name, count in expected["relation_types"].items()
+                ]
+            raise AssertionError(f"意外查询：{query}")
+
+    assert inspect_remote(FakeClient()) == expected
 
 
 def test_bm25_evidence_changes_initial_ranking(service):
@@ -151,6 +193,22 @@ def test_neo4j_clear_is_project_scoped():
     GraphBuilder(Settings(), client).clear_all()
     assert "project: 'DebugPath'" in client.queries[0]
     assert "MATCH (n)" not in client.queries[0]
+
+
+def test_neo4j_build_rejects_incomplete_write():
+    from src.graph.builder import GraphBuilder
+
+    class EmptyClient:
+        def run(self, query, parameters=None):
+            if "RETURN count(n) AS c" in query or "RETURN count(r) AS c" in query:
+                return [{"c": 0}]
+            return []
+
+    with pytest.raises(RuntimeError, match="写入后规模不一致"):
+        GraphBuilder(Settings(), EmptyClient()).build(
+            [{"name": "测试故障", "type": "Issue", "props": {}}],
+            [],
+        )
 
 
 def test_all_frozen_evaluation_cases(service):

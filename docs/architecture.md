@@ -6,6 +6,8 @@
 官方文档与人工复核案例
   → 受控Schema与版本条件
   → DocumentSource与EvidenceChunk
+  → 合并校验、稳定排序与内容指纹
+  → 本地运行图 / Neo4j持久化图
   → BM25文本证据召回
   → 场景识别
   → 文本证据分布与图谱先验融合
@@ -22,6 +24,8 @@
 |---|---|
 | `src/graph/schema.py` | 冻结实体类型、关系类型及方向 |
 | `src/data/loader.py` | 加载并在使用前验证图谱 |
+| `src/graph/artifact.py` | 生成确定性Neo4j待写入产物、统计和内容指纹 |
+| `src/graph/builder.py` | 写入DebugPath子图并核对写入后规模 |
 | `src/retrieval/bm25.py` | 中英文分词、BM25证据召回和候选原因融合 |
 | `src/diagnosis/engine.py` | 场景识别、信息增益、贝叶斯更新和停止策略 |
 | `src/diagnosis/planner.py` | 从首要原因形成检查—修复计划并执行安全验证 |
@@ -55,3 +59,7 @@ Utility(q) = IG(q) - 0.02×检查成本 - 0.05×风险成本
 5. 高风险动作必须被阻止。
 
 Neo4j只是持久化与可视化后端。核心算法不依赖数据库或网络，因此答辩现场可以稳定离线运行。
+
+## 图谱构建可复现性
+
+`scripts/prepare_graph.py`读取基础因果图谱和证据层，先执行实体类型、关系类型、关系方向、重复项与端点完整性校验，再稳定排序并计算内容指纹。相同输入会得到相同的`data/processed/debugpath_graph.json`。`scripts/build_kg.py`使用同一产物写入Neo4j，写入后必须得到130个节点和338条关系，否则构建失败。`scripts/check_neo4j.py`进一步只读核对实体类型和关系类型分布，避免本地图谱与演示数据库悄悄不同步。

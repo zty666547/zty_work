@@ -138,6 +138,11 @@ class GraphBuilder:
             )
 
         stats = self.graph_stats()
+        expected = {"nodes": len(entities), "relationships": len(relations)}
+        if stats != expected:
+            raise RuntimeError(
+                f"Neo4j写入后规模不一致：期望{expected}，实际{stats}"
+            )
         logger.info("图谱构建完成：%s", stats)
         return stats
 
@@ -173,7 +178,7 @@ class GraphBuilder:
                 )
 
     def clear_all(self) -> None:
-        """清空整库（在开发/演示阶段安全；生产务必谨慎）。"""
+        """只清理带project=DebugPath标记的项目子图。"""
         self.client.run("MATCH (n:Entity {project: 'DebugPath'}) DETACH DELETE n")
         logger.info("已清空 Neo4j 中的 DebugPath 子图")
 

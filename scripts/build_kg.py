@@ -20,6 +20,7 @@ from config.settings import settings  # noqa: E402
 from src.data.loader import load_input  # noqa: E402
 from src.extraction.llm_client import LLMClient  # noqa: E402
 from src.extraction.extractor import EntityRelationExtractor  # noqa: E402
+from src.graph.artifact import create_graph_artifact, write_graph_artifact  # noqa: E402
 from src.graph.builder import GraphBuilder  # noqa: E402
 from src.graph.neo4j_client import Neo4jClient  # noqa: E402
 from src.utils.logger import get_logger  # noqa: E402
@@ -36,11 +37,18 @@ def main() -> None:
     relations: list[dict] = []
 
     if structured is not None:
-        # 结构化模式：把按类型分组的实体展平，带 props
-        for etype, items in structured.entities.items():
-            for item in items:
-                entities.append({"name": item["name"], "type": etype, "props": item.get("props", {})})
-        relations = list(structured.relations)
+        artifact = create_graph_artifact(
+            structured,
+            [
+                f"data/raw/{settings.structured_filename}",
+                f"data/raw/{settings.evidence_filename}",
+            ],
+        )
+        write_graph_artifact(
+            artifact, settings.processed_dir / "debugpath_graph.json"
+        )
+        entities = artifact["entities"]
+        relations = artifact["relations"]
         logger.info("已加载结构化三元组：%d 实体，%d 关系", len(entities), len(relations))
     else:
         # LLM 抽取模式
