@@ -1,242 +1,149 @@
-"""人工智能专业培养方案智能问答系统的学生端网页。"""
+"""DebugPath Streamlit 交互式主动诊断页面。"""
 from __future__ import annotations
 
 import streamlit as st
 
 from config.settings import settings
-from src.data.loader import load_knowledge_base
-from src.graph.memory_client import MemoryGraphClient
-from src.rag.offline_answerer import build_offline_answer
-from src.rag.chain import GraphRAGChain
-from src.rag.retriever import GraphRetriever
-from src.rag.scope import SOURCE_NAME
+from src.diagnosis.engine import UnknownIssueError
+from src.diagnosis.generator import render_offline, render_with_llm
+from src.diagnosis.models import DiagnosisState
+from src.diagnosis.service import DiagnosisService
 from src.extraction.llm_client import LLMClient
 
-
-SAMPLE_QUESTIONS = [
-    "知识工程是多少学分，建议在哪个学期修读？",
-    "选修课和通识课是什么关系？",
-    "专业核心与专业选修有什么区别？",
-    "建议修读学期是否具有强制性？",
-    "四史类课程是每一门都必修吗？",
-    "专业选修需要修满多少学分？",
+EXAMPLES = [
+    "ModuleNotFoundError: No module named 'pandas'",
+    "torch.cuda.is_available() 返回 False，检测不到GPU",
+    "Neo4j Connection refused，无法连接 localhost:7687",
+    "API 请求返回 401 Unauthorized",
 ]
 
 
 @st.cache_resource
-def load_services_v2() -> tuple[MemoryGraphClient, GraphRetriever]:
-    graph = load_knowledge_base(
-        settings.raw_dir / settings.structured_filename,
-        settings.raw_dir / settings.rules_filename,
-    )
-    client = MemoryGraphClient(graph)
-    return client, GraphRetriever(client)
+def load_service() -> DiagnosisService:
+    return DiagnosisService(settings)
 
 
-def build_course_rows(client: MemoryGraphClient) -> list[dict]:
-    """把课程邻接关系整理为适合学生浏览的表格。"""
-    rows: dict[str, dict] = {}
-    for name, props in client.nodes.items():
-        if props.get("entity_type") == "Course":
-            rows[name] = {
-                "课程": name,
-                "课程代码": props.get("code", ""),
-                "学分": props.get("credits", ""),
-                "必修": "是" if props.get("required") else "否",
-                "建议学期": "",
-                "课程类别": "",
-            }
-    for relation in client.relations:
-        course = rows.get(relation["source"])
-        if not course:
-            continue
-        if relation["type"] == "OFFERED_IN":
-            course["建议学期"] = relation["target"]
-        elif relation["type"] == "BELONGS_TO_CATEGORY":
-            course["课程类别"] = relation["target"]
-    return sorted(
-        rows.values(),
-        key=lambda row: (
-            int(str(row["建议学期"]).replace("第", "").replace("学期", "") or 99),
-            row["课程"],
-        ),
-    )
-
-
-def build_dot(triples: list[dict]) -> str:
-    """把少量检索三元组转为 Graphviz DOT。"""
-    def quote(value: str) -> str:
-        return value.replace('"', '\\"')
-
-    lines = ["digraph G {", 'rankdir="LR";', 'node [shape="box", style="rounded,filled", fillcolor="#EEF4FF"];']
-    for triple in triples[:16]:
-        source = quote(triple["source"])
-        target = quote(triple["target"])
-        relation = quote(triple["rel"])
-        lines.append(f'"{source}" -> "{target}" [label="{relation}"];')
+def _graph_dot(snapshot: dict) -> str:
+    issue = snapshot["state"]["issue_name"]
+    lines = ["digraph G {", 'rankdir="LR";', 'node [shape="box", style="rounded,filled", fontname="Arial"];']
+    lines.append(f'issue [label="{issue}", fillcolor="#dbeafe"];')
+    for index, candidate in enumerate(snapshot["candidates"]):
+        color = "#fecaca" if index == 0 else "#fef3c7"
+        label = f"{candidate['name']}\\n{candidate['probability']:.1%}"
+        lines.append(f'c{index} [label="{label}", fillcolor="{color}"];')
+        lines.append(f'issue -> c{index};')
+    if snapshot.get("question"):
+        question_text = snapshot["question"]["text"].replace('"', "'")
+        lines.append(f'q [label="下一问\\n{question_text}", fillcolor="#dcfce7"];')
+        lines.append("issue -> q [style=dashed];")
     lines.append("}")
     return "\n".join(lines)
 
 
-def build_rule_rows(client: MemoryGraphClient) -> list[dict]:
-    """整理规则节点，便于用户直接查看适用范围和核验状态。"""
-    sources_by_rule: dict[str, list[dict]] = {}
-    for relation in client.relations:
-        if relation["type"] != "SUPPORTED_BY":
-            continue
-        source_props = client.nodes.get(relation["target"], {})
-        sources_by_rule.setdefault(relation["source"], []).append(
-            {
-                "name": relation["target"],
-                "url": source_props.get("url", ""),
-                "tier": source_props.get("source_tier", ""),
-            }
-        )
-
-    rows = []
-    for name, props in client.nodes.items():
-        if props.get("entity_type") != "Rule":
-            continue
-        sources = sources_by_rule.get(name, [])
-        rows.append(
-            {
-                "规则": name,
-                "适用范围": props.get("scope", ""),
-                "规则内容": props.get("statement", ""),
-                "证据状态": props.get("verification_status", ""),
-                "依据来源": "；".join(item["name"] for item in sources),
-                "来源等级": "；".join(item["tier"] for item in sources),
-                "来源链接": "；".join(item["url"] for item in sources),
-            }
-        )
-    return sorted(rows, key=lambda row: row["规则"])
+def _render_candidates(snapshot: dict) -> None:
+    st.subheader("候选原因正在收敛")
+    rows = [
+        {"候选原因": item["name"], "当前概率": round(item["probability"] * 100, 1), "说明": item["description"]}
+        for item in snapshot["candidates"]
+    ]
+    st.dataframe(rows, width="stretch", hide_index=True)
+    st.bar_chart({row["候选原因"]: row["当前概率"] for row in rows}, horizontal=True)
 
 
 def main() -> None:
-    st.set_page_config(page_title="AI 培养方案问答", page_icon="🎓", layout="wide")
-    st.title("🎓 人工智能专业培养方案智能问答")
-    st.caption("课程事实 + 培养规则 + 可追溯依据 · 当前主数据版本：2024级")
-    st.info(
-        "当前系统只收录 2024 级培养方案。其他年级的课程安排可能不同，"
-        "请勿将本系统答案直接视为其他年级的正式选课依据。"
-    )
-    st.caption("官方2024版页面已确认；课程明细按两届无变动结论迁移，待PDF逐项复核。")
+    st.set_page_config(page_title="DebugPath", page_icon="🧭", layout="wide")
+    st.title("🧭 DebugPath")
+    st.caption("基于版本感知因果知识图谱与主动询问的 AI 开发环境故障诊断")
+    service = load_service()
 
     with st.sidebar:
-        st.subheader("可以这样问")
-        for item in SAMPLE_QUESTIONS:
-            st.markdown(f"- {item}")
-        st.divider()
-        st.markdown(f"**主要依据**  \n{SOURCE_NAME}")
-        st.markdown("**回答方式**  \n问题识别 → 图谱检索 → 规则与来源 → 证据回答")
-        st.divider()
-        answer_options = ["离线证据回答"]
+        st.header("演示设置")
+        platform_label = st.selectbox("目标环境", ["macOS", "Windows", "Linux"])
+        platform = {"macOS": "macos", "Windows": "windows", "Linux": "linux"}[platform_label]
+        modes = ["离线稳定模式"]
         if settings.deepseek_api_key:
-            answer_options.append("DeepSeek Graph RAG")
-        default_answer_index = (
-            1
-            if settings.answer_mode == "llm" and len(answer_options) > 1
-            else 0
-        )
-        answer_mode = st.radio(
-            "答案生成",
-            answer_options,
-            index=default_answer_index,
-        )
-        if not settings.deepseek_api_key:
-            st.caption("填写 .env 中的 DEEPSEEK_API_KEY 后可启用大模型回答。")
-        strategy_label = st.selectbox(
-            "检索策略",
-            ["增强检索", "基础检索"],
-            help="基础检索用于最终答辩的对比实验。",
-        )
-        strategy = "enhanced" if strategy_label == "增强检索" else "baseline"
+            modes.append("DeepSeek解释模式")
+        mode = st.radio("答案生成", modes)
+        st.info("系统只生成检查建议，不会自动执行命令。")
+        if st.button("重新开始", width="stretch"):
+            st.session_state.pop("diagnosis", None)
+            st.rerun()
 
-    client, retriever = load_services_v2()
-    qa_tab, rules_tab, path_tab, coverage_tab = st.tabs(
-        ["智能问答", "培养规则", "培养路径", "数据范围"]
-    )
-
-    with qa_tab:
-        question = st.chat_input("请输入关于课程、分类、学分或修读规则的问题")
-        if not question:
-            st.markdown("#### 示例问题")
-            cols = st.columns(2)
-            for index, item in enumerate(SAMPLE_QUESTIONS):
-                cols[index % 2].code(item, language=None)
-        else:
-            with st.chat_message("user"):
-                st.write(question)
-            if answer_mode == "DeepSeek Graph RAG":
+    diagnose_tab, graph_tab, method_tab = st.tabs(["主动诊断", "因果图谱", "方法说明"])
+    with diagnose_tab:
+        report = st.text_area(
+            "粘贴报错信息或描述现象", placeholder=EXAMPLES[0], height=120,
+            disabled="diagnosis" in st.session_state,
+        )
+        if "diagnosis" not in st.session_state:
+            st.caption("可直接尝试：" + " ｜ ".join(EXAMPLES))
+            if st.button("开始诊断", type="primary"):
                 try:
-                    result = GraphRAGChain(
-                        settings,
-                        client,
-                        LLMClient(settings),
-                    ).answer(question, hop=1, strategy=strategy)
-                    answer = result["answer"]
-                except Exception as exc:  # noqa: BLE001
-                    st.warning(f"DeepSeek 调用失败，已回退到离线证据回答：{exc}")
-                    result = retriever.retrieve(question, hop=1, strategy=strategy)
-                    answer = build_offline_answer(question, result["triples"])
+                    st.session_state.diagnosis = service.start(report)
+                    st.rerun()
+                except (ValueError, UnknownIssueError) as exc:
+                    st.warning(str(exc))
+        else:
+            previous = st.session_state.diagnosis
+            state = previous["state"]
+            snapshot = service.snapshot(DiagnosisState.from_dict(state), platform=platform)
+            st.session_state.diagnosis = snapshot
+            state = snapshot["state"]
+            st.success(f"已识别场景：{state['issue_name']}")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("候选原因", len(snapshot["candidates"]))
+            c2.metric("已追问", len(state["asked_questions"]))
+            c3.metric("最高概率", f"{snapshot['candidates'][0]['probability']:.1%}")
+            _render_candidates(snapshot)
+            question = snapshot.get("question")
+            if state["status"] == "questioning" and question:
+                st.subheader("系统选择的下一问")
+                st.write(question["text"])
+                st.caption(question["reason"])
+                answer_label = st.radio(
+                    "请选择观察结果",
+                    [question["yes_label"], question["no_label"], "暂时无法确认"],
+                    key=f"answer-{question['name']}",
+                )
+                answer = {question["yes_label"]: "yes", question["no_label"]: "no", "暂时无法确认": "unknown"}[answer_label]
+                left, right = st.columns(2)
+                if left.button("提交观察结果", type="primary", width="stretch"):
+                    st.session_state.diagnosis = service.answer(state, question["name"], answer)
+                    st.rerun()
+                if right.button("结束追问，查看当前方案", width="stretch"):
+                    st.session_state.diagnosis = service.complete(state)
+                    st.rerun()
             else:
-                result = retriever.retrieve(question, hop=1, strategy=strategy)
-                answer = build_offline_answer(question, result["triples"])
-            with st.chat_message("assistant"):
-                st.write(answer)
-                st.caption(
-                    "主要适用范围：2024级人工智能专业｜"
-                    "具体规则以证据中的适用范围与核验状态为准"
-                )
-                st.caption(
-                    "检索说明："
-                    f"策略={result.get('strategy', strategy)}；"
-                    f"意图={','.join(result.get('intents', [])) or '通用查询'}；"
-                    f"关系过滤={','.join(result.get('relation_filter', [])) or '无'}"
-                )
-                with st.expander("查看课程关系图"):
-                    if result["triples"]:
-                        st.graphviz_chart(build_dot(result["triples"]), width="stretch")
-                    else:
-                        st.write("没有可展示的关系。")
-                with st.expander("查看原始图谱证据"):
-                    if result["entities"]:
-                        st.write("命中实体：", "、".join(result["entities"]))
-                    st.code(result["context_text"], language=None)
+                st.subheader("已验证的排查方案")
+                if snapshot["plan_errors"]:
+                    st.error("方案验证未通过：" + "；".join(snapshot["plan_errors"]))
+                elif mode == "DeepSeek解释模式":
+                    try:
+                        st.markdown(render_with_llm(snapshot, LLMClient(settings)))
+                    except Exception as exc:  # noqa: BLE001
+                        st.warning(f"大模型暂不可用，已回退到离线答案：{exc}")
+                        st.markdown(render_offline(snapshot))
+                else:
+                    st.markdown(render_offline(snapshot))
 
-    with rules_tab:
-        st.subheader("已收录的培养与选课规则")
-        st.caption(
-            "规则与课程事实分开建模；每条规则保留适用范围和证据状态，"
-            "学期性通知不会被当作永久规则。"
-        )
-        st.dataframe(build_rule_rows(client), width="stretch", hide_index=True)
+    with graph_tab:
+        st.subheader("当前诊断子图")
+        if "diagnosis" in st.session_state:
+            st.graphviz_chart(_graph_dot(st.session_state.diagnosis), width="stretch")
+        else:
+            st.info("开始一次诊断后，这里会显示问题、候选原因和下一条主动询问。")
+        node_count = sum(len(items) for items in service.graph.entities.values())
+        st.caption(f"知识库规模：{node_count} 个节点，{len(service.graph.relations)} 条受控关系。")
 
-    with path_tab:
-        st.subheader("按培养方案浏览课程路径")
-        st.caption("这里展示的是建议修读学期，不代表课程先修关系或个性化选课结论。")
-        rows = build_course_rows(client)
-        semesters = ["全部", *[f"第{i}学期" for i in range(1, 9)]]
-        semester = st.selectbox("学期", semesters)
-        categories = ["全部", *sorted({row["课程类别"] for row in rows if row["课程类别"]})]
-        category = st.selectbox("课程类别", categories)
-        filtered = [
-            row
-            for row in rows
-            if (semester == "全部" or row["建议学期"] == semester)
-            and (category == "全部" or row["课程类别"] == category)
-        ]
-        st.dataframe(filtered, width="stretch", hide_index=True)
-        st.caption(f"当前展示 {len(filtered)} 门课程；知识库共收录 {len(rows)} 门代表性课程。")
-
-    with coverage_tab:
-        st.subheader("当前原型的数据边界")
+    with method_tab:
+        st.subheader("为什么不是普通问答")
         st.markdown(
-            "- 已覆盖：代表性课程、课程分类、学分、建议学期、毕业要求和首批培养规则。\n"
-            "- 规则能力：区分通识/专业领域与必修/选修性质，记录四史课程组、学分要求和来源状态。\n"
-            "- 尚未覆盖：实时开课状态、个人成绩、完整课程目录和经官方原文复核的全部先修关系。\n"
-            "- 使用原则：来源标记为“待原始通知复核”的结论，应以教务系统或官方原文为准。"
+            "1. **版本化因果图谱**：原因、平台、版本、检查、修复和官方来源分别建模。\n"
+            "2. **主动询问**：对每个未问问题计算期望信息增益，并扣除操作成本与风险。\n"
+            "3. **生成前验证**：修复动作必须具备前置检查、风险等级和证据来源；高风险动作自动阻止。"
         )
+        st.code("Utility(q) = ExpectedInformationGain(q) - CheckCost(q) - RiskCost(q)", language=None)
+        st.caption("候选概率用于决定排查顺序，不替代真实运行结果或专业判断。")
 
 
 if __name__ == "__main__":

@@ -30,8 +30,9 @@ def _build_user_prompt(text: str, entity_types: list[str], relation_types: list[
 
 要求：
 1. 实体名使用文本中的原语言名称。
-2. 关系方向必须符合语义（如 课程 -> 学期，用 OFFERED_IN）。
+2. 关系方向必须严格符合项目 Schema；不要创造新的实体或关系类型。
 3. 同一实体在不同文档中出现时保持名称一致。
+4. 只抽取原文明确支持的事实，不得补充常识；来源和版本条件必须保留。
 
 请严格按以下 JSON 格式输出，不要多余内容：
 {{

@@ -1,38 +1,27 @@
-"""培养方案知识图谱的 Schema 定义。"""
+"""DebugPath 版本感知故障诊断知识图谱 Schema。"""
 from __future__ import annotations
 
-
 ENTITY_TYPES = [
-    "Program",
-    "Course",
-    "CourseCategory",
-    "Semester",
-    "Department",
-    "GraduationRequirement",
-    "Concept",
-    "CourseGroup",
-    "Rule",
-    "DocumentSource",
+    "Issue", "Cause", "Observation", "DiagnosticQuestion",
+    "DiagnosticCheck", "RepairAction", "Package", "Platform",
+    "VersionConstraint", "Risk", "DocumentSource",
 ]
 
 RELATION_SIGNATURES = {
-    "HAS_COURSE": ("Program", "Course"),
-    "HAS_REQUIREMENT": ("Program", "GraduationRequirement"),
-    "BELONGS_TO_CATEGORY": ("Course", "CourseCategory"),
-    "OFFERED_IN": ("Course", "Semester"),
-    "TAUGHT_BY": ("Course", "Department"),
-    "SUPPORTS_REQUIREMENT": ("Course", "GraduationRequirement"),
-    "HAS_RULE": ("Program", "Rule"),
-    "GOVERNS_CATEGORY": ("Rule", "CourseCategory"),
-    "GOVERNS_GROUP": ("Rule", "CourseGroup"),
-    "GOVERNS_CONCEPT": ("Rule", "Concept"),
-    "ALLOWS_OPTION": ("Rule", "CourseGroup"),
-    "SUPPORTED_BY": ("Rule", "DocumentSource"),
-    "CATEGORY_IN_DOMAIN": ("CourseCategory", "Concept"),
-    "HAS_NATURE": ("CourseCategory", "Concept"),
-    "CONTAINS_GROUP": ("CourseGroup", "CourseGroup"),
-    "COUNTS_TOWARD": ("CourseGroup", "CourseCategory"),
-    "DEFINED_BY": ("Concept", "DocumentSource"),
+    "HAS_POSSIBLE_CAUSE": ("Issue", "Cause"),
+    "HAS_QUESTION": ("Issue", "DiagnosticQuestion"),
+    "CHECKS": ("DiagnosticQuestion", "Observation"),
+    "OBSERVATION_SUPPORTS": ("Observation", "Cause"),
+    "CAUSE_CHECKED_BY": ("Cause", "DiagnosticCheck"),
+    "CAUSE_RESOLVED_BY": ("Cause", "RepairAction"),
+    "REPAIR_REQUIRES": ("RepairAction", "DiagnosticCheck"),
+    "REPAIR_HAS_RISK": ("RepairAction", "Risk"),
+    "AFFECTS_PACKAGE": ("Cause", "Package"),
+    "VALID_ON": ("Cause", "Platform"),
+    "SUBJECT_TO_VERSION": ("Cause", "VersionConstraint"),
+    "CAUSE_SUPPORTED_BY": ("Cause", "DocumentSource"),
+    "CHECK_SUPPORTED_BY": ("DiagnosticCheck", "DocumentSource"),
+    "REPAIR_SUPPORTED_BY": ("RepairAction", "DocumentSource"),
 }
 
 RELATION_TYPES = list(RELATION_SIGNATURES)

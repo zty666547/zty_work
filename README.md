@@ -1,134 +1,106 @@
-# 基于知识图谱的人工智能专业培养方案智能问答系统
+# DebugPath：交互式 AI 开发环境故障诊断 Graph RAG
 
-本项目面向人工智能专业学生在培养方案查询和课程规划中的实际需求，设计并实现了一套基于 Graph RAG 的智能问答原型系统。当前以 2024 级培养方案为数据基础，验证自然语言查询、课程关系检索、培养路径分析及证据溯源等功能，为后续扩展至更多年级和实际教学服务场景提供基础。
+DebugPath 不把报错直接交给大模型猜测，而是把故障、候选原因、可观测现象、检查步骤、修复动作、风险和官方来源组织成因果知识图谱。系统维护候选原因概率，选择期望信息增益最高的下一条问题；用户补充观察结果后，系统更新概率并生成经过前置条件、风险和来源校验的排查方案。
 
-> 当前知识库只对应 **2024级人工智能专业**。官方2024版培养方案页面已经确认；课程明细按两届无变动结论从既有数据迁移，后续取得PDF后仍需逐项复核。
+> 当前版本是知识工程综合实践的期中原型。概率用于安排排查顺序，不代表已经确定根因；系统不会自动执行任何命令。
 
-## 项目解决什么问题
+## 当前范围
 
-培养方案信息密集、规则分散，新生和低年级学生常见的问题包括：
+已覆盖三个适合现场演示的故障族：
 
-- “知识工程是多少学分，建议什么时候修？”
-- “第四学期有哪些专业核心课？”
-- “第六学期有哪些专业选修课？”
-- “专业核心与专业选修有什么区别？”
-- “建议修读学期是否具有强制性？”
-- “四史类课程是每一门都必修吗？”
+- Python `ModuleNotFoundError`、解释器错位、模块遮蔽和版本冲突；
+- PyTorch CPU/CUDA构建、驱动、容器GPU映射和macOS计算后端；
+- API或Neo4j的环境变量、服务地址、服务状态、端口和认证问题。
 
-本项目采用 Graph RAG 路线：先将培养方案组织为实体与关系，再进行实体链接和图邻域检索，最后把检索证据组织成答案。回答同时标注适用范围与来源，便于学生核对，也便于答辩展示系统如何降低幻觉。
+知识库当前包含 **94个节点、218条受控关系、14个候选原因、14个主动问题和8个官方文档来源**。冻结评测集包含8条完整诊断路径。
 
-## 当前完成度
+## 三层创新
 
-- 知识图谱构建：10 类实体、17 类关系；课程事实图与规则图合并校验，规则携带适用范围、来源等级和核验状态。
-- 图检索：提供基础/增强两种策略；增强策略支持别名、问题类型识别、动态 1/2 跳检索、关系过滤和多条件交集查询。
-- 问答：网页可在离线证据回答与 DeepSeek Graph RAG 之间切换；LLM答案要求引用 `[E1]` 形式的图谱证据。
-- 产品界面：提供 Streamlit 学生端网页，展示答案、培养规则、培养路径、适用范围、来源和图谱证据。
-- 数据质量：构建前执行 Schema、重复实体、悬空关系和类型校验。
-- 可验证性：包含 16 项单元测试与 10 题基础/增强检索对比评测。
-
-## 系统结构
+1. **构建层：版本感知因果图谱。** 平台、版本条件、观察、检查、修复和来源分别建模，不把整句话当作自由关系。
+2. **检索推理层：主动询问。** 使用贝叶斯更新维护候选原因，并以期望信息增益减去检查成本和风险成本来选择下一问。
+3. **生成验证层：安全排查计划。** 修复动作必须有前置检查、风险等级和来源；高风险、危险命令或缺少证据的计划会被阻止。
 
 ```text
-培养方案 PDF + 规则与选课说明
-    ↓ 人工核对 / LLM 抽取
-结构化实体与关系
-    ↓ Schema 校验
-Neo4j 图数据库 ────── 内存图（离线演示）
-    ↓                      ↓
-实体链接 → 问题类型识别 → 动态 1/2 跳检索 → 关系过滤/多条件筛选
-    ↓
-离线答案 / DeepSeek 生成
-    ↓
-学生端网页：答案 + 版本范围 + 来源 + 图谱证据
+错误描述
+  ↓ 场景识别
+候选原因及先验概率
+  ↓ 计算每个问题的期望信息增益
+主动询问 → 用户观察 → 贝叶斯更新 ─┐
+  ↑                                  │
+  └──────── 未达到停止条件 ──────────┘
+  ↓
+检查前置条件 → 风险与来源验证 → 离线/DeepSeek解释
 ```
 
-更详细的设计见 [系统架构](docs/architecture.md)。
+## 快速运行
 
-## 知识图谱 Schema
-
-| 类型 | 内容 |
-| --- | --- |
-| 实体 | Program、Course、CourseCategory、Semester、Department、GraduationRequirement、Concept、CourseGroup、Rule、DocumentSource |
-| 关系 | 课程事实关系 + HAS_RULE、SUPPORTED_BY、ALLOWS_OPTION、COUNTS_TOWARD、CATEGORY_IN_DOMAIN、HAS_NATURE 等规则关系 |
-
-课程节点还保存课程代码、学分、总学时、是否必修等属性。`SUPPORTS_REQUIREMENT` 已保留在 Schema 中，但在没有可靠课程—毕业要求映射依据前不写入数据，避免编造关系。
-
-## 快速体验（无需 Neo4j 和 API Key）
+Python 3.9及以上：
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
 python scripts/inspect_data.py
 python scripts/offline_demo.py
-python scripts/evaluate_retrieval.py
+python scripts/evaluate_diagnosis.py
+pytest -q
 streamlit run app.py
 ```
 
-打开终端显示的本地网址，即可使用学生端问答页面。
+离线模式不需要Neo4j或API密钥。网页中可以粘贴：
 
-## DeepSeek Graph RAG 模式
+```text
+ModuleNotFoundError: No module named 'pandas'
+torch.cuda.is_available() 返回 False
+Neo4j Connection refused
+API 请求返回 401 Unauthorized
+```
 
-网页的 DeepSeek 模式可以直接使用内存图完成 Graph RAG，不强制要求 Neo4j。复制配置模板并填写 API Key：
+## 联网解释模式
+
+复制配置模板并只在本地填写密钥：
 
 ```bash
 cp .env.example .env
 ```
 
-```dotenv
-DEEPSEEK_API_KEY=你的密钥
-ANSWER_MODE=llm
-RETRIEVAL_STRATEGY=enhanced
-```
+当 `.env` 中存在 `DEEPSEEK_API_KEY` 时，页面可启用DeepSeek解释模式。大模型只能改写已经验证的结构化计划，不能新增原因、命令或操作；调用失败时自动回退到离线答案。
 
-随后运行 `streamlit run app.py`，侧栏会出现“DeepSeek Graph RAG”。如果需要演示 Neo4j 图存储，再启动 Neo4j：
+## Neo4j图谱
+
+离线诊断默认读取同一份结构化图谱。需要展示Neo4j时：
 
 ```bash
 docker compose up -d neo4j
-```
-
-构建 Neo4j 图谱并在命令行提问：
-
-```bash
 python scripts/build_kg.py
-python scripts/query.py "知识工程是多少学分，建议在哪个学期修读？"
+python scripts/check_neo4j.py
 ```
 
-设置 `EXTRACTION_MODE=llm` 后可使用 DeepSeek 从文本语料抽取实体和关系；默认 `structured` 模式使用人工核对后的结构化数据，更适合稳定答辩。
+构建脚本只清理带 `project=DebugPath` 标记的节点，不会清空数据库中的其他图谱。
 
-## 常用命令
+## 目录
 
-| 命令 | 用途 | 外部依赖 |
-| --- | --- | --- |
-| `make inspect` | 校验知识库规模与 Schema | 无 |
-| `make offline-demo` | 显示实体链接和图谱证据 | 无 |
-| `make evaluate` | 运行检索评测 | 无 |
-| `make test` | 运行单元测试 | 无 |
-| `make app` | 启动学生端网页 | 无 |
-| `make build` | 将结构化数据写入 Neo4j | Neo4j |
-| `make demo` | Neo4j + DeepSeek 完整问答 | Neo4j、API Key |
+```text
+app.py                         Streamlit主动诊断页面
+data/raw/debugpath_knowledge.json  受控因果图谱
+data/evaluation/diagnosis_cases.json  冻结诊断评测集
+src/diagnosis/engine.py        信息增益选问与概率更新
+src/diagnosis/planner.py       排查计划与安全验证
+src/diagnosis/service.py       CLI、网页和测试共用入口
+src/diagnosis/generator.py     离线/LLM答案渲染
+src/graph/                     Schema、内存图和Neo4j构建
+scripts/                       检查、评测和演示脚本
+tests/                         无外部服务的核心测试
+docs/                          架构、数据字典与答辩说明
+```
 
-当前 10 题小型评测用于验证代码回归，而不是通用性能结论。题目同时覆盖课程事实、概念比较和规则判断；最终答辩前仍需继续扩充评测规模。
+培养方案Graph RAG旧版本完整保留在分支 `archive/curriculum-graphrag-v1` 和同名标签中。
 
-## 数据与来源
+## 安全边界
 
-- 原始依据：天津大学人工智能学院《2024 人工智能培养方案-本科》官方页面。
-- 结构化知识库：`data/raw/curriculum_structured.json`。
-- 规则知识库：`data/raw/curriculum_rules.json`。
-- 文本抽取语料：`data/raw/curriculum_docs.txt`。
-- 评测集：`data/evaluation/questions.json`。
-
-目前录入的是适合 MVP 演示的代表性课程，而不是教务系统的完整替代品。课程先修关系没有出现在现有依据中，因此系统不回答或推断先修课。
-
-## 项目文档
-
-- [系统架构说明](docs/architecture.md)
-- [数据字典](docs/data_dictionary.md)
-- [培养规则来源清单](docs/rule_sources.md)
-- [期中答辩方案](docs/midterm_defense.md)
-- [最终答辩提纲](docs/report_outline.md)
-
-## 安全
-
-`.env` 已被 Git 忽略。不要提交 DeepSeek API Key、Neo4j 密码或其他个人凭据。
+- `.env`、真实密钥和数据库密码不会进入Git；
+- 系统只展示命令，不会执行命令；
+- 检查步骤先于修复动作；
+- 中风险操作要求用户确认，高风险操作只提示不建议执行；
+- 当前知识库外的问题会明确拒绝，不让大模型自由补全。

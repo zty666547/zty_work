@@ -39,8 +39,8 @@ class GraphBuilder:
         """为 Entity.name 建立唯一约束，为实体类型建立索引。"""
         try:
             self.client.run(
-                "CREATE CONSTRAINT entity_name_unique IF NOT EXISTS "
-                "FOR (n:Entity) REQUIRE n.name IS UNIQUE"
+                "CREATE CONSTRAINT debugpath_entity_unique IF NOT EXISTS "
+                "FOR (n:Entity) REQUIRE (n.project, n.name) IS UNIQUE"
             )
         except Exception as exc:  # noqa: BLE001
             logger.warning("创建唯一约束失败（可能已存在）：%s", exc)
@@ -59,7 +59,7 @@ class GraphBuilder:
         label = _quote(etype)
         self.client.run(
             f"""
-            MERGE (n:Entity {{name: $name}})
+            MERGE (n:Entity {{project: 'DebugPath', name: $name}})
             ON CREATE SET n:{label}, n.created_at = datetime()
             ON MATCH SET n:{label}
             """,
@@ -72,7 +72,7 @@ class GraphBuilder:
             params = {f"prop_{key}": props[key] for key in safe_keys}
             if set_clause:
                 self.client.run(
-                    f"MATCH (n:Entity {{name: $name}}) SET {set_clause}",
+                    f"MATCH (n:Entity {{project: 'DebugPath', name: $name}}) SET {set_clause}",
                     {"name": name, **params},
                 )
 
@@ -89,8 +89,8 @@ class GraphBuilder:
         rel_type = _quote(rtype)
         # 两端实体按 name 匹配；若是特定类型，则加上标签约束以加快匹配
         query = f"""
-            MATCH (s:Entity {{name: $source}})
-            MATCH (t:Entity {{name: $target}})
+            MATCH (s:Entity {{project: 'DebugPath', name: $source}})
+            MATCH (t:Entity {{project: 'DebugPath', name: $target}})
             MERGE (s)-[r:{rel_type}]->(t)
         """
         params = {"source": source, "target": target}
@@ -174,11 +174,15 @@ class GraphBuilder:
 
     def clear_all(self) -> None:
         """清空整库（在开发/演示阶段安全；生产务必谨慎）。"""
-        self.client.run("MATCH (n) DETACH DELETE n")
-        logger.info("已清空 Neo4j 图库")
+        self.client.run("MATCH (n:Entity {project: 'DebugPath'}) DETACH DELETE n")
+        logger.info("已清空 Neo4j 中的 DebugPath 子图")
 
     def graph_stats(self) -> dict:
         """返回节点/关系计数用于验证。"""
-        node_count = self.client.run("MATCH (n:Entity) RETURN count(n) AS c")[0]["c"]
-        rel_count = self.client.run("MATCH ()-[r]->() RETURN count(r) AS c")[0]["c"]
+        node_count = self.client.run(
+            "MATCH (n:Entity {project: 'DebugPath'}) RETURN count(n) AS c"
+        )[0]["c"]
+        rel_count = self.client.run(
+            "MATCH (:Entity {project: 'DebugPath'})-[r]->(:Entity {project: 'DebugPath'}) RETURN count(r) AS c"
+        )[0]["c"]
         return {"nodes": node_count, "relationships": rel_count}

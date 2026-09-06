@@ -1,0 +1,9 @@
+# 用于展示“官方文档文本 -> 受控图谱”的精简证据语料；正式演示默认读取结构化图谱。
+
+Python 官方文档指出，ModuleNotFoundError 是 ImportError 的子类，在 import 无法定位模块时触发。来源：https://docs.python.org/3/library/exceptions.html
+
+pip 官方用户指南建议通过 python -m pip 调用 pip，这会让 pip 使用指定的 Python 解释器。来源：https://pip.pypa.io/en/stable/user_guide/
+
+PyTorch 官方提供 torch.cuda.is_available() 判断 CUDA 当前是否可用，并要求按操作系统、包管理器和计算平台选择安装构建。来源：https://pytorch.org/get-started/locally/
+
+Neo4j Python Driver 官方手册建议在创建 Driver 后调用 verify_connectivity()，从而立即验证地址、认证和版本兼容性。来源：https://neo4j.com/docs/python-manual/current/connect/

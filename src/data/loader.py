@@ -96,13 +96,13 @@ def load_structured(path: Path) -> StructuredGraph:
 
 
 def load_knowledge_base(
-    curriculum_path: Path,
-    rules_path: Path | None = None,
+    primary_path: Path,
+    supplemental_path: Path | None = None,
 ) -> StructuredGraph:
-    """合并课程事实与规则图谱，再对整体执行一次 Schema 校验。"""
-    paths = [curriculum_path]
-    if rules_path and rules_path.exists():
-        paths.append(rules_path)
+    """合并主知识图与可选补充图，再执行 Schema 校验。"""
+    paths = [primary_path]
+    if supplemental_path and supplemental_path.exists():
+        paths.append(supplemental_path)
 
     merged = StructuredGraph()
     supplemental_sources: list[dict] = []
@@ -159,9 +159,6 @@ def load_input(settings: Settings) -> tuple[StructuredGraph | None, list[str]]:
     docs_path = settings.raw_dir / settings.documents_filename
 
     if settings.extraction_mode == "structured" and structured_path.exists():
-        return load_knowledge_base(
-            structured_path,
-            settings.raw_dir / settings.rules_filename,
-        ), []
+        return load_knowledge_base(structured_path), []
 
     return None, load_documents(docs_path)

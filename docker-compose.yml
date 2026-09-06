@@ -4,7 +4,7 @@
 services:
   neo4j:
     image: neo4j:5-community
-    container_name: kg_rag_neo4j
+    container_name: debugpath_neo4j
     ports:
       - "7474:7474"   # HTTP 控制台
       - "7687:7687"   # Bolt 驱动接口
