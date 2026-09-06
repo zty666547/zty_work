@@ -1,0 +1,20 @@
+{
+  "python_exceptions": {"title": "Python Built-in Exceptions", "url": "https://docs.python.org/3/library/exceptions.html", "kind": "official_documentation"},
+  "python_environment": {"title": "Python os.environ", "url": "https://docs.python.org/3/library/os.html#os.environ", "kind": "official_documentation"},
+  "python_import_system": {"title": "Python Import System", "url": "https://docs.python.org/3/reference/import.html", "kind": "official_documentation"},
+  "python_sys_path": {"title": "Python sys.path Initialization", "url": "https://docs.python.org/3/library/sys_path_init.html", "kind": "official_documentation"},
+  "pip_cli": {"title": "pip Command Line", "url": "https://pip.pypa.io/en/stable/cli/pip/", "kind": "official_documentation"},
+  "pip_user_guide": {"title": "pip User Guide", "url": "https://pip.pypa.io/en/stable/user_guide/", "kind": "official_documentation"},
+  "pip_python_option": {"title": "Managing a Different Python Interpreter", "url": "https://pip.pypa.io/en/stable/topics/python-option/", "kind": "official_documentation"},
+  "pip_dependency_resolution": {"title": "pip Dependency Resolution", "url": "https://pip.pypa.io/en/stable/topics/dependency-resolution/", "kind": "official_documentation"},
+  "pytorch_install": {"title": "PyTorch Start Locally", "url": "https://pytorch.org/get-started/locally/", "kind": "official_documentation"},
+  "pytorch_cuda_available": {"title": "torch.cuda.is_available", "url": "https://docs.pytorch.org/docs/stable/generated/torch.cuda.is_available.html", "kind": "official_documentation"},
+  "pytorch_mps": {"title": "PyTorch MPS Backend", "url": "https://docs.pytorch.org/docs/stable/notes/mps.html", "kind": "official_documentation"},
+  "pytorch_issue_6041": {"title": "PyTorch Issue 6041", "url": "https://github.com/pytorch/pytorch/issues/6041", "kind": "public_issue"},
+  "pytorch_issue_77520": {"title": "PyTorch Issue 77520", "url": "https://github.com/pytorch/pytorch/issues/77520", "kind": "public_issue"},
+  "pytorch_issue_81549": {"title": "PyTorch Issue 81549", "url": "https://github.com/pytorch/pytorch/issues/81549", "kind": "public_issue"},
+  "pytorch_issue_11430": {"title": "PyTorch Issue 11430", "url": "https://github.com/pytorch/pytorch/issues/11430", "kind": "public_issue"},
+  "pytorch_issue_144835": {"title": "PyTorch Issue 144835", "url": "https://github.com/pytorch/pytorch/issues/144835", "kind": "public_issue"},
+  "neo4j_connect": {"title": "Neo4j Python Driver Connection", "url": "https://neo4j.com/docs/python-manual/current/connect/", "kind": "official_documentation"},
+  "neo4j_connect_advanced": {"title": "Neo4j Advanced Connection Information", "url": "https://neo4j.com/docs/python-manual/current/connect-advanced/", "kind": "official_documentation"}
+}

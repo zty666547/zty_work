@@ -135,17 +135,17 @@ def test_neo4j_clear_is_project_scoped():
 
 
 def test_all_frozen_evaluation_cases(service):
-    from scripts.evaluate_diagnosis import run_case
+    from scripts.evaluate_diagnosis import load_cases, run_case
 
-    cases = json.loads((ROOT / "data/evaluation/diagnosis_cases.json").read_text(encoding="utf-8"))
+    cases = load_cases()
     results = [run_case(service, case) for case in cases]
     assert all(item["passed"] for item in results), results
 
 
 def test_comparison_evaluation_is_reproducible():
-    from scripts.evaluate_diagnosis import evaluate
+    from scripts.evaluate_diagnosis import evaluate, load_cases
 
-    cases = json.loads((ROOT / "data/evaluation/diagnosis_cases.json").read_text(encoding="utf-8"))
+    cases = load_cases()
     first = evaluate(cases, random_runs=5, seed=2026)
     second = evaluate(cases, random_runs=5, seed=2026)
     assert first == second
@@ -156,3 +156,27 @@ def test_comparison_evaluation_is_reproducible():
         "information_gain",
     ]
     assert first["metrics"][-1]["top1"] == 1.0
+
+
+def test_benchmark_is_balanced_and_source_traceable(service):
+    from scripts.evaluate_diagnosis import load_cases
+
+    cases = load_cases()
+    assert len(cases) == 30
+    assert {item["family"] for item in cases} == {
+        "python_import",
+        "pytorch_gpu",
+        "service_config",
+    }
+    assert all(sum(item["family"] == family for item in cases) == 10 for family in {
+        "python_import", "pytorch_gpu", "service_config"
+    })
+    assert sum(item["split"] == "dev" for item in cases) == 9
+    assert sum(item["split"] == "test" for item in cases) == 21
+    assert all(item["source_refs"] for item in cases)
+    expected_causes = {
+        cause["name"]
+        for causes in service.engine.issue_causes.values()
+        for cause in causes
+    }
+    assert {item["expected_top_cause"] for item in cases} == expected_causes

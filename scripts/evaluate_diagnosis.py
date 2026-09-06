@@ -22,6 +22,35 @@ from src.diagnosis.policies import (  # noqa: E402
 from src.diagnosis.service import DiagnosisService  # noqa: E402
 
 
+def load_cases(path: Path | None = None) -> list[dict]:
+    """读取紧凑案例集，并校验划分、答案模板和来源引用。"""
+    path = path or ROOT / "data/evaluation/diagnosis_cases.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    profiles = payload["answer_profiles"]
+    sources = json.loads(
+        (path.parent / "sources.json").read_text(encoding="utf-8")
+    )
+    cases: list[dict] = []
+    seen_ids: set[str] = set()
+    for raw_case in payload["cases"]:
+        case = dict(raw_case)
+        case_id = case["id"]
+        cause = case["expected_top_cause"]
+        if case_id in seen_ids:
+            raise ValueError(f"重复案例ID: {case_id}")
+        if case.get("split") not in {"dev", "test"}:
+            raise ValueError(f"{case_id}缺少有效的dev/test划分")
+        if cause not in profiles:
+            raise ValueError(f"{case_id}没有答案模板: {cause}")
+        unknown_sources = set(case.get("source_refs", [])) - sources.keys()
+        if unknown_sources:
+            raise ValueError(f"{case_id}引用未知来源: {sorted(unknown_sources)}")
+        case["answers"] = dict(profiles[cause])
+        cases.append(case)
+        seen_ids.add(case_id)
+    return cases
+
+
 def run_case(
     service: DiagnosisService,
     case: dict,
@@ -112,12 +141,33 @@ def evaluate(cases: list[dict], random_runs: int = 100, seed: int = 2026) -> dic
     ]
     summaries.insert(2, summarize("random_question", random_results))
 
+    metrics_by_split: dict[str, list[dict]] = {}
+    for split in sorted({case["split"] for case in cases}):
+        split_rows = [
+            summarize(name, [item for item in details[name] if item["split"] == split])
+            for name in ("direct", "fixed_order")
+        ]
+        split_rows.append(
+            summarize(
+                "random_question",
+                [item for item in random_results if item["split"] == split],
+            )
+        )
+        split_rows.append(
+            summarize(
+                "information_gain",
+                [item for item in details["information_gain"] if item["split"] == split],
+            )
+        )
+        metrics_by_split[split] = split_rows
+
     return {
         "benchmark": "data/evaluation/diagnosis_cases.json",
         "case_count": len(cases),
         "random_runs": random_runs,
         "random_seed": seed,
         "metrics": summaries,
+        "metrics_by_split": metrics_by_split,
         "details": details,
     }
 
@@ -145,9 +195,7 @@ def main() -> None:
     if args.random_runs < 1:
         parser.error("--random-runs 必须大于 0")
 
-    cases = json.loads(
-        (ROOT / "data/evaluation/diagnosis_cases.json").read_text(encoding="utf-8")
-    )
+    cases = load_cases()
     report = evaluate(cases, random_runs=args.random_runs, seed=args.seed)
     print_table(report)
     if args.json:

@@ -1,58 +1,53 @@
-[
-  {
-    "id": "import_missing",
-    "split": "dev",
-    "report": "ModuleNotFoundError: No module named 'pandas'",
-    "answers": {"Q-包是否可见": "no", "Q-解释器是否一致": "yes", "Q-是否存在同名文件": "no", "Q-Python版本是否受支持": "yes"},
-    "expected_top_cause": "目标包未安装"
+{
+  "description": "30条来源约束的诊断路径。report为基于官方文档或公开问题改写的合成描述，不代表真实用户日志。",
+  "answer_profiles": {
+    "目标包未安装": {"Q-包是否可见": "no", "Q-解释器是否一致": "yes", "Q-是否存在同名文件": "no", "Q-Python版本是否受支持": "yes"},
+    "pip与Python指向不同环境": {"Q-包是否可见": "no", "Q-解释器是否一致": "no", "Q-是否存在同名文件": "no", "Q-Python版本是否受支持": "yes"},
+    "本地文件遮蔽第三方模块": {"Q-包是否可见": "yes", "Q-解释器是否一致": "yes", "Q-是否存在同名文件": "yes", "Q-Python版本是否受支持": "yes"},
+    "Python版本与包不兼容": {"Q-包是否可见": "yes", "Q-解释器是否一致": "yes", "Q-是否存在同名文件": "no", "Q-Python版本是否受支持": "no"},
+    "安装了CPU版PyTorch": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "yes", "Q-PyTorch是否包含CUDA": "no", "Q-是否运行在容器": "no", "Q-是否为macOS": "no"},
+    "NVIDIA驱动不可用": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "no", "Q-PyTorch是否包含CUDA": "yes", "Q-是否运行在容器": "no", "Q-是否为macOS": "no"},
+    "PyTorch与CUDA构建不匹配": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "yes", "Q-PyTorch是否包含CUDA": "yes", "Q-是否运行在容器": "no", "Q-是否为macOS": "no"},
+    "容器未获得GPU设备": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "yes", "Q-PyTorch是否包含CUDA": "yes", "Q-是否运行在容器": "yes", "Q-是否为macOS": "no"},
+    "当前平台不提供CUDA": {"Q-是否有NVIDIA硬件": "no", "Q-nvidia-smi是否成功": "no", "Q-PyTorch是否包含CUDA": "no", "Q-是否运行在容器": "no", "Q-是否为macOS": "yes"},
+    "必需环境变量缺失": {"Q-变量是否缺失": "yes", "Q-是否连接被拒绝": "no", "Q-是否认证失败": "no", "Q-健康检查是否成功": "yes", "Q-端口是否被占用": "no"},
+    "服务地址配置错误": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "no", "Q-是否认证失败": "no", "Q-健康检查是否成功": "no", "Q-端口是否被占用": "no"},
+    "目标服务未启动": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "yes", "Q-是否认证失败": "no", "Q-健康检查是否成功": "no", "Q-端口是否被占用": "no"},
+    "端口被其他进程占用": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "yes", "Q-是否认证失败": "no", "Q-健康检查是否成功": "no", "Q-端口是否被占用": "yes"},
+    "认证信息无效": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "no", "Q-是否认证失败": "yes", "Q-健康检查是否成功": "yes", "Q-端口是否被占用": "no"}
   },
-  {
-    "id": "import_wrong_env",
-    "split": "test",
-    "report": "No module named torch，但我刚刚用pip安装过",
-    "answers": {"Q-包是否可见": "no", "Q-解释器是否一致": "no", "Q-是否存在同名文件": "no", "Q-Python版本是否受支持": "yes"},
-    "expected_top_cause": "pip与Python指向不同环境"
-  },
-  {
-    "id": "import_shadow",
-    "split": "test",
-    "report": "ImportError: 导入requests时行为异常",
-    "answers": {"Q-包是否可见": "yes", "Q-解释器是否一致": "yes", "Q-是否存在同名文件": "yes", "Q-Python版本是否受支持": "yes"},
-    "expected_top_cause": "本地文件遮蔽第三方模块"
-  },
-  {
-    "id": "gpu_macos",
-    "split": "dev",
-    "report": "在macOS上torch.cuda.is_available() False，CUDA不可用",
-    "answers": {"Q-是否有NVIDIA硬件": "no", "Q-nvidia-smi是否成功": "no", "Q-PyTorch是否包含CUDA": "no", "Q-是否运行在容器": "no", "Q-是否为macOS": "yes"},
-    "expected_top_cause": "当前平台不提供CUDA"
-  },
-  {
-    "id": "gpu_cpu_build",
-    "split": "test",
-    "report": "Windows电脑检测不到GPU，torch.cuda.is_available() False",
-    "answers": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "yes", "Q-PyTorch是否包含CUDA": "no", "Q-是否运行在容器": "no", "Q-是否为macOS": "no"},
-    "expected_top_cause": "安装了CPU版PyTorch"
-  },
-  {
-    "id": "service_missing_env",
-    "split": "dev",
-    "report": "API调用失败，程序提示环境变量没有配置",
-    "answers": {"Q-变量是否缺失": "yes", "Q-是否连接被拒绝": "no", "Q-是否认证失败": "no", "Q-健康检查是否成功": "yes", "Q-端口是否被占用": "no"},
-    "expected_top_cause": "必需环境变量缺失"
-  },
-  {
-    "id": "service_auth",
-    "split": "test",
-    "report": "API请求返回401 Unauthorized",
-    "answers": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "no", "Q-是否认证失败": "yes", "Q-健康检查是否成功": "yes", "Q-端口是否被占用": "no"},
-    "expected_top_cause": "认证信息无效"
-  },
-  {
-    "id": "service_down",
-    "split": "test",
-    "report": "Neo4j Connection refused，无法连接localhost:7687",
-    "answers": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "yes", "Q-是否认证失败": "no", "Q-健康检查是否成功": "no", "Q-端口是否被占用": "no"},
-    "expected_top_cause": "目标服务未启动"
-  }
-]
+  "cases": [
+    {"id": "import_missing_pandas", "split": "dev", "family": "python_import", "report": "ModuleNotFoundError: No module named 'pandas'", "expected_top_cause": "目标包未安装", "source_refs": ["python_exceptions", "pip_cli"]},
+    {"id": "import_missing_yaml", "split": "test", "family": "python_import", "report": "运行脚本时报错 No module named yaml，当前环境从未装过PyYAML", "expected_top_cause": "目标包未安装", "source_refs": ["python_exceptions", "pip_cli"]},
+    {"id": "import_missing_dotenv", "split": "test", "family": "python_import", "report": "ModuleNotFoundError: No module named 'dotenv'，pip show也找不到", "expected_top_cause": "目标包未安装", "source_refs": ["python_exceptions", "pip_cli"]},
+    {"id": "import_wrong_env_torch", "split": "dev", "family": "python_import", "report": "No module named torch，但终端里的pip明明显示已经安装", "expected_top_cause": "pip与Python指向不同环境", "source_refs": ["pip_user_guide", "pip_python_option"]},
+    {"id": "import_wrong_env_ide", "split": "test", "family": "python_import", "report": "命令行能import numpy，IDE运行却提示 ModuleNotFoundError", "expected_top_cause": "pip与Python指向不同环境", "source_refs": ["pip_user_guide", "pip_python_option"]},
+    {"id": "import_wrong_env_venv", "split": "test", "family": "python_import", "report": "激活虚拟环境后仍然 No module named requests，系统pip中能查到它", "expected_top_cause": "pip与Python指向不同环境", "source_refs": ["pip_user_guide", "pip_python_option"]},
+    {"id": "import_shadow_requests", "split": "test", "family": "python_import", "report": "ImportError: 导入requests时行为异常，项目里刚好有requests.py", "expected_top_cause": "本地文件遮蔽第三方模块", "source_refs": ["python_import_system", "python_sys_path"]},
+    {"id": "import_shadow_json", "split": "test", "family": "python_import", "report": "ImportError: from json import loads失败，当前目录存在json.py", "expected_top_cause": "本地文件遮蔽第三方模块", "source_refs": ["python_import_system", "python_sys_path"]},
+    {"id": "import_python_version_old_package", "split": "dev", "family": "python_import", "report": "ImportError: 升级Python后旧版依赖无法导入，官方兼容范围不包含当前版本", "expected_top_cause": "Python版本与包不兼容", "source_refs": ["python_exceptions", "pip_dependency_resolution"]},
+    {"id": "import_python_version_wheel", "split": "test", "family": "python_import", "report": "ImportError: 包已安装但不支持当前Python版本，也没有同版本wheel", "expected_top_cause": "Python版本与包不兼容", "source_refs": ["pip_dependency_resolution"]},
+
+    {"id": "gpu_cpu_build_windows", "split": "dev", "family": "pytorch_gpu", "report": "Windows有NVIDIA显卡，但torch.cuda.is_available() False，torch.version.cuda是None", "expected_top_cause": "安装了CPU版PyTorch", "source_refs": ["pytorch_install", "pytorch_cuda_available"]},
+    {"id": "gpu_cpu_build_linux", "split": "test", "family": "pytorch_gpu", "report": "Linux主机的nvidia-smi正常，但PyTorch GPU不可用且构建信息没有CUDA", "expected_top_cause": "安装了CPU版PyTorch", "source_refs": ["pytorch_install", "pytorch_issue_11430"]},
+    {"id": "gpu_driver_unavailable_linux", "split": "dev", "family": "pytorch_gpu", "report": "机器装有NVIDIA卡，但nvidia-smi失败，PyTorch提示CUDA不可用", "expected_top_cause": "NVIDIA驱动不可用", "source_refs": ["pytorch_cuda_available", "pytorch_issue_77520"]},
+    {"id": "gpu_driver_unknown_error", "split": "test", "family": "pytorch_gpu", "report": "PyTorch GPU初始化出现CUDA unknown error，随后torch.cuda.is_available() False", "expected_top_cause": "NVIDIA驱动不可用", "source_refs": ["pytorch_issue_6041", "pytorch_cuda_available"]},
+    {"id": "gpu_build_mismatch_runtime", "split": "test", "family": "pytorch_gpu", "report": "nvidia-smi正常且PyTorch带CUDA，但CUDA不可用，安装构建与机器环境不匹配", "expected_top_cause": "PyTorch与CUDA构建不匹配", "source_refs": ["pytorch_install", "pytorch_issue_81549"]},
+    {"id": "gpu_build_mismatch_conda", "split": "test", "family": "pytorch_gpu", "report": "更换多个CUDA环境后PyTorch GPU仍不可用，显卡驱动可见且torch包含CUDA", "expected_top_cause": "PyTorch与CUDA构建不匹配", "source_refs": ["pytorch_issue_81549", "pytorch_install"]},
+    {"id": "gpu_container_no_mapping", "split": "test", "family": "pytorch_gpu", "report": "宿主机能看到GPU，但Docker容器里PyTorch检测不到GPU", "expected_top_cause": "容器未获得GPU设备", "source_refs": ["pytorch_issue_144835", "pytorch_cuda_available"]},
+    {"id": "gpu_container_runtime", "split": "test", "family": "pytorch_gpu", "report": "CUDA不可用只发生在容器中，宿主NVIDIA驱动和PyTorch构建都正常", "expected_top_cause": "容器未获得GPU设备", "source_refs": ["pytorch_issue_144835"]},
+    {"id": "gpu_macos_apple_silicon", "split": "dev", "family": "pytorch_gpu", "report": "Apple Silicon macOS上torch.cuda.is_available() False，想使用CUDA", "expected_top_cause": "当前平台不提供CUDA", "source_refs": ["pytorch_mps", "pytorch_install"]},
+    {"id": "gpu_macos_intel", "split": "test", "family": "pytorch_gpu", "report": "Intel Mac运行PyTorch时CUDA不可用，系统中也不存在NVIDIA设备", "expected_top_cause": "当前平台不提供CUDA", "source_refs": ["pytorch_mps", "pytorch_install"]},
+
+    {"id": "service_missing_api_key", "split": "dev", "family": "service_config", "report": "API调用失败，程序提示DEEPSEEK_API_KEY环境变量没有配置", "expected_top_cause": "必需环境变量缺失", "source_refs": ["python_environment", "neo4j_connect"]},
+    {"id": "service_missing_neo4j_uri", "split": "test", "family": "service_config", "report": "Neo4j连接失败，当前进程读取到的NEO4J_URI环境变量为空", "expected_top_cause": "必需环境变量缺失", "source_refs": ["python_environment", "neo4j_connect"]},
+    {"id": "service_wrong_uri_scheme", "split": "dev", "family": "service_config", "report": "Neo4j连接失败，服务在线但URI协议和地址配置错误", "expected_top_cause": "服务地址配置错误", "source_refs": ["neo4j_connect", "neo4j_connect_advanced"]},
+    {"id": "service_wrong_host", "split": "test", "family": "service_config", "report": "API调用失败，健康检查不通，但没有Connection refused，检查发现主机名写错", "expected_top_cause": "服务地址配置错误", "source_refs": ["neo4j_connect_advanced"]},
+    {"id": "service_neo4j_stopped", "split": "test", "family": "service_config", "report": "Neo4j Connection refused，localhost:7687没有服务响应", "expected_top_cause": "目标服务未启动", "source_refs": ["neo4j_connect"]},
+    {"id": "service_api_stopped", "split": "test", "family": "service_config", "report": "本地API出现Connection refused，配置端口正确但服务进程没有启动", "expected_top_cause": "目标服务未启动", "source_refs": ["neo4j_connect"]},
+    {"id": "service_port_8501_busy", "split": "test", "family": "service_config", "report": "启动Streamlit时报错 Address already in use，8501端口被占用", "expected_top_cause": "端口被其他进程占用", "source_refs": ["neo4j_connect_advanced"]},
+    {"id": "service_port_7687_busy", "split": "test", "family": "service_config", "report": "Neo4j启动失败并提示Address already in use，7687端口已有其他进程监听", "expected_top_cause": "端口被其他进程占用", "source_refs": ["neo4j_connect", "neo4j_connect_advanced"]},
+    {"id": "service_auth_api_401", "split": "dev", "family": "service_config", "report": "API请求返回401 Unauthorized，服务可访问但令牌校验失败", "expected_top_cause": "认证信息无效", "source_refs": ["neo4j_connect_advanced"]},
+    {"id": "service_auth_neo4j", "split": "test", "family": "service_config", "report": "Neo4j连接失败并返回认证失败，地址可达但用户名或密码无效", "expected_top_cause": "认证信息无效", "source_refs": ["neo4j_connect", "neo4j_connect_advanced"]}
+  ]
+}
