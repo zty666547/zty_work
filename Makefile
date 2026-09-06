@@ -1,4 +1,4 @@
-.PHONY: install setup inspect prepare offline-demo evaluate ablation build check-neo4j query demo app test up down
+.PHONY: install setup inspect prepare offline-demo evaluate ablation injection-eval build check-neo4j query demo app test up down
 
 install:
 	pip install -r requirements.txt
@@ -21,6 +21,9 @@ evaluate:
 
 ablation:
 	python scripts/evaluate_ablation.py
+
+injection-eval:
+	python scripts/evaluate_injection.py
 
 test:
 	pytest -q

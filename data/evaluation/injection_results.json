@@ -1,0 +1,331 @@
+{
+  "valid_cases": 9,
+  "invalid_cases": 24,
+  "valid_acceptance_rate": 1.0,
+  "invalid_rejection_rate": 1.0,
+  "false_acceptance_rate": 0.0,
+  "false_rejection_rate": 0.0,
+  "details": [
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "valid_diagnosis",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "valid_checks",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "valid_safety",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "unknown_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "missing_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "duplicate_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "unknown_evidence",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "duplicate_evidence",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "invalid_emphasis",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "emphasis不在允许范围"
+      ]
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "free_text",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明",
+        "evidence_ids包含未召回证据或重复项",
+        "emphasis不在允许范围"
+      ]
+    },
+    {
+      "report": "ModuleNotFoundError: No module named pandas",
+      "case": "malformed_types",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明",
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "valid_diagnosis",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "valid_checks",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "valid_safety",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "unknown_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "missing_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "duplicate_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "unknown_evidence",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "duplicate_evidence",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "invalid_emphasis",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "emphasis不在允许范围"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "free_text",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明",
+        "evidence_ids包含未召回证据或重复项",
+        "emphasis不在允许范围"
+      ]
+    },
+    {
+      "report": "macOS Apple Silicon上CUDA不可用",
+      "case": "malformed_types",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明",
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "valid_diagnosis",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "valid_checks",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "valid_safety",
+      "expected_valid": true,
+      "accepted": true,
+      "passed": true,
+      "errors": []
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "unknown_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "missing_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "duplicate_claim",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "unknown_evidence",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "duplicate_evidence",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "invalid_emphasis",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "emphasis不在允许范围"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "free_text",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明",
+        "evidence_ids包含未召回证据或重复项",
+        "emphasis不在允许范围"
+      ]
+    },
+    {
+      "report": "Neo4j Connection refused",
+      "case": "malformed_types",
+      "expected_valid": false,
+      "accepted": false,
+      "passed": true,
+      "errors": [
+        "claim_order必须完整且只能包含白名单声明",
+        "evidence_ids包含未召回证据或重复项"
+      ]
+    }
+  ]
+}

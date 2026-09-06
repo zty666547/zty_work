@@ -56,7 +56,21 @@ python scripts/evaluate_diagnosis.py
 python scripts/evaluate_diagnosis.py --random-runs 100 --seed 2026 \
   --json data/evaluation/baseline_results.json
 python scripts/evaluate_ablation.py
+python scripts/evaluate_injection.py
 ```
+
+## 知识注入边界测试
+
+三个故障族分别测试`diagnosis/checks/safety`三种合法编排，共9次；每个故障族再测试未知声明、遗漏声明、重复声明、未召回证据、重复证据、非法侧重点、自由文本和畸形类型，共24次非法编排。
+
+| 指标 | 结果 |
+| --- | ---: |
+| 合法编排接受率 | 100.0%（9/9） |
+| 非法编排拒绝率 | 100.0%（24/24） |
+| 误放行率 | 0.0% |
+| 误拒绝率 | 0.0% |
+
+该实验验证的是结构化声明—证据白名单的程序边界，不等同于开放式LLM安全评测。由于模型无权直接输出技术内容，非法结构只会触发离线模板回退。
 
 ## 局限与下一步
 
@@ -64,4 +78,4 @@ python scripts/evaluate_ablation.py
 - 下一版应收集独立、脱敏的真实故障对话，只允许在开发集上调整概率参数；
 - 需要在独立真实案例上重新验证Text Only、Graph Only和Hybrid结论，并只在开发集上校准融合权重；
 - 应报告各故障族结果和置信区间，避免总体平均掩盖单一场景缺陷；
-- 增加版本条件、证据检索和安全验证指标后，再形成最终答辩结论。
+- 在独立案例中增加证据Recall@k、计划覆盖率和端到端响应时间，再形成最终答辩结论。

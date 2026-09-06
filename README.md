@@ -69,6 +69,7 @@ data/evaluation/
   sources.json                   案例来源登记表
   baseline_results.json          可复现的策略对比结果
   ablation_results.json          图谱、文本、主动询问消融结果
+  injection_results.json         声明—证据白名单攻防结果
 app.py                 Streamlit交互页面
 ```
 
@@ -86,6 +87,7 @@ python scripts/prepare_graph.py
 python scripts/offline_demo.py
 python scripts/evaluate_diagnosis.py
 python scripts/evaluate_ablation.py
+python scripts/evaluate_injection.py
 pytest -q
 ```
 
@@ -145,6 +147,8 @@ python scripts/evaluate_diagnosis.py
 当前评测集包含三个故障族各10条、覆盖全部14个原因的30条来源约束合成路径，其中9条开发集、21条冻结测试集。四种选问策略现在共享BM25证据检索和图谱先验融合；测试集上信息增益策略Top-1为100%，固定顺序为95.2%，随机追问平均为96.5%，不追问为71.4%。合成路径仍不能代表真实世界泛化能力。评测设计、指标解释与限制见[对比实验](docs/evaluation.md)。
 
 消融实验进一步拆分了各组件贡献：仅图谱先验Top-1为23.3%，仅文本证据为76.7%，当前简单图文融合为73.3%；加入主动询问后，图谱主动诊断与混合主动诊断均为100%，而混合方案把平均追问从3.10次降到2.80次。这里没有隐藏“仅文本初始排序略高于简单融合”的结果，它说明当前人工图谱先验和固定融合权重仍需校准，而不是说明图谱无用。
+
+知识注入验证覆盖三个故障族的9次合法编排，以及未知声明、遗漏声明、重复声明、未召回证据、重复证据、非法侧重点、自由文本和畸形类型共24次攻击。当前合法接受率100%，非法拒绝率100%。这些是针对结构化白名单边界的确定性机制测试，不代表对任意提示注入攻击的通用防御能力。
 
 ## 5. 项目边界
 

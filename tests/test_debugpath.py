@@ -217,6 +217,16 @@ def test_llm_unknown_claim_or_evidence_falls_back(service):
     assert render_with_llm(snapshot, MalformedPlannerLLM()) == render_offline(snapshot)
 
 
+def test_injection_guard_evaluation_rejects_all_invalid_cases():
+    from scripts.evaluate_injection import evaluate
+
+    report = evaluate()
+    assert report["valid_cases"] == 9
+    assert report["invalid_cases"] == 24
+    assert report["valid_acceptance_rate"] == 1.0
+    assert report["invalid_rejection_rate"] == 1.0
+
+
 def test_neo4j_clear_is_project_scoped():
     from src.graph.builder import GraphBuilder
 
