@@ -178,6 +178,45 @@ def test_llm_cannot_invent_command(service):
     assert "不会自动执行" in answer
 
 
+def test_llm_can_only_reorder_verified_claims(service):
+    class ValidPlannerLLM:
+        def chat_json(self, *args, **kwargs):
+            return {
+                "claim_order": ["C2", "C1", "C3"],
+                "evidence_ids": ["E024"],
+                "emphasis": "safety",
+            }
+
+    snapshot = service.complete(service.start("Neo4j Connection refused")['state'])
+    answer = render_with_llm(snapshot, ValidPlannerLLM())
+    assert answer.index("[C2]") < answer.index("[C1]") < answer.index("[C3]")
+    assert "优先保留前置检查" in answer
+    assert "E024" in answer
+
+
+def test_llm_unknown_claim_or_evidence_falls_back(service):
+    class InventingPlannerLLM:
+        def chat_json(self, *args, **kwargs):
+            return {
+                "claim_order": ["C999"],
+                "evidence_ids": ["E999"],
+                "emphasis": "diagnosis",
+            }
+
+    snapshot = service.complete(service.start("Neo4j Connection refused")["state"])
+    assert render_with_llm(snapshot, InventingPlannerLLM()) == render_offline(snapshot)
+
+    class MalformedPlannerLLM:
+        def chat_json(self, *args, **kwargs):
+            return {
+                "claim_order": [{"invented": True}],
+                "evidence_ids": [{"invented": True}],
+                "emphasis": "diagnosis",
+            }
+
+    assert render_with_llm(snapshot, MalformedPlannerLLM()) == render_offline(snapshot)
+
+
 def test_neo4j_clear_is_project_scoped():
     from src.graph.builder import GraphBuilder
 

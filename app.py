@@ -78,7 +78,7 @@ def main() -> None:
         platform = {"macOS": "macos", "Windows": "windows", "Linux": "linux"}[platform_label]
         modes = ["离线稳定模式"]
         if settings.deepseek_api_key:
-            modes.append("DeepSeek解释模式")
+            modes.append("DeepSeek受控编排模式")
         mode = st.radio("答案生成", modes)
         st.info("系统只生成检查建议，不会自动执行命令。")
         if st.button("重新开始", width="stretch"):
@@ -134,7 +134,7 @@ def main() -> None:
                 st.subheader("已验证的排查方案")
                 if snapshot["plan_errors"]:
                     st.error("方案验证未通过：" + "；".join(snapshot["plan_errors"]))
-                elif mode == "DeepSeek解释模式":
+                elif mode == "DeepSeek受控编排模式":
                     try:
                         st.markdown(render_with_llm(snapshot, LLMClient(settings)))
                     except Exception as exc:  # noqa: BLE001
@@ -157,7 +157,7 @@ def main() -> None:
         st.markdown(
             "1. **版本化因果图谱**：原因、平台、版本、检查、修复和官方来源分别建模。\n"
             "2. **主动询问**：对每个未问问题计算期望信息增益，并扣除操作成本与风险。\n"
-            "3. **生成前验证**：修复动作必须具备前置检查、风险等级和证据来源；高风险动作自动阻止。"
+            "3. **受控知识注入**：模型只能编排白名单声明和证据ID；技术内容由已验证模板输出。"
         )
         st.code("Utility(q) = ExpectedInformationGain(q) - CheckCost(q) - RiskCost(q)", language=None)
         st.caption("候选概率用于决定排查顺序，不替代真实运行结果或专业判断。")

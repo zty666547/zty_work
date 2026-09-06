@@ -13,7 +13,7 @@ DebugPath 面向信息不完整的开发环境报错，不直接让大模型猜�
 - `active_diagnosis`：维护候选原因概率，通过期望信息增益选择下一问，并根据用户观察执行贝叶斯更新；
 - `verified_plan`：修复动作必须具有前置检查、风险等级和来源，危险命令或高风险动作会被阻止；
 - `offline`：完全不依赖 Neo4j 和 API，保证现场演示稳定；
-- `deepseek`：大模型只解释已验证的结构化计划，生成未授权命令时自动回退到离线答案。
+- `deepseek`：大模型只选择白名单声明、证据和展示侧重点，技术内容仍由已验证模板输出。
 
 当前覆盖三个故障族：Python 模块导入、PyTorch GPU/CUDA、API 与 Neo4j 连接配置。合并知识库包含 **130个节点、338条关系、30个EvidenceChunk、14个候选原因和14个主动问题**。
 
@@ -35,7 +35,7 @@ DebugPath 面向信息不完整的开发环境报错，不直接让大模型猜�
                               ↓
                   检查 → 修复 → 风险 → 来源
                               ↓
-                  规则验证 → 离线/LLM解释
+                  规则验证 → 离线模板/LLM受控编排
 ```
 
 选问目标为：
@@ -54,7 +54,7 @@ src/diagnosis/
   policies.py          直接、固定、随机和信息增益四种选问策略
   planner.py           检查—修复计划与安全验证
   service.py           Web、CLI和评测共用入口
-  generator.py         离线答案与受约束LLM解释
+  generator.py         声明—证据白名单与确定性答案渲染
 src/graph/
   schema.py            实体、关系及方向约束
   artifact.py          确定性排序、统计与内容指纹
@@ -116,7 +116,7 @@ API 请求返回 401 Unauthorized
 cp .env.example .env
 ```
 
-配置 `DEEPSEEK_API_KEY` 后，页面可以切换到 DeepSeek 解释模式。需要展示持久化图谱时：
+配置 `DEEPSEEK_API_KEY` 后，页面可以切换到DeepSeek受控编排模式。模型只能返回完整的`C1/C2/C3`声明顺序、已召回的`E001…`证据ID和有限的展示侧重点；原因、检查命令、修复动作、风险与来源均由程序从已验证计划中渲染。需要展示持久化图谱时：
 
 ```bash
 python scripts/prepare_graph.py
