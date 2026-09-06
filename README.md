@@ -48,6 +48,7 @@ Utility(q) = ExpectedInformationGain(q) - CheckCost(q) - RiskCost(q)
 ```text
 src/diagnosis/
   engine.py            场景识别、信息增益、贝叶斯更新和停止策略
+  policies.py          直接、固定、随机和信息增益四种选问策略
   planner.py           检查—修复计划与安全验证
   service.py           Web、CLI和评测共用入口
   generator.py         离线答案与受约束LLM解释
@@ -58,6 +59,7 @@ data/raw/
   debugpath_knowledge.json       受控因果知识图谱
 data/evaluation/
   diagnosis_cases.json           冻结诊断路径
+  baseline_results.json          可复现的策略对比结果
 app.py                 Streamlit交互页面
 ```
 
@@ -119,7 +121,16 @@ python scripts/check_neo4j.py
 python scripts/evaluate_diagnosis.py
 ```
 
-当前冻结集包含 8 条诊断路径，覆盖三个故障族。现阶段结果为 **8/8 首因命中、平均 2.75 轮追问**；16 项核心测试全部通过。该结果用于代码回归，不代表真实世界通用准确率。
+四种策略使用完全相同的图谱、案例、概率更新和停止条件；随机策略固定种子并重复 100 次：
+
+| 选问策略 | Top-1 | MRR | 平均追问 | 3问内成功 |
+| --- | ---: | ---: | ---: | ---: |
+| 不追问 | 37.5% | 0.581 | 0.00 | 37.5% |
+| 固定顺序 | 100.0% | 1.000 | 3.00 | 75.0% |
+| 随机追问 | 100.0% | 1.000 | 3.22 | 53.2% |
+| **信息增益** | **100.0%** | **1.000** | **2.75** | **75.0%** |
+
+这组初步结果说明主动追问明显优于直接猜测，信息增益策略在保持命中的同时使用更少问题。当前只有 8 条人工构造路径，不能据此声称具备真实世界泛化能力。评测设计、指标解释与限制见[对比实验](docs/evaluation.md)。
 
 ## 5. 项目边界
 

@@ -101,6 +101,10 @@ class DiagnosisEngine:
     def _entropy(probabilities: dict[str, float]) -> float:
         return -sum(p * math.log2(p) for p in probabilities.values() if p > 0)
 
+    def entropy(self, state: DiagnosisState) -> float:
+        """返回当前候选原因分布的香农熵，供评估与界面解释使用。"""
+        return self._entropy(state.probabilities)
+
     def _question_gain(self, state: DiagnosisState, question: str) -> tuple[float, float]:
         observation = self.question_observation[question]
         effects = self.observation_effects[observation]
@@ -121,9 +125,8 @@ class DiagnosisEngine:
         gain = max(0.0, self._entropy(state.probabilities) - expected)
         return gain, p_yes
 
-    def next_question(self, state: DiagnosisState) -> QuestionChoice | None:
-        if state.status != "questioning":
-            return None
+    def available_questions(self, state: DiagnosisState) -> list[QuestionChoice]:
+        """列出尚未回答的问题及其当前信息增益，不改变诊断状态。"""
         choices: list[QuestionChoice] = []
         for item in self.issue_questions[state.issue_name]:
             question = item["name"]
@@ -145,6 +148,12 @@ class DiagnosisEngine:
                     reason=f"预计可减少 {gain:.3f} bit 不确定性；当前回答“是”的预测概率为 {p_yes:.0%}",
                 )
             )
+        return choices
+
+    def next_question(self, state: DiagnosisState) -> QuestionChoice | None:
+        if state.status != "questioning":
+            return None
+        choices = self.available_questions(state)
         if not choices:
             return None
         best = max(choices, key=lambda item: (item.utility, item.information_gain, item.name))

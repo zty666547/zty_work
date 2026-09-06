@@ -1,48 +1,56 @@
 [
   {
     "id": "import_missing",
+    "split": "dev",
     "report": "ModuleNotFoundError: No module named 'pandas'",
     "answers": {"Q-包是否可见": "no", "Q-解释器是否一致": "yes", "Q-是否存在同名文件": "no", "Q-Python版本是否受支持": "yes"},
     "expected_top_cause": "目标包未安装"
   },
   {
     "id": "import_wrong_env",
+    "split": "test",
     "report": "No module named torch，但我刚刚用pip安装过",
     "answers": {"Q-包是否可见": "no", "Q-解释器是否一致": "no", "Q-是否存在同名文件": "no", "Q-Python版本是否受支持": "yes"},
     "expected_top_cause": "pip与Python指向不同环境"
   },
   {
     "id": "import_shadow",
+    "split": "test",
     "report": "ImportError: 导入requests时行为异常",
     "answers": {"Q-包是否可见": "yes", "Q-解释器是否一致": "yes", "Q-是否存在同名文件": "yes", "Q-Python版本是否受支持": "yes"},
     "expected_top_cause": "本地文件遮蔽第三方模块"
   },
   {
     "id": "gpu_macos",
+    "split": "dev",
     "report": "在macOS上torch.cuda.is_available() False，CUDA不可用",
     "answers": {"Q-是否有NVIDIA硬件": "no", "Q-nvidia-smi是否成功": "no", "Q-PyTorch是否包含CUDA": "no", "Q-是否运行在容器": "no", "Q-是否为macOS": "yes"},
     "expected_top_cause": "当前平台不提供CUDA"
   },
   {
     "id": "gpu_cpu_build",
+    "split": "test",
     "report": "Windows电脑检测不到GPU，torch.cuda.is_available() False",
     "answers": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "yes", "Q-PyTorch是否包含CUDA": "no", "Q-是否运行在容器": "no", "Q-是否为macOS": "no"},
     "expected_top_cause": "安装了CPU版PyTorch"
   },
   {
     "id": "service_missing_env",
+    "split": "dev",
     "report": "API调用失败，程序提示环境变量没有配置",
     "answers": {"Q-变量是否缺失": "yes", "Q-是否连接被拒绝": "no", "Q-是否认证失败": "no", "Q-健康检查是否成功": "yes", "Q-端口是否被占用": "no"},
     "expected_top_cause": "必需环境变量缺失"
   },
   {
     "id": "service_auth",
+    "split": "test",
     "report": "API请求返回401 Unauthorized",
     "answers": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "no", "Q-是否认证失败": "yes", "Q-健康检查是否成功": "yes", "Q-端口是否被占用": "no"},
     "expected_top_cause": "认证信息无效"
   },
   {
     "id": "service_down",
+    "split": "test",
     "report": "Neo4j Connection refused，无法连接localhost:7687",
     "answers": {"Q-变量是否缺失": "no", "Q-是否连接被拒绝": "yes", "Q-是否认证失败": "no", "Q-健康检查是否成功": "no", "Q-端口是否被占用": "no"},
     "expected_top_cause": "目标服务未启动"

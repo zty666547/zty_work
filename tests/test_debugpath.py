@@ -140,3 +140,19 @@ def test_all_frozen_evaluation_cases(service):
     cases = json.loads((ROOT / "data/evaluation/diagnosis_cases.json").read_text(encoding="utf-8"))
     results = [run_case(service, case) for case in cases]
     assert all(item["passed"] for item in results), results
+
+
+def test_comparison_evaluation_is_reproducible():
+    from scripts.evaluate_diagnosis import evaluate
+
+    cases = json.loads((ROOT / "data/evaluation/diagnosis_cases.json").read_text(encoding="utf-8"))
+    first = evaluate(cases, random_runs=5, seed=2026)
+    second = evaluate(cases, random_runs=5, seed=2026)
+    assert first == second
+    assert [item["strategy"] for item in first["metrics"]] == [
+        "direct",
+        "fixed_order",
+        "random_question",
+        "information_gain",
+    ]
+    assert first["metrics"][-1]["top1"] == 1.0
