@@ -57,6 +57,8 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+答辩时推荐部署到 Streamlit Community Cloud，并在学校电脑上直接打开公网地址。详细步骤和 Windows/macOS 本地备用入口见[答辩部署说明](docs/deployment.md)。
+
 可以直接测试：
 
 ```text
