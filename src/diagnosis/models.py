@@ -15,6 +15,8 @@ class DiagnosisState:
     answers: dict[str, str] = field(default_factory=dict)
     evidence: list[dict] = field(default_factory=list)
     status: str = "questioning"
+    stop_reason: str = ""
+    trajectory: list[dict] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self)

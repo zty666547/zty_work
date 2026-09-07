@@ -62,6 +62,8 @@ class DiagnosisEngine:
         scored: list[tuple[int, str]] = []
         for issue in self.supported_issues():
             terms = [issue["name"], *(issue.get("aliases") or [])]
+            if issue.get("example"):
+                terms.append(issue["example"])
             score = sum(len(term) for term in terms if term.casefold() in normalized)
             if score:
                 scored.append((score, issue["name"]))
@@ -155,14 +157,19 @@ class DiagnosisEngine:
             return None
         choices = self.available_questions(state)
         if not choices:
+            state.status = "completed"
+            state.stop_reason = "没有剩余问题"
             return None
         best = max(choices, key=lambda item: (item.utility, item.information_gain, item.name))
         if best.information_gain < self.settings.min_information_gain:
             state.status = "completed"
+            state.stop_reason = "剩余问题的信息增益不足"
             return None
         return best
 
     def answer(self, state: DiagnosisState, question_name: str, answer: str) -> DiagnosisState:
+        if state.status != "questioning":
+            raise ValueError("诊断已经结束，请重新开始")
         if question_name in state.asked_questions:
             raise ValueError("该问题已经回答过")
         if question_name not in {item["name"] for item in self.issue_questions[state.issue_name]}:
@@ -182,11 +189,12 @@ class DiagnosisEngine:
             self._normalize(state.probabilities)
 
         top_probability = max(state.probabilities.values(), default=0.0)
-        if (
-            len(state.asked_questions) >= self.settings.max_questions
-            or (len(state.asked_questions) >= 2 and top_probability >= self.settings.confidence_threshold)
-        ):
+        if len(state.asked_questions) >= self.settings.max_questions:
             state.status = "completed"
+            state.stop_reason = "达到最大追问轮数"
+        elif len(state.asked_questions) >= 2 and top_probability >= self.settings.confidence_threshold:
+            state.status = "completed"
+            state.stop_reason = "最高候选概率达到停止阈值"
         elif self.next_question(state) is None:
             state.status = "completed"
         return state

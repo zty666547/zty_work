@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import streamlit as st
+import json
+import pandas as pd
 
 from config.settings import settings
 from src.diagnosis.engine import UnknownIssueError
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.service import DiagnosisService
+from src.diagnosis.trajectory import stage_dot
 from src.extraction.llm_client import LLMClient
 
 EXAMPLES = [
@@ -41,13 +44,53 @@ def _graph_dot(snapshot: dict) -> str:
 
 
 def _render_candidates(snapshot: dict) -> None:
-    st.subheader("候选原因正在收敛")
+    st.subheader("当前候选原因")
     rows = [
         {"候选原因": item["name"], "当前概率": round(item["probability"] * 100, 1), "说明": item["description"]}
         for item in snapshot["candidates"]
     ]
     st.dataframe(rows, width="stretch", hide_index=True)
     st.bar_chart({row["候选原因"]: row["当前概率"] for row in rows}, horizontal=True)
+
+
+def _render_trajectory(snapshot: dict, service: DiagnosisService) -> None:
+    stages = snapshot["state"].get("trajectory", [])
+    if not stages:
+        st.info("请重新开始一次诊断以记录完整轨迹。")
+        return
+    st.subheader("动态诊断轨迹")
+    index = st.select_slider(
+        "回看阶段", options=list(range(len(stages))), value=len(stages) - 1,
+        format_func=lambda i: "初始检索" if i == 0 else ("手动结束" if stages[i]["event"] == "manual_stop" else f"第{stages[i]['round']}轮回答后"),
+        key=f"stage-{snapshot['state']['session_id']}-{len(stages)}",
+    )
+    stage = stages[index]
+    previous = stages[max(0, index - 1)]
+    if stage["question"]:
+        question = stage["question"]
+        st.write("本轮问题：" + question["text"])
+        st.caption("选择依据：" + question["reason"] + f"；扣除检查成本和风险后的效用为 {question['utility']:.3f}")
+        st.write("用户反馈：" + {"yes": question["yes_label"], "no": question["no_label"], "unknown": "暂时无法确认（概率保持不变）"}[stage["answer"]])
+    if stage["stop_reason"]:
+        st.info("停止原因：" + stage["stop_reason"] + "。当前首位原因仍需实际检查确认。")
+    elif stage.get("next_question"):
+        st.caption("下一问：" + stage["next_question"]["text"])
+    st.graphviz_chart(stage_dot(stage, service.graph, previous), width="stretch")
+    st.caption("蓝：故障；紫：问题；青：观察；黄：候选；灰：概率较上一阶段降低；绿：当前首位及排查路径。灰色不代表排除，负面回答也保留原图关系。")
+    before = {c["name"]: (rank, c["probability"]) for rank, c in enumerate(previous["candidates"], 1)}
+    st.dataframe([
+        {"候选原因": c["name"], "上一阶段排名": before[c["name"]][0], "当前排名": rank,
+         "上一阶段概率 (%)": round(before[c["name"]][1] * 100, 2), "当前概率 (%)": round(c["probability"] * 100, 2),
+         "变化 (百分点)": round((c["probability"] - before[c["name"]][1]) * 100, 2)}
+        for rank, c in enumerate(stage["candidates"], 1)
+    ], hide_index=True, width="stretch")
+    chart = pd.DataFrame([
+        {"阶段": s["step"], **{c["name"]: c["probability"] * 100 for c in s["candidates"]}}
+        for s in stages[:index + 1]
+    ]).set_index("阶段")
+    st.line_chart(chart, x_label="阶段", y_label="候选概率 (%)")
+    st.caption("回看只改变展示，不修改当前诊断。证据可能使判断反转，概率不保证单调收敛。")
+    st.download_button("下载完整轨迹（JSON）", json.dumps({"issue": snapshot["state"]["issue_name"], "stages": stages}, ensure_ascii=False, indent=2), file_name="debugpath-trajectory.json", mime="application/json")
 
 
 def _render_evidence(snapshot: dict) -> None:
@@ -85,7 +128,7 @@ def main() -> None:
             st.session_state.pop("diagnosis", None)
             st.rerun()
 
-    diagnose_tab, graph_tab, method_tab = st.tabs(["主动诊断", "因果图谱", "方法说明"])
+    diagnose_tab, graph_tab, method_tab = st.tabs(["主动诊断", "诊断轨迹", "方法说明"])
     with diagnose_tab:
         report = st.text_area(
             "粘贴报错信息或描述现象", placeholder=EXAMPLES[0], height=120,
@@ -144,9 +187,8 @@ def main() -> None:
                     st.markdown(render_offline(snapshot))
 
     with graph_tab:
-        st.subheader("当前诊断子图")
         if "diagnosis" in st.session_state:
-            st.graphviz_chart(_graph_dot(st.session_state.diagnosis), width="stretch")
+            _render_trajectory(st.session_state.diagnosis, service)
         else:
             st.info("开始一次诊断后，这里会显示问题、候选原因和下一条主动询问。")
         node_count = sum(len(items) for items in service.graph.entities.values())
