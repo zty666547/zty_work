@@ -4,6 +4,8 @@ DebugPath 面向信息不完整的 AI 开发环境报错。
 
 普通 RAG 根据用户第一次输入直接回答；DebugPath 会从知识图谱中找到候选原因，主动选择最有价值的问题，并根据用户回答逐轮更新判断，最终给出带检查步骤、风险提示和来源的排查方案。
 
+**在线演示：** [打开 DebugPath](https://ztywork-w4dzhwedqtyxgzbuqzkyus.streamlit.app/)
+
 ## 整体流程
 
 ```text
@@ -57,7 +59,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-答辩时推荐部署到 Streamlit Community Cloud，并在学校电脑上直接打开公网地址。详细步骤和 Windows/macOS 本地备用入口见[答辩部署说明](docs/deployment.md)。
+答辩时可直接打开上方公网地址。部署步骤和 Windows/macOS 本地备用入口见[答辩部署说明](docs/deployment.md)。
 
 可以直接测试：
 

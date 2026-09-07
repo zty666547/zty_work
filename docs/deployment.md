@@ -4,6 +4,8 @@
 
 部署后，学校电脑只需要浏览器和网络，不需要安装 Python。
 
+当前在线入口：[DebugPath 在线演示](https://ztywork-w4dzhwedqtyxgzbuqzkyus.streamlit.app/)
+
 1. 打开 [Streamlit Community Cloud](https://share.streamlit.io/)；
 2. 使用能够访问本项目仓库的 GitHub 账号登录；
 3. 选择仓库 `zty666547/zty_work`；
