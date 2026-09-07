@@ -98,6 +98,7 @@ python scripts/evaluate_injection.py
 
 - [5分钟网页幻灯片](presentation/index.html)：方向键翻页，按 `P` 进入演讲者模式，按 `B` 切换静态模式。
 - [完整展示大纲](presentation/大纲-v2.md)
+- [5分钟答辩演讲稿](presentation/5分钟演讲稿.md)
 
 ## 代码结构
 
