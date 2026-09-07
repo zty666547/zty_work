@@ -94,6 +94,11 @@ python scripts/evaluate_injection.py
 
 以上结果用于验证系统机制，不能代表真实环境中的准确率。详细设置见[评测说明](docs/evaluation.md)。
 
+## 答辩展示
+
+- [5分钟网页幻灯片](presentation/index.html)：方向键翻页，按 `P` 进入演讲者模式，按 `B` 切换静态模式。
+- [展示大纲与时间分配](presentation/大纲-v1.md)
+
 ## 代码结构
 
 | 位置 | 功能 |
