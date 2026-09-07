@@ -26,23 +26,6 @@ def load_service() -> DiagnosisService:
     return DiagnosisService(settings)
 
 
-def _graph_dot(snapshot: dict) -> str:
-    issue = snapshot["state"]["issue_name"]
-    lines = ["digraph G {", 'rankdir="LR";', 'node [shape="box", style="rounded,filled", fontname="Arial"];']
-    lines.append(f'issue [label="{issue}", fillcolor="#dbeafe"];')
-    for index, candidate in enumerate(snapshot["candidates"]):
-        color = "#fecaca" if index == 0 else "#fef3c7"
-        label = f"{candidate['name']}\\n{candidate['probability']:.1%}"
-        lines.append(f'c{index} [label="{label}", fillcolor="{color}"];')
-        lines.append(f'issue -> c{index};')
-    if snapshot.get("question"):
-        question_text = snapshot["question"]["text"].replace('"', "'")
-        lines.append(f'q [label="下一问\\n{question_text}", fillcolor="#dcfce7"];')
-        lines.append("issue -> q [style=dashed];")
-    lines.append("}")
-    return "\n".join(lines)
-
-
 def _render_candidates(snapshot: dict) -> None:
     st.subheader("当前候选原因")
     rows = [
@@ -51,6 +34,26 @@ def _render_candidates(snapshot: dict) -> None:
     ]
     st.dataframe(rows, width="stretch", hide_index=True)
     st.bar_chart({row["候选原因"]: row["当前概率"] for row in rows}, horizontal=True)
+
+
+def _render_live_graph(snapshot: dict, service: DiagnosisService) -> None:
+    """在问答旁展示最新阶段，而不是等诊断结束后再回放。"""
+    stages = snapshot["state"].get("trajectory", [])
+    if not stages:
+        st.info("开始诊断后，这里会实时显示候选子图。")
+        return
+    stage = stages[-1]
+    previous = stages[-2] if len(stages) > 1 else stage
+    top = stage["candidates"][0]
+    st.subheader("实时候选子图")
+    st.caption(
+        f"第 {stage['round']} 轮 · 当前首位：{top['name']}（{top['probability']:.1%}）"
+    )
+    st.graphviz_chart(stage_dot(stage, service.graph, previous), width="stretch")
+    st.caption(
+        "蓝：故障；紫：当前问题；青：用户观察；黄：候选原因；"
+        "灰：本轮概率下降；绿：当前首位。节点越大，当前概率越高。"
+    )
 
 
 def _render_trajectory(snapshot: dict, service: DiagnosisService) -> None:
@@ -153,38 +156,46 @@ def main() -> None:
             c1.metric("候选原因", len(snapshot["candidates"]))
             c2.metric("已追问", len(state["asked_questions"]))
             c3.metric("最高概率", f"{snapshot['candidates'][0]['probability']:.1%}")
-            _render_evidence(snapshot)
-            _render_candidates(snapshot)
-            question = snapshot.get("question")
-            if state["status"] == "questioning" and question:
-                st.subheader("系统选择的下一问")
-                st.write(question["text"])
-                st.caption(question["reason"])
-                answer_label = st.radio(
-                    "请选择观察结果",
-                    [question["yes_label"], question["no_label"], "暂时无法确认"],
-                    key=f"answer-{question['name']}",
-                )
-                answer = {question["yes_label"]: "yes", question["no_label"]: "no", "暂时无法确认": "unknown"}[answer_label]
-                left, right = st.columns(2)
-                if left.button("提交观察结果", type="primary", width="stretch"):
-                    st.session_state.diagnosis = service.answer(state, question["name"], answer)
-                    st.rerun()
-                if right.button("结束追问，查看当前方案", width="stretch"):
-                    st.session_state.diagnosis = service.complete(state)
-                    st.rerun()
-            else:
-                st.subheader("已验证的排查方案")
-                if snapshot["plan_errors"]:
-                    st.error("方案验证未通过：" + "；".join(snapshot["plan_errors"]))
-                elif mode == "DeepSeek受控编排模式":
-                    try:
-                        st.markdown(render_with_llm(snapshot, LLMClient(settings)))
-                    except Exception as exc:  # noqa: BLE001
-                        st.warning(f"大模型暂不可用，已回退到离线答案：{exc}")
-                        st.markdown(render_offline(snapshot))
+            interaction_col, graph_col = st.columns([0.88, 1.12], gap="large")
+            with interaction_col:
+                _render_candidates(snapshot)
+                question = snapshot.get("question")
+                if state["status"] == "questioning" and question:
+                    st.subheader("系统选择的下一问")
+                    st.write(question["text"])
+                    st.caption(question["reason"])
+                    answer_label = st.radio(
+                        "请选择观察结果",
+                        [question["yes_label"], question["no_label"], "暂时无法确认"],
+                        key=f"answer-{question['name']}",
+                    )
+                    answer = {
+                        question["yes_label"]: "yes",
+                        question["no_label"]: "no",
+                        "暂时无法确认": "unknown",
+                    }[answer_label]
+                    submit_col, stop_col = st.columns(2)
+                    if submit_col.button("提交观察结果", type="primary", width="stretch"):
+                        st.session_state.diagnosis = service.answer(state, question["name"], answer)
+                        st.rerun()
+                    if stop_col.button("结束追问，查看当前方案", width="stretch"):
+                        st.session_state.diagnosis = service.complete(state)
+                        st.rerun()
                 else:
-                    st.markdown(render_offline(snapshot))
+                    st.subheader("已验证的排查方案")
+                    if snapshot["plan_errors"]:
+                        st.error("方案验证未通过：" + "；".join(snapshot["plan_errors"]))
+                    elif mode == "DeepSeek受控编排模式":
+                        try:
+                            st.markdown(render_with_llm(snapshot, LLMClient(settings)))
+                        except Exception as exc:  # noqa: BLE001
+                            st.warning(f"大模型暂不可用，已回退到离线答案：{exc}")
+                            st.markdown(render_offline(snapshot))
+                    else:
+                        st.markdown(render_offline(snapshot))
+            with graph_col:
+                _render_live_graph(snapshot, service)
+            _render_evidence(snapshot)
 
     with graph_tab:
         if "diagnosis" in st.session_state:
