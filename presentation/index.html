@@ -1253,7 +1253,7 @@
   <div class="canvas-card">
     <div class="chrome-min">
       <div class="l">DEBUGPATH · KNOWLEDGE ENGINEERING</div>
-      <div class="r">PROJECT PRESENTATION · 01 / 11</div>
+      <div class="r">PROJECT PRESENTATION · 01 / 09</div>
     </div>
 
     <!-- 主体:padding 必须为 0,不要再叠 5vw,否则左右对不齐 chrome-min -->
@@ -1273,28 +1273,37 @@
   </div>
 </section>
 
-<!-- 02 · S03 Split Statement · 项目解释 -->
+<!-- 02 · S03 Split Statement · DebugPath 与 Graph RAG -->
 <section class="slide split" data-layout="S03" data-animate="split-statement" data-slide-id="project-definition">
   <div class="canvas-card">
     <div class="split-half">
       <div class="half b-ink" style="padding:5.6vh 3.6vw 4.4vh;justify-content:space-between">
-        <div class="chrome-min" style="margin-bottom:0"><div class="l">PROJECT · PROBLEM</div><div class="r">02 / 11</div></div>
+        <div class="chrome-min" style="margin-bottom:0"><div class="l">GRAPH RAG · STANDARD</div><div class="r">02 / 09</div></div>
         <div style="display:flex;flex-direction:column;gap:2vh">
-          <div class="t-meta">USER INPUT</div>
-          <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(5.8vw,10.4vh);line-height:1;letter-spacing:-.03em">“我的程序<br/>为什么跑不起来？”</h2>
+          <div class="t-meta">普通 GRAPH RAG</div>
+          <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.8vw,8.6vh);line-height:1.04;letter-spacing:-.03em">一次提问，<br/>一次检索，<br/>一次回答</h2>
         </div>
-        <p style="font-size:max(18px,1.15vw);line-height:1.6;color:rgba(255,255,255,.76);max-width:34ch">一条报错通常对应多个原因。用户提供的信息不足，普通问答只能给出一份宽泛清单。</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.22)">
+          <div style="background:var(--ink);padding:1.8vh 1vw"><span class="t-meta">01</span><p style="font-size:max(15px,.9vw);margin-top:.8vh">用户提问</p></div>
+          <div style="background:var(--ink);padding:1.8vh 1vw"><span class="t-meta">02</span><p style="font-size:max(15px,.9vw);margin-top:.8vh">检索知识</p></div>
+          <div style="background:var(--ink);padding:1.8vh 1vw"><span class="t-meta">03</span><p style="font-size:max(15px,.9vw);margin-top:.8vh">生成回答</p></div>
+        </div>
       </div>
       <div class="half" style="padding:5.6vh 3.6vw 4.4vh;justify-content:space-between">
-        <div class="chrome-min"><div class="l">DEBUGPATH · GOAL</div><div class="r">FINAL FUNCTION</div></div>
-        <div style="display:flex;flex-direction:column;gap:2.4vh">
-          <div class="t-meta" style="color:var(--accent)">SYSTEM RESPONSE</div>
-          <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.8vw,8.6vh);line-height:1.04;letter-spacing:-.03em">逐步询问，<br/>缩小原因范围</h2>
-          <p class="lead">系统把故障知识组织成因果图谱，根据当前候选原因主动选择下一项检查。</p>
+        <div class="chrome-min"><div class="l">DEBUGPATH · DYNAMIC</div><div class="r">ACTIVE LOOP</div></div>
+        <div style="display:flex;flex-direction:column;gap:1.6vh">
+          <div class="t-meta" style="color:var(--accent)">在普通 GRAPH RAG 上增加</div>
+          <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(4.3vw,7.7vh);line-height:1.04;letter-spacing:-.03em">主动询问<br/>与动态推理</h2>
+          <div style="display:grid;grid-template-columns:2.3em 1fr;column-gap:1vw;row-gap:1.05vh;font-size:max(15px,.94vw);line-height:1.35">
+            <span class="t-meta" style="color:var(--accent)">01</span><span>描述故障，检索候选原因</span>
+            <span class="t-meta" style="color:var(--accent)">02</span><span>选择最有价值的问题</span>
+            <span class="t-meta" style="color:var(--accent)">03</span><span>根据回答更新原因概率</span>
+            <span class="t-meta" style="color:var(--accent)">04</span><span>改变下一轮候选子图并继续询问</span>
+            <span class="t-meta" style="color:var(--accent)">05</span><span>定位原因，生成排查方案</span>
+          </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--grey-2)">
-          <div style="background:var(--paper);padding:2.2vh 1.4vw"><span class="t-meta">INPUT</span><p style="font-size:max(16px,1vw);margin-top:1vh">报错描述与用户观察</p></div>
-          <div style="background:var(--paper);padding:2.2vh 1.4vw"><span class="t-meta">OUTPUT</span><p style="font-size:max(16px,1vw);margin-top:1vh">原因排序与安全排查方案</p></div>
+        <div style="border-top:2px solid var(--accent);padding-top:1.8vh">
+          <p style="font-size:max(17px,1.05vw);line-height:1.5;font-weight:500">用户每次回答，都会改变候选概率、下一问和检索子图。</p>
         </div>
       </div>
     </div>
@@ -1304,27 +1313,27 @@
 <!-- 03 · S17 System Diagram · 课程三部分与系统实现 -->
 <section class="slide light" data-layout="S17" data-animate="system-diagram" data-slide-id="architecture">
   <div class="canvas-card">
-    <div class="chrome-min"><div class="l">SYSTEM · COURSE REQUIREMENTS</div><div class="r">03 / 11</div></div>
-    <div style="flex:1;display:grid;grid-template-columns:6fr 7fr;gap:5vw;align-items:center">
-      <div data-anim="head" style="display:flex;flex-direction:column;gap:2.2vh;align-self:stretch;justify-content:center">
-        <div class="t-meta">OVERALL FRAMEWORK</div>
-        <h2 class="h-xl-zh" style="font-size:min(5.4vw,9.6vh)">三项要求，<br/>一条诊断链</h2>
-        <p class="lead" style="max-width:30ch">图谱负责表达因果，检索负责获取新证据，生成负责给出可验证、可追溯的处理方案。</p>
-      </div>
-      <div class="system-diagram" data-anim="diagram" style="display:grid;grid-template-columns:1fr;grid-template-rows:1fr;place-items:center;position:relative;height:54vh">
-        <svg class="sys-svg" viewBox="0 0 600 600" style="grid-area:1/1;width:52vh;height:52vh;overflow:visible" aria-hidden="true">
-          <circle cx="300" cy="300" r="270" fill="none" stroke="var(--grey-2)" stroke-width="2"/>
-          <circle cx="300" cy="300" r="190" fill="none" stroke="var(--accent)" stroke-width="3"/>
-          <circle cx="300" cy="300" r="105" fill="var(--accent)"/>
-          <line x1="405" y1="300" x2="560" y2="300" stroke="var(--accent)" stroke-width="2"/>
-          <line x1="300" y1="110" x2="300" y2="25" stroke="var(--accent)" stroke-width="2"/>
-          <line x1="110" y1="430" x2="20" y2="500" stroke="var(--grey-3)" stroke-width="2"/>
-        </svg>
-        <div style="grid-area:1/1;z-index:2;color:#fff;font-family:var(--sans),var(--sans-zh);font-size:max(18px,1.4vw);font-weight:500;line-height:1.35">检索与推理<br/><span class="t-meta" style="color:rgba(255,255,255,.72)">ACTIVE LOOP</span></div>
-        <div class="sys-label" style="position:absolute;right:0;top:48%;font-size:max(16px,1vw);font-weight:500">知识注入<br/><span class="t-meta">证据约束 · 安全编排</span></div>
-        <div class="sys-label" style="position:absolute;left:39%;top:0;font-size:max(16px,1vw);font-weight:500">图谱构建<br/><span class="t-meta">症状—原因—检查—修复</span></div>
-        <div class="sys-label" style="position:absolute;left:0;bottom:0;font-size:max(16px,1vw);font-weight:500">知识底座<br/><span class="t-meta">130 节点 · 338 关系</span></div>
-      </div>
+    <div class="chrome-min"><div class="l">SYSTEM · COURSE REQUIREMENTS</div><div class="r">03 / 09</div></div>
+    <div data-anim="head" style="display:flex;align-items:end;justify-content:space-between;gap:4vw">
+      <div><div class="t-meta">OVERALL FRAMEWORK</div><h2 class="h-xl-zh" style="font-size:min(5.2vw,9.3vh);margin-top:1.2vh">三个部分，一条完整诊断链</h2></div>
+      <p class="lead" style="max-width:28ch">课程要求不是三个孤立模块，而是从故障知识到可靠答案的连续过程。</p>
+    </div>
+    <div data-anim="diagram" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--grey-2);margin-top:4vh;min-height:43vh">
+      <article style="background:var(--paper);padding:3vh 2vw;display:flex;flex-direction:column;gap:2vh">
+        <div class="t-meta">01 · KNOWLEDGE GRAPH</div><h3 style="font-size:min(2.6vw,4.7vh);font-weight:350">图谱构建</h3>
+        <p style="font-size:max(17px,1.05vw);line-height:1.65;color:var(--text-secondary)">连接故障、原因、问题、观察、检查、修复、风险和来源，形成因果知识图谱。</p>
+        <div class="t-meta" style="margin-top:auto">把知识“连起来”</div>
+      </article>
+      <article style="background:rgba(0,47,167,.07);padding:3vh 2vw;display:flex;flex-direction:column;gap:2vh;border-top:3px solid var(--accent)">
+        <div class="t-meta" style="color:var(--accent)">02 · RETRIEVAL &amp; REASONING</div><h3 style="font-size:min(2.6vw,4.7vh);font-weight:350;color:var(--accent)">检索与推理</h3>
+        <p style="font-size:max(17px,1.05vw);line-height:1.65;color:var(--text-secondary)">召回候选原因，用信息增益选择下一问，再根据回答更新概率和候选子图。</p>
+        <div class="t-meta" style="margin-top:auto;color:var(--accent)">让候选“收敛起来”</div>
+      </article>
+      <article style="background:var(--paper);padding:3vh 2vw;display:flex;flex-direction:column;gap:2vh">
+        <div class="t-meta">03 · KNOWLEDGE INJECTION</div><h3 style="font-size:min(2.6vw,4.7vh);font-weight:350">知识注入</h3>
+        <p style="font-size:max(17px,1.05vw);line-height:1.65;color:var(--text-secondary)">把原因、检查、修复、风险和来源整理成结构化上下文，由模型组织最终答案。</p>
+        <div class="t-meta" style="margin-top:auto">把证据“说清楚”</div>
+      </article>
     </div>
   </div>
 </section>
@@ -1332,7 +1341,7 @@
 <!-- 04 · S05 Three Layers · 图谱构建 -->
 <section class="slide light" data-layout="S05" data-animate="sub-stack" data-slide-id="graph-construction">
   <div class="canvas-card">
-    <div class="chrome-min"><div class="l">PART 01 · KNOWLEDGE GRAPH</div><div class="r">04 / 11</div></div>
+    <div class="chrome-min"><div class="l">PART 01 · KNOWLEDGE GRAPH</div><div class="r">04 / 09</div></div>
     <div style="flex:1;display:grid;grid-template-columns:5fr 7fr;gap:5vw;align-items:center">
       <div data-anim="head" style="display:flex;flex-direction:column;gap:2vh">
         <div class="t-meta">CONSTRUCTION PIPELINE</div>
@@ -1340,7 +1349,7 @@
         <p class="lead">先定义受控模式，再合并因果知识与证据片段。构建脚本验证结构并生成可复现产物。</p>
       </div>
       <div class="sub-card-stack" data-anim="up" style="display:flex;flex-direction:column;gap:1.4vh">
-        <article class="card-fill sub-card" style="padding:2.2vh 1.8vw;display:grid;grid-template-columns:6em 1fr;gap:1.5vw"><span style="font-size:min(3.5vw,6vh);font-weight:200;color:var(--accent)">01</span><div><h3 style="font-size:max(20px,1.5vw);font-weight:400">定义 Schema</h3><p style="font-size:max(16px,.95vw);margin-top:.7vh;color:var(--text-secondary)">12 类实体、15 类关系，固定关系方向和必要属性。</p></div></article>
+        <article class="card-fill sub-card" style="padding:2.2vh 1.8vw;display:grid;grid-template-columns:6em 1fr;gap:1.5vw"><span style="font-size:min(3.5vw,6vh);font-weight:200;color:var(--accent)">01</span><div><h3 style="font-size:max(20px,1.5vw);font-weight:400">定义 Schema</h3><p style="font-size:max(16px,.95vw);margin-top:.7vh;color:var(--text-secondary)">12 类实体、18 类关系，固定关系方向和必要属性。</p></div></article>
         <article class="card-fill sub-card" style="padding:2.2vh 1.8vw;display:grid;grid-template-columns:6em 1fr;gap:1.5vw"><span style="font-size:min(3.5vw,6vh);font-weight:200;color:var(--accent)">02</span><div><h3 style="font-size:max(20px,1.5vw);font-weight:400">整理因果知识</h3><p style="font-size:max(16px,.95vw);margin-top:.7vh;color:var(--text-secondary)">把故障、原因、问题、观察、检查、修复、风险和来源连接起来。</p></div></article>
         <article class="card-fill sub-card" style="padding:2.2vh 1.8vw;display:grid;grid-template-columns:6em 1fr;gap:1.5vw"><span style="font-size:min(3.5vw,6vh);font-weight:200;color:var(--accent)">03</span><div><h3 style="font-size:max(20px,1.5vw);font-weight:400">校验并持久化</h3><p style="font-size:max(16px,.95vw);margin-top:.7vh;color:var(--text-secondary)">检查端点、重复项与类型，稳定排序并计算指纹，再写入内存图或 Neo4j。</p></div></article>
       </div>
@@ -1352,7 +1361,7 @@
 <!-- 05 · S11 Horizontal Timeline · 初始检索链路 -->
 <section class="slide light" data-layout="S11" data-animate="timeline-walk" data-slide-id="hybrid-retrieval">
   <div class="canvas-card">
-    <div class="chrome-min"><div class="l">PART 02 · INITIAL RETRIEVAL</div><div class="r">05 / 11</div></div>
+    <div class="chrome-min"><div class="l">PART 02 · INITIAL RETRIEVAL</div><div class="r">05 / 09</div></div>
     <div data-anim="head" style="display:flex;flex-direction:column;gap:1.4vh">
       <div class="t-meta">BM25 + GRAPH PRIOR</div>
       <h2 class="h-xl-zh" style="font-size:min(5.2vw,9.3vh)">第一轮候选原因从哪里来</h2>
@@ -1376,7 +1385,7 @@
 <!-- 06 · S08 Duo Compare · 主动询问算法 -->
 <section class="slide light" data-layout="S08" data-animate="duo-mirror" data-slide-id="active-retrieval">
   <div class="canvas-card">
-    <div class="chrome-min"><div class="l">PART 02 · ACTIVE REASONING</div><div class="r">06 / 11</div></div>
+    <div class="chrome-min"><div class="l">PART 02 · ACTIVE REASONING</div><div class="r">06 / 09</div></div>
     <div data-anim="head" style="display:flex;flex-direction:column;gap:1.4vh">
       <div class="t-meta">INFORMATION GAIN + BAYES UPDATE</div>
       <h2 class="h-xl-zh" style="font-size:min(5.2vw,9.2vh)">主动询问与概率更新</h2>
@@ -1401,31 +1410,10 @@
   </div>
 </section>
 
-<!-- 07 · S07 Horizontal Bar · 策略对比 -->
-<section class="slide dark" data-layout="S07" data-animate="hbar-grow" data-slide-id="evaluation">
-  <div class="canvas-card">
-    <div class="chrome-min"><div class="l">PART 02 · STRATEGY EVALUATION</div><div class="r">07 / 11</div></div>
-    <div data-anim="head" style="display:grid;grid-template-columns:7fr 5fr;gap:4vw;align-items:end">
-      <div style="display:flex;flex-direction:column;gap:1.4vh"><div class="t-meta">30 SOURCE-CONSTRAINED CASES</div><h2 class="h-xl-zh" style="font-size:min(5.2vw,9.2vh)">四种选问策略对比</h2></div>
-      <p class="lead" style="font-size:max(18px,1.1vw)">所有策略共用相同图谱、BM25 召回、概率更新与停止条件，只改变问题选择方式。</p>
-    </div>
-    <div class="h-bar-chart" data-anim="bars" style="margin-top:6vh">
-      <span class="row-lbl">不追问</span><span class="row-track"><span class="row-fill grey" style="width:73.3%"></span></span><span class="row-val">73.3<span class="unit">%</span></span>
-      <span class="row-lbl">固定顺序</span><span class="row-track"><span class="row-fill" style="width:96.7%"></span></span><span class="row-val">96.7<span class="unit">%</span></span>
-      <span class="row-lbl">随机追问</span><span class="row-track"><span class="row-fill" style="width:97.5%"></span></span><span class="row-val">97.5<span class="unit">%</span></span>
-      <span class="row-lbl">信息增益</span><span class="row-track"><span class="row-fill accent" style="width:100%"></span></span><span class="row-val" style="color:var(--accent)">100<span class="unit">%</span></span>
-    </div>
-    <div data-anim="foot" style="display:grid;grid-template-columns:1fr 1fr;gap:4vw;margin-top:4vh;border-top:1px solid rgba(255,255,255,.2);padding-top:2vh">
-      <p style="font-size:max(16px,1vw);font-weight:500">信息增益：平均追问 <span style="color:var(--accent);font-size:1.8em;font-weight:300">2.80</span> 次，比固定与随机策略少 0.43 次</p>
-      <p style="font-size:max(16px,1vw);font-weight:500;color:var(--text-secondary)">结论范围：验证当前知识库中的选问机制，不代表真实环境准确率。</p>
-    </div>
-  </div>
-</section>
-
-<!-- 08 · S13 Three Forces · 受控知识注入 -->
+<!-- 07 · S13 Three Forces · 受控知识注入 -->
 <section class="slide light" data-layout="S13" data-animate="three-forces" data-slide-id="knowledge-injection">
   <div class="canvas-card">
-    <div class="chrome-min"><div class="l">PART 03 · KNOWLEDGE INJECTION</div><div class="r">08 / 11</div></div>
+    <div class="chrome-min"><div class="l">PART 03 · KNOWLEDGE INJECTION</div><div class="r">07 / 09</div></div>
     <div style="flex:1;display:grid;grid-template-columns:5fr 7fr;gap:4vw;align-items:stretch">
       <div data-anim="head" style="background:var(--ink);color:var(--paper);padding:3.4vh 2.4vw;display:flex;flex-direction:column;justify-content:space-between">
         <div class="t-meta">CONTROLLED GENERATION</div>
@@ -1442,56 +1430,10 @@
   </div>
 </section>
 
-<!-- 09 · S19 Four Cards · 动态诊断轨迹 -->
-<section class="slide light" data-layout="S19" data-animate="four-cards" data-slide-id="trajectory-demo">
-  <div class="canvas-card">
-    <div class="chrome-min"><div class="l">FUNCTION DEMO · DYNAMIC TRAJECTORY</div><div class="r">09 / 11</div></div>
-    <div data-anim="head" style="display:flex;flex-direction:column;gap:1.4vh">
-      <div class="t-meta">CASE · TORCH.CUDA.IS_AVAILABLE() = FALSE</div>
-      <h2 class="h-xl-zh" style="font-size:min(4.9vw,8.8vh)">用户回答怎样改变候选原因</h2>
-    </div>
-    <div class="four-cards" data-anim="up" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--grey-2);margin-top:4vh">
-      <article style="background:var(--paper);padding:2vh 1.35vw;min-height:42vh;display:flex;flex-direction:column;gap:1.4vh">
-        <div class="t-meta">ROUND 0 · INITIAL</div><h3 style="font-size:max(20px,1.45vw);font-weight:400">初始描述</h3><p style="font-size:max(15px,.88vw);color:var(--text-secondary)">系统先判断驱动问题最可能。</p>
-        <div style="margin-top:auto;display:flex;flex-direction:column;gap:1.2vh">
-          <div><span class="t-meta">驱动不可用 47.8%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:47.8%;height:100%;background:var(--accent)"></div></div></div>
-          <div><span class="t-meta">CPU版 19.5%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:19.5%;height:100%;background:var(--ink)"></div></div></div>
-          <div><span class="t-meta">容器设备 11.8%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:11.8%;height:100%;background:var(--ink)"></div></div></div>
-        </div>
-      </article>
-      <article style="background:var(--paper);padding:2vh 1.35vw;min-height:42vh;display:flex;flex-direction:column;gap:1.4vh">
-        <div class="t-meta">ROUND 1 · YES</div><h3 style="font-size:max(20px,1.45vw);font-weight:400">nvidia-smi 正常？</h3><p style="font-size:max(15px,.88vw);color:var(--text-secondary)">驱动原因快速下降，CPU 版升到首位。</p>
-        <div style="margin-top:auto;display:flex;flex-direction:column;gap:1.2vh">
-          <div><span class="t-meta">CPU版 50.4%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:50.4%;height:100%;background:var(--accent)"></div></div></div>
-          <div><span class="t-meta">容器设备 23.3%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:23.3%;height:100%;background:var(--ink)"></div></div></div>
-          <div><span class="t-meta">驱动不可用 7.3%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:7.3%;height:100%;background:var(--grey-3)"></div></div></div>
-        </div>
-      </article>
-      <article style="background:var(--paper);padding:2vh 1.35vw;min-height:42vh;display:flex;flex-direction:column;gap:1.4vh">
-        <div class="t-meta">ROUND 2 · YES</div><h3 style="font-size:max(20px,1.45vw);font-weight:400">运行在容器？</h3><p style="font-size:max(15px,.88vw);color:var(--text-secondary)">容器设备问题成为明显首因。</p>
-        <div style="margin-top:auto;display:flex;flex-direction:column;gap:1.2vh">
-          <div><span class="t-meta">容器设备 72.1%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:72.1%;height:100%;background:var(--accent)"></div></div></div>
-          <div><span class="t-meta">CPU版 16.4%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:16.4%;height:100%;background:var(--ink)"></div></div></div>
-          <div><span class="t-meta">构建不匹配 9.0%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:9%;height:100%;background:var(--ink)"></div></div></div>
-        </div>
-      </article>
-      <article style="background:rgba(0,47,167,.06);padding:2vh 1.35vw;min-height:42vh;display:flex;flex-direction:column;gap:1.4vh;border-top:3px solid var(--accent)">
-        <div class="t-meta" style="color:var(--accent)">ROUND 3 · STOP</div><h3 style="font-size:max(20px,1.45vw);font-weight:400;color:var(--accent)">PyTorch 包含 CUDA？</h3><p style="font-size:max(15px,.88vw);color:var(--text-secondary)">回答“是”，最高候选达到停止阈值。</p>
-        <div style="margin-top:auto;display:flex;flex-direction:column;gap:1.2vh">
-          <div><span class="t-meta" style="color:var(--accent)">容器设备 85.2%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:85.2%;height:100%;background:var(--accent)"></div></div></div>
-          <div><span class="t-meta">构建不匹配 11.4%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:11.4%;height:100%;background:var(--ink)"></div></div></div>
-          <div><span class="t-meta">其他原因 3.4%</span><div style="height:1.4vh;background:var(--grey-1);margin-top:.5vh"><div style="width:3.4%;height:100%;background:var(--grey-3)"></div></div></div>
-        </div>
-      </article>
-    </div>
-    <div class="t-meta" style="margin-top:1.5vh;color:var(--accent)">容器未获得 GPU 设备：11.8% → 23.3% → 72.1% → 85.2%</div>
-  </div>
-</section>
-
-<!-- 10 · S19 Four Cards · 已完成工作与最终功能 -->
+<!-- 08 · S19 Four Cards · 已完成工作与最终功能 -->
 <section class="slide dark" data-layout="S19" data-animate="four-cards" data-slide-id="completed-functions">
   <div class="canvas-card">
-    <div class="chrome-min"><div class="l">DELIVERY · COMPLETED WORK</div><div class="r">10 / 11</div></div>
+    <div class="chrome-min"><div class="l">DELIVERY · COMPLETED WORK</div><div class="r">08 / 09</div></div>
     <div data-anim="head" style="display:flex;flex-direction:column;gap:1.4vh">
       <div class="t-meta">WHAT WE BUILT</div>
       <h2 class="h-xl-zh" style="font-size:min(5vw,9vh)">已经完成的系统功能</h2>
@@ -1515,7 +1457,7 @@
       <!-- 左半 · 纯黑宣言，不使用动态背景 -->
       <div class="half b-ink" style="padding:5.6vh 3.6vw 4.4vh;justify-content:space-between;position:relative;overflow:hidden">
         <div class="chrome-min" style="margin-bottom:0;position:relative;z-index:1">
-          <div class="l">11 / 11</div>
+          <div class="l">09 / 09</div>
           <div class="r">CLOSING</div>
         </div>
 
@@ -1574,112 +1516,58 @@
 
 <!-- 演讲备注：替换示例页时同步替换，id 必须与 section[data-slide-id] 一致。 -->
 <script>
-const LEGACY_SPEAKER_NOTES = [
-  {
-    id: 'cover', title: 'DebugPath', section: '开场', minutes: 0.35,
-    purpose: '用一句话建立项目差异：从静态问答转向主动诊断',
-    talk: ['传统问答系统通常根据第一句话直接给答案', 'DebugPath 会继续提问，并把新证据写回图谱检索过程', '今天重点展示图谱如何在交互中逐轮收敛'],
-    transition: '先把它放回课程要求，看三个部分分别怎样实现',
-    delivery: '开场简短，重读“主动询问”和“逐轮逼近”'
-  },
-  {
-    id: 'architecture', title: '三项要求，一条诊断链', section: '整体框架', minutes: 0.75,
-    purpose: '明确项目没有偏离课程要求，并给出整体架构',
-    talk: ['构建层把症状、原因、检查、修复、风险和来源组织成因果图谱', '检索推理层结合文本召回与图谱先验，使用信息增益选择下一问题', '知识注入层只允许有证据支持的结论进入最终方案，并检查前置条件和风险', '当前图谱包含130个节点和338条关系'],
-    transition: '三部分中最具区分度的是中间的动态检索，因此单独展开',
-    advance: '讲完三个圆的对应关系后翻页'
-  },
-  {
-    id: 'active-retrieval', title: '从一次检索到动态检索', section: '核心机制', minutes: 0.7,
-    purpose: '解释主动询问为什么属于检索推理创新',
-    talk: ['静态Graph RAG只根据初始描述召回一次，信息不足时容易把相似原因混在一起', 'DebugPath根据当前候选概率，计算哪个问题最能降低不确定性', '用户回答后更新后验概率，再从变化后的候选子图继续检索', '所以交互式诊断本质上是反馈驱动的动态图谱检索'],
-    transition: '接下来用一个真实运行轨迹把这个过程展示出来'
-  },
-  {
-    id: 'trajectory-demo', title: '三轮询问，让原因浮出图谱', section: '演示过程', minutes: 1.25,
-    purpose: '用真实轨迹替代耗时且不稳定的现场演示',
-    talk: ['初始输入只能确定PyTorch无法使用GPU，系统把驱动不可用排在首位', '确认nvidia-smi正常后，驱动原因从47.8%降到7.3%', '确认运行在容器后，容器未获得GPU设备升到72.1%', '确认PyTorch包含CUDA后，该原因达到85.2%，触发停止阈值', '最终输出沿图谱连接到检查步骤、修复操作、风险提示和证据来源'],
-    transition: '一个案例说明过程，下一页用统一测试集说明策略是否稳定',
-    fallback: '如果现场网页无法打开，直接按时间线讲述，所有数字来自本地实际运行'
-  },
-  {
-    id: 'evaluation', title: '主动询问更少，定位更稳', section: '实验结果', minutes: 0.75,
-    purpose: '给出主动询问与信息增益策略的量化证据和边界',
-    talk: ['不追问时Top-1为73.3%，说明仅凭初始信息仍有歧义', '固定顺序和随机追问虽然接近97%，平均都需要3.23次', '信息增益策略达到100%，平均追问2.80次', '这些是30条受来源约束的合成案例，只能证明机制在当前知识库内有效，不能声称真实世界准确率'],
-    transition: '最后总结当前已经完成什么，以及最终答辩前还需要补什么',
-    delivery: '先讲趋势，再主动说明实验边界'
-  },
-  {
-    id: 'closing', title: '让图谱在询问中收敛', section: '收束', minutes: 0.45,
-    purpose: '收束当前成果、创新点与后续边界',
-    talk: ['当前版本已经形成可诊断、可解释、可回放的完整流程', '项目最核心的表达不是节点数量，而是图谱如何在交互中逐轮收敛', '最终阶段将用真实案例校准概率，并完成Neo4j Aura展示'],
-    transition: '结束演讲，进入提问',
-    cue: '停顿一秒后致谢'
-  }
-];
 const SPEAKER_NOTES = [
   {
-    id: 'cover', title: 'DebugPath', section: '项目介绍', minutes: 0.35,
+    id: 'cover', title: 'DebugPath', section: '项目介绍', minutes: 0.2,
     purpose: '说明项目名称、领域和基本定位',
     talk: ['DebugPath面向AI开发环境中的常见故障', '项目使用因果知识图谱组织诊断知识，并通过主动询问逐步定位原因', '汇报按照课程要求的图谱构建、检索推理和知识注入展开'],
-    transition: '先说明用户遇到的问题，以及系统最终要完成什么'
+    transition: '先说明DebugPath与普通Graph RAG有什么不同'
   },
   {
-    id: 'project-definition', title: '项目解决的问题', section: '项目介绍', minutes: 0.65,
-    purpose: '解释为什么需要交互式故障诊断以及最终输出',
-    talk: ['一条报错可能对应驱动、依赖、环境、版本或配置等多个原因', '用户第一次描述通常不足以确定根因，普通问答容易返回一长串通用建议', 'DebugPath通过继续询问可观察事实来缩小原因范围', '最终输出原因排序和带来源的安全排查方案'],
-    transition: '明确项目目标后，把系统工作对应到课程要求的三个部分'
+    id: 'project-definition', title: 'DebugPath与Graph RAG', section: '项目定位', minutes: 0.45,
+    purpose: '用一次检索与动态检索的区别建立项目核心特色',
+    talk: ['普通Graph RAG通常是用户提问一次、系统检索一次、模型回答一次', 'DebugPath在这个基础上增加主动询问和动态推理', '用户每次回答都会更新原因概率，并改变下一问和下一轮候选子图', '系统直到定位原因后，才生成结构化排查方案'],
+    transition: '这条动态诊断链正好对应课程要求的三个部分'
   },
   {
-    id: 'architecture', title: '课程三部分与系统框架', section: '整体框架', minutes: 0.75,
-    purpose: '说明三个课程要求如何组成完整链路',
-    talk: ['图谱构建层负责定义并保存故障诊断知识', '检索推理层从初始描述形成候选原因，并在每轮回答后重新排序', '知识注入层把检索结果转成经过验证的检查和修复方案', '三个部分共同形成从问题输入到诊断输出的闭环'],
+    id: 'architecture', title: '三个部分，一条诊断链', section: '整体框架', minutes: 0.4,
+    purpose: '用通俗语言说明三项课程要求分别完成什么',
+    talk: ['图谱构建把故障、原因、问题、观察、检查、修复、风险和来源连接起来', '检索与推理先召回候选原因，再选下一问，并根据回答更新概率和子图', '知识注入把最终证据组织成结构化上下文，交给模型整理答案', '三部分分别解决知识如何连接、候选如何收敛、证据如何表达'],
     transition: '下面按照这三个部分依次说明已经完成的工作'
   },
   {
-    id: 'graph-construction', title: '知识图谱构建', section: '知识图谱构建', minutes: 0.9,
+    id: 'graph-construction', title: '知识图谱构建', section: '知识图谱构建', minutes: 0.45,
     purpose: '展开图谱构建的方法、数据结构和构建产物',
-    talk: ['我们先冻结12类实体和15类关系，避免抽取结果随意变化', '图谱把故障、原因、问题、观察、检查、修复、风险与来源连接成因果链', '构建脚本检查关系方向、重复项、端点完整性与类型', '相同输入生成稳定排序和相同内容指纹，可写入内存图或Neo4j', '当前产物包含130个节点、338条关系和30条证据片段'],
+    talk: ['我们先冻结12类实体和18类关系，避免知识结构随意变化', '图谱把故障、原因、问题、观察、检查、修复、风险与来源连接成因果链', '构建脚本检查关系方向、重复项、端点完整性与类型', '相同输入生成稳定排序和相同内容指纹，可写入内存图或Neo4j', '当前产物包含130个节点、338条关系和30条证据片段'],
     transition: '图谱建好后，系统首先要从用户报错中得到初始候选原因'
   },
   {
-    id: 'hybrid-retrieval', title: 'BM25与图谱先验融合', section: '检索与推理', minutes: 0.8,
+    id: 'hybrid-retrieval', title: 'BM25与图谱先验融合', section: '检索与推理', minutes: 0.55,
     purpose: '说明第一轮候选原因的检索过程',
     talk: ['BM25对报错文本与EvidenceChunk执行中英文关键词匹配', '召回片段沿CHUNK_SUPPORTS_CAUSE关系映射到候选原因', '系统按45%文本证据和55%图谱先验形成初始概率', '这一步只生成候选排序，不直接宣称已经确定根因'],
     transition: '初始候选仍可能有歧义，因此进入主动询问算法'
   },
   {
-    id: 'active-retrieval', title: '主动询问与概率更新', section: '检索与推理', minutes: 1.1,
+    id: 'active-retrieval', title: '主动询问与概率更新', section: '检索与推理', minutes: 0.8,
     purpose: '解释项目的核心检索算法',
     talk: ['系统为每个问题计算回答前后的期望熵下降', '信息增益再扣除检查成本和风险成本，得到问题效用', '系统选择效用最高的问题，而不是按固定顺序询问', '用户回答后，根据图谱保存的条件概率执行贝叶斯更新', '达到置信阈值、问题用尽、信息增益不足或最大轮数时停止'],
-    transition: '紧接着使用对比实验检验这种选问方法是否有效'
+    transition: '原因收敛后，还需要控制这些知识怎样进入最终答案'
   },
   {
-    id: 'evaluation', title: '选问策略对比实验', section: '检索与推理', minutes: 0.8,
-    purpose: '量化比较不追问、固定、随机和信息增益策略',
-    talk: ['四种策略共享相同的图谱、初始检索、概率更新与停止条件', '不追问的Top-1为73.3%，说明初始输入不足时仍存在明显歧义', '信息增益策略Top-1为100%，平均追问2.80次', '与固定和随机策略相比，平均少0.43问', '30条路径来自来源约束的合成案例，结果不能解释为真实世界准确率'],
-    transition: '检索得到候选原因后，还需要控制这些知识怎样进入最终答案'
-  },
-  {
-    id: 'knowledge-injection', title: '受控知识注入', section: '知识注入', minutes: 0.9,
+    id: 'knowledge-injection', title: '受控知识注入', section: '知识注入', minutes: 0.45,
     purpose: '说明检索知识如何安全进入最终答案',
     talk: ['程序先把验证通过的诊断项转换为C1、C2、C3声明白名单', '本轮召回证据保留E编号，模型只能选择已存在的证据', 'DeepSeek只调整展示顺序与侧重点，不能编造原因、命令、修复或链接', '程序拒绝未知ID、遗漏声明、重复证据和非法侧重点', '任何非法结构都回退到确定性离线模板'],
-    transition: '三个部分都解释清楚后，用一条实际轨迹展示它们怎样协同工作'
+    transition: '三个部分讲完后，切换到网页完成一次实际诊断演示',
+    cue: '此处切换到Streamlit网页，展示输入、追问、概率与子图同步变化'
   },
   {
-    id: 'trajectory-demo', title: '候选原因的动态变化', section: '功能展示', minutes: 1.2,
-    purpose: '直观展示每轮询问如何改变候选原因',
-    talk: ['初始状态把NVIDIA驱动不可用排在47.8%的首位', '确认nvidia-smi正常后，驱动原因降到7.3%，CPU版PyTorch升到首位', '确认运行在容器后，容器未获得GPU设备升到72.1%', '再确认PyTorch包含CUDA后，该原因达到85.2%并触发停止', '这四个阶段都来自项目实际运行结果，不是手工编写的示意数字'],
-    transition: '诊断轨迹之外，最后汇总用户在系统中能够直接使用的功能'
-  },
-  {
-    id: 'completed-functions', title: '已经完成的系统功能', section: '功能展示', minutes: 0.8,
+    id: 'completed-functions', title: '已经完成的系统功能', section: '功能展示', minutes: 0.35,
     purpose: '明确团队实际完成的工程工作和用户可见功能',
     talk: ['图谱可由固定输入重复构建，并可写入Neo4j核验', '网页支持输入报错、查看候选概率、回答问题并继续诊断', '诊断轨迹可回看每轮问题、概率变化和停止原因，也可下载JSON', '最终方案包含前置检查、检查命令、修复动作、风险提示和证据来源', '当前覆盖Python导入、PyTorch GPU/CUDA以及API和Neo4j连接三类故障'],
     transition: '最后说明当前完成度和后续需要补强的部分'
   },
   {
-    id: 'closing', title: '当前结论', section: '总结', minutes: 0.45,
+    id: 'closing', title: '当前结论', section: '总结', minutes: 0.2,
     purpose: '总结课程要求完成情况、核心特色和项目边界',
     talk: ['课程要求的图谱构建、检索推理和知识注入均已形成可运行链路', '项目的主要特色是用户反馈会触发新的图谱检索与概率更新', '当前概率来自原型参数和合成路径，后续需要用独立真实案例校准', 'Neo4j Aura主要用于持久化和展示，核心算法保持离线可运行'],
     transition: '结束汇报，进入提问'
