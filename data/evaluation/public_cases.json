@@ -1,0 +1,68 @@
+{
+  "description": "从公开项目Issue整理的独立案例种子。只有root_cause_status为confirmed的案例参与准确率；缺少的观察统一视为unknown。",
+  "cases": [
+    {
+      "id": "public_cpython_local_shadow",
+      "split": "test",
+      "family": "python_import",
+      "report": "ImportError: partially initialized module 'random' has no attribute 'randint'，脚本文件名为random.py",
+      "expected_top_cause": "本地文件遮蔽第三方模块",
+      "answers": {"Q-是否存在同名文件": "yes"},
+      "source_url": "https://github.com/python/cpython/issues/95754",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue明确给出脚本与被导入模块同名的最小复现场景。"
+    },
+    {
+      "id": "public_pip_homebrew_wrong_interpreter",
+      "split": "test",
+      "family": "python_import",
+      "report": "虚拟环境中运行tox出现ModuleNotFoundError，但包已经安装；脚本shebang指向系统Python",
+      "expected_top_cause": "pip与Python指向不同环境",
+      "answers": {"Q-解释器是否一致": "no"},
+      "source_url": "https://github.com/pypa/pip/issues/8600",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue提供最小复现并定位到虚拟环境脚本指向系统解释器。"
+    },
+    {
+      "id": "public_pytorch_cpu_only_build",
+      "split": "test",
+      "family": "pytorch_gpu",
+      "report": "torch.cuda.is_available() False，调用CUDA时报错 Cannot initialize CUDA without ATen_cuda library，当前为CPU-only build",
+      "expected_top_cause": "安装了CPU版PyTorch",
+      "answers": {"Q-PyTorch是否包含CUDA": "no"},
+      "source_url": "https://github.com/pytorch/pytorch/issues/11430",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue标题和错误信息明确指向CPU-only构建。"
+    },
+    {
+      "id": "public_pytorch_cuda_false_windows",
+      "split": "unconfirmed",
+      "family": "pytorch_gpu",
+      "report": "Windows笔记本中nvidia-smi正常，但torch.cuda.is_available()返回False",
+      "answers": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "yes"},
+      "source_url": "https://github.com/pytorch/pytorch/issues/51858",
+      "root_cause_status": "unconfirmed",
+      "confirmation": "原帖没有唯一确认根因，不参与准确率。"
+    },
+    {
+      "id": "public_pytorch_container_unknown_error",
+      "split": "unconfirmed",
+      "family": "pytorch_gpu",
+      "report": "容器内出现CUDA unknown error，torch.cuda.is_available()返回False，torch.version.cuda为12.1",
+      "answers": {"Q-是否运行在容器": "yes", "Q-PyTorch是否包含CUDA": "yes"},
+      "source_url": "https://github.com/pytorch/pytorch/issues/144835",
+      "root_cause_status": "unconfirmed",
+      "confirmation": "环境变量只是错误信息中的可能原因，原帖未确认最终修复。"
+    },
+    {
+      "id": "public_neo4j_connection_refused",
+      "split": "unconfirmed",
+      "family": "service_config",
+      "report": "Neo4j Python Driver连接localhost:7687时返回ServiceUnavailable和Connection refused",
+      "answers": {"Q-是否连接被拒绝": "yes"},
+      "source_url": "https://github.com/neo4j/neo4j-python-driver/issues/251",
+      "root_cause_status": "unconfirmed",
+      "confirmation": "维护者指出这是TCP层通用故障，缺少足够环境信息，不能标注唯一根因。"
+    }
+  ]
+}

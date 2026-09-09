@@ -153,6 +153,17 @@ def test_unknown_answers_do_not_satisfy_robust_confidence_stop(service):
             snapshot["state"], snapshot["question"]["name"], "unknown"
         )
     assert snapshot["state"]["status"] == "questioning"
+    assert not snapshot["decision"]["sufficient"]
+
+
+def test_max_questions_with_weak_evidence_abstains(service):
+    snapshot = service.start("No module named pandas")
+    while snapshot["state"]["status"] == "questioning":
+        snapshot = service.answer(
+            snapshot["state"], snapshot["question"]["name"], "unknown"
+        )
+    assert not snapshot["decision"]["sufficient"]
+    assert "证据不足" in snapshot["state"]["stop_reason"]
 
 
 def test_answerability_reduces_effective_information_gain(service):
@@ -264,6 +275,17 @@ def test_answerability_aware_evaluation_is_reproducible():
         "legacy_information_gain",
         "answerability_aware",
     ]
+
+
+def test_public_cases_exclude_unconfirmed_roots_from_accuracy():
+    from scripts.evaluate_public_cases import evaluate, load_public_cases
+
+    confirmed, pending = load_public_cases()
+    report = evaluate()
+    assert confirmed and pending
+    assert report["confirmed_cases"] == len(confirmed)
+    assert report["unconfirmed_cases"] == len(pending)
+    assert all(case["root_cause_status"] == "confirmed" for case in confirmed)
 
 
 def test_neo4j_clear_is_project_scoped():

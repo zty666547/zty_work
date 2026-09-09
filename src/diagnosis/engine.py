@@ -107,6 +107,26 @@ class DiagnosisEngine:
         """返回当前候选原因分布的香农熵，供评估与界面解释使用。"""
         return self._entropy(state.probabilities)
 
+    def decision_summary(self, state: DiagnosisState) -> dict:
+        """判断当前证据是否足以支持确定性诊断。"""
+        ranked = sorted(state.probabilities.values(), reverse=True)
+        top_probability = ranked[0] if ranked else 0.0
+        runner_up = ranked[1] if len(ranked) > 1 else 0.0
+        margin = top_probability - runner_up
+        informative_answers = sum(answer != "unknown" for answer in state.answers.values())
+        sufficient = (
+            top_probability >= self.settings.confidence_threshold
+            and margin >= self.settings.confidence_margin
+            and informative_answers >= self.settings.min_informative_answers
+        )
+        return {
+            "sufficient": sufficient,
+            "top_probability": top_probability,
+            "margin": margin,
+            "informative_answers": informative_answers,
+            "required_informative_answers": self.settings.min_informative_answers,
+        }
+
     def _question_gain(self, state: DiagnosisState, question: str) -> tuple[float, float]:
         observation = self.question_observation[question]
         effects = self.observation_effects[observation]
@@ -215,23 +235,19 @@ class DiagnosisEngine:
                 state.probabilities[cause] = probability * likelihood
             self._normalize(state.probabilities)
 
-        ranked_probabilities = sorted(state.probabilities.values(), reverse=True)
-        top_probability = ranked_probabilities[0] if ranked_probabilities else 0.0
-        runner_up = ranked_probabilities[1] if len(ranked_probabilities) > 1 else 0.0
-        confidence_margin = top_probability - runner_up
-        informative_answers = sum(answer != "unknown" for answer in state.answers.values())
-        confidence_ready = top_probability >= self.settings.confidence_threshold
+        decision = self.decision_summary(state)
+        confidence_ready = decision["top_probability"] >= self.settings.confidence_threshold
         if self.settings.enable_robust_stopping:
-            confidence_ready = (
-                confidence_ready
-                and informative_answers >= self.settings.min_informative_answers
-                and confidence_margin >= self.settings.confidence_margin
-            )
+            confidence_ready = decision["sufficient"]
         else:
             confidence_ready = confidence_ready and len(state.asked_questions) >= 2
         if len(state.asked_questions) >= self.settings.max_questions:
             state.status = "completed"
-            state.stop_reason = "达到最大追问轮数"
+            state.stop_reason = (
+                "达到最大追问轮数，但有效证据不足"
+                if self.settings.enable_robust_stopping and not decision["sufficient"]
+                else "达到最大追问轮数"
+            )
         elif confidence_ready:
             state.status = "completed"
             state.stop_reason = "置信度、领先差距与有效证据达到停止条件"

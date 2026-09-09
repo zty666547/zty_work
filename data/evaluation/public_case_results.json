@@ -1,0 +1,133 @@
+{
+  "benchmark": "confirmed_public_case_seed",
+  "confirmed_cases": 3,
+  "unconfirmed_cases": 3,
+  "warning": "样本量极小，只验证数据流程，不用于算法优劣结论。",
+  "metrics": [
+    {
+      "algorithm": "legacy_information_gain",
+      "cases": 3,
+      "top1": 1.0,
+      "coverage": 0.0,
+      "selective_accuracy": null,
+      "avg_questions": 3.3333333333333335,
+      "avg_unknown_questions": 2.3333333333333335,
+      "avg_cost": 3.6666666666666665,
+      "avg_risk": 0.0,
+      "wrong_confident_stop_rate": 0.0
+    },
+    {
+      "algorithm": "answerability_aware",
+      "cases": 3,
+      "top1": 1.0,
+      "coverage": 0.0,
+      "selective_accuracy": null,
+      "avg_questions": 4.0,
+      "avg_unknown_questions": 3.0,
+      "avg_cost": 4.666666666666667,
+      "avg_risk": 0.0,
+      "wrong_confident_stop_rate": 0.0
+    }
+  ],
+  "details": {
+    "legacy_information_gain": [
+      {
+        "id": "public_cpython_local_shadow",
+        "split": "test",
+        "expected": "本地文件遮蔽第三方模块",
+        "predicted": "本地文件遮蔽第三方模块",
+        "probability": 0.9095280826299228,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 2,
+        "unknown_questions": 1,
+        "total_cost": 2.0,
+        "total_risk": 0.0,
+        "stop_reason": "置信度、领先差距与有效证据达到停止条件"
+      },
+      {
+        "id": "public_pip_homebrew_wrong_interpreter",
+        "split": "test",
+        "expected": "pip与Python指向不同环境",
+        "predicted": "pip与Python指向不同环境",
+        "probability": 0.7178406735707137,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 4,
+        "unknown_questions": 3,
+        "total_cost": 5.0,
+        "total_risk": 0.0,
+        "stop_reason": "达到最大追问轮数"
+      },
+      {
+        "id": "public_pytorch_cpu_only_build",
+        "split": "test",
+        "expected": "安装了CPU版PyTorch",
+        "predicted": "安装了CPU版PyTorch",
+        "probability": 0.49211128879869187,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 4,
+        "unknown_questions": 3,
+        "total_cost": 4.0,
+        "total_risk": 0.0,
+        "stop_reason": "达到最大追问轮数"
+      }
+    ],
+    "answerability_aware": [
+      {
+        "id": "public_cpython_local_shadow",
+        "split": "test",
+        "expected": "本地文件遮蔽第三方模块",
+        "predicted": "本地文件遮蔽第三方模块",
+        "probability": 0.9095280826299228,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 4,
+        "unknown_questions": 3,
+        "total_cost": 5.0,
+        "total_risk": 0.0,
+        "stop_reason": "达到最大追问轮数，但有效证据不足"
+      },
+      {
+        "id": "public_pip_homebrew_wrong_interpreter",
+        "split": "test",
+        "expected": "pip与Python指向不同环境",
+        "predicted": "pip与Python指向不同环境",
+        "probability": 0.7178406735707137,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 4,
+        "unknown_questions": 3,
+        "total_cost": 5.0,
+        "total_risk": 0.0,
+        "stop_reason": "达到最大追问轮数，但有效证据不足"
+      },
+      {
+        "id": "public_pytorch_cpu_only_build",
+        "split": "test",
+        "expected": "安装了CPU版PyTorch",
+        "predicted": "安装了CPU版PyTorch",
+        "probability": 0.49211128879869187,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 4,
+        "unknown_questions": 3,
+        "total_cost": 4.0,
+        "total_risk": 0.0,
+        "stop_reason": "达到最大追问轮数，但有效证据不足"
+      }
+    ]
+  },
+  "unconfirmed_ids": [
+    "public_pytorch_cuda_false_windows",
+    "public_pytorch_container_unknown_error",
+    "public_neo4j_connection_refused"
+  ]
+}

@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+"""在根因已确认的公开案例种子上运行新旧主动诊断算法。"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from config.settings import Settings  # noqa: E402
+from scripts.evaluate_active_algorithm import run_case, summarize  # noqa: E402
+from src.diagnosis.service import DiagnosisService  # noqa: E402
+
+DATASET = ROOT / "data/evaluation/public_cases.json"
+OUTPUT = ROOT / "data/evaluation/public_case_results.json"
+
+
+def load_public_cases() -> tuple[list[dict], list[dict]]:
+    payload = json.loads(DATASET.read_text(encoding="utf-8"))
+    cases = payload["cases"]
+    ids = [case["id"] for case in cases]
+    if len(ids) != len(set(ids)):
+        raise ValueError("公开案例ID重复")
+    for case in cases:
+        if not case["source_url"].startswith("https://github.com/"):
+            raise ValueError(f"{case['id']}缺少公开GitHub来源")
+        if case["root_cause_status"] not in {"confirmed", "unconfirmed"}:
+            raise ValueError(f"{case['id']}的根因状态非法")
+    confirmed = [case for case in cases if case["root_cause_status"] == "confirmed"]
+    pending = [case for case in cases if case["root_cause_status"] == "unconfirmed"]
+    return confirmed, pending
+
+
+def evaluate() -> dict:
+    confirmed, pending = load_public_cases()
+    algorithms = [
+        (
+            "legacy_information_gain",
+            DiagnosisService(
+                Settings(
+                    enable_answerability_adjustment=False,
+                    enable_robust_stopping=False,
+                )
+            ),
+        ),
+        ("answerability_aware", DiagnosisService(Settings())),
+    ]
+    details = {
+        name: [run_case(service, case, unknown_below=0.0) for case in confirmed]
+        for name, service in algorithms
+    }
+    return {
+        "benchmark": "confirmed_public_case_seed",
+        "confirmed_cases": len(confirmed),
+        "unconfirmed_cases": len(pending),
+        "warning": "样本量极小，只验证数据流程，不用于算法优劣结论。",
+        "metrics": [summarize(name, details[name]) for name, _ in algorithms],
+        "details": details,
+        "unconfirmed_ids": [case["id"] for case in pending],
+    }
+
+
+def main() -> None:
+    report = evaluate()
+    print(f"已确认公开案例：{report['confirmed_cases']}；待确认：{report['unconfirmed_cases']}")
+    for row in report["metrics"]:
+        print(
+            f"{row['algorithm']}: Top-1={row['top1']:.1%}, "
+            f"覆盖率={row['coverage']:.1%}, "
+            f"平均追问={row['avg_questions']:.2f}, "
+            f"平均无法回答={row['avg_unknown_questions']:.2f}"
+        )
+    print("注意：样本量极小，当前结果不得用于算法优劣结论。")
+    OUTPUT.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+if __name__ == "__main__":
+    main()

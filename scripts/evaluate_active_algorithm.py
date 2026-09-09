@@ -43,6 +43,7 @@ def run_case(
 
     expected = case["expected_top_cause"]
     predicted = snapshot["candidates"][0]
+    decision_sufficient = snapshot["decision"]["sufficient"]
     return {
         "id": case["id"],
         "split": case["split"],
@@ -50,6 +51,8 @@ def run_case(
         "predicted": predicted["name"],
         "probability": predicted["probability"],
         "passed": predicted["name"] == expected,
+        "decision_sufficient": decision_sufficient,
+        "resolved_correctly": decision_sufficient and predicted["name"] == expected,
         "questions": len(snapshot["state"]["asked_questions"]),
         "unknown_questions": unknown_questions,
         "total_cost": total_cost,
@@ -60,6 +63,7 @@ def run_case(
 
 def summarize(name: str, rows: list[dict]) -> dict:
     total = len(rows)
+    resolved = [row for row in rows if row["decision_sufficient"]]
     wrong_confident_stops = sum(
         not row["passed"] and "置信" in row["stop_reason"] for row in rows
     )
@@ -67,6 +71,10 @@ def summarize(name: str, rows: list[dict]) -> dict:
         "algorithm": name,
         "cases": total,
         "top1": sum(row["passed"] for row in rows) / total,
+        "coverage": len(resolved) / total,
+        "selective_accuracy": (
+            sum(row["passed"] for row in resolved) / len(resolved) if resolved else None
+        ),
         "avg_questions": sum(row["questions"] for row in rows) / total,
         "avg_unknown_questions": sum(row["unknown_questions"] for row in rows) / total,
         "avg_cost": sum(row["total_cost"] for row in rows) / total,
@@ -103,12 +111,13 @@ def evaluate(cases: list[dict], unknown_below: float = 0.8) -> dict:
 
 
 def print_table(report: dict) -> None:
-    print("算法                         Top-1  平均追问  无法回答  检查成本  错误自信停止")
-    print("-" * 82)
+    print("算法                         Top-1  覆盖率  平均追问  无法回答  检查成本  错误自信停止")
+    print("-" * 91)
     for row in report["metrics"]:
         print(
             f"{row['algorithm']:<28} {row['top1']:>6.1%} "
-            f"{row['avg_questions']:>9.2f} {row['avg_unknown_questions']:>9.2f} "
+            f"{row['coverage']:>6.1%} {row['avg_questions']:>9.2f} "
+            f"{row['avg_unknown_questions']:>9.2f} "
             f"{row['avg_cost']:>9.2f} {row['wrong_confident_stop_rate']:>11.1%}"
         )
 

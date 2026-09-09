@@ -182,7 +182,14 @@ def main() -> None:
                         st.session_state.diagnosis = service.complete(state)
                         st.rerun()
                 else:
-                    st.subheader("已验证的排查方案")
+                    if snapshot["decision"]["sufficient"]:
+                        st.subheader("已验证的排查方案")
+                    else:
+                        st.subheader("当前排查建议（证据不足）")
+                        st.warning(
+                            "现有观察不足以支持确定性诊断。以下内容仅按当前候选顺序给出，"
+                            "请先补充检查结果，不要直接执行修复。"
+                        )
                     if snapshot["plan_errors"]:
                         st.error("方案验证未通过：" + "；".join(snapshot["plan_errors"]))
                     elif mode == "DeepSeek受控编排模式":

@@ -71,6 +71,7 @@ class DiagnosisService:
             "state": state.to_dict(),
             "candidates": self.engine.ranked_candidates(state),
             "question": question.__dict__ if question else None,
+            "decision": self.engine.decision_summary(state),
             "plan": [item.__dict__ for item in plan],
             "plan_errors": verify_plan(plan),
             "source": self.graph.source,

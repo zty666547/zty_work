@@ -82,6 +82,7 @@ python scripts/offline_demo.py
 pytest -q
 python scripts/evaluate_diagnosis.py
 python scripts/evaluate_active_algorithm.py
+python scripts/evaluate_public_cases.py
 python scripts/evaluate_ablation.py
 python scripts/evaluate_injection.py
 ```
@@ -99,7 +100,7 @@ python scripts/evaluate_injection.py
 
 以上结果用于验证系统机制，不能代表真实环境中的准确率。详细设置见[评测说明](docs/evaluation.md)。
 
-最终阶段正在研究“可回答性感知”的主动诊断：理论上信息量很大、但普通用户难以确认的问题会被降低优先级；回答“不清楚”也不会被计作有效诊断证据。当前信息受限用户压力测试属于确定性模拟，尚不能替代真实用户实验。
+最终阶段正在研究“可回答性感知”的主动诊断：理论上信息量很大、但普通用户难以确认的问题会被降低优先级；回答“不清楚”也不会被计作有效诊断证据。若置信度、首位领先差距或有效回答数不足，系统会明确标记“证据不足”，不把候选第一名冒充为确定结论。当前信息受限用户压力测试属于确定性模拟，尚不能替代真实用户实验。
 
 ## 答辩展示
 
