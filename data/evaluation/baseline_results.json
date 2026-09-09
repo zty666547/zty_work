@@ -36,9 +36,9 @@
       "trajectories": 30,
       "top1": 1.0,
       "mrr": 1.0,
-      "avg_questions": 2.8,
+      "avg_questions": 2.8333333333333335,
       "success_within_3": 0.6666666666666666,
-      "avg_entropy_drop": 1.3681938374015092
+      "avg_entropy_drop": 1.3682020835706687
     }
   ],
   "metrics_by_split": {
@@ -113,9 +113,9 @@
         "trajectories": 21,
         "top1": 1.0,
         "mrr": 1.0,
-        "avg_questions": 2.8095238095238093,
+        "avg_questions": 2.857142857142857,
         "success_within_3": 0.6666666666666666,
-        "avg_entropy_drop": 1.363723896954109
+        "avg_entropy_drop": 1.3637356771957656
       }
     ]
   },
@@ -928,7 +928,7 @@
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 0.9507605503134764,
+        "entropy_drop": 0.9507605503134765,
         "passed": true
       },
       {
@@ -962,12 +962,12 @@
         "split": "test",
         "expected": "pip与Python指向不同环境",
         "predicted": "pip与Python指向不同环境",
-        "probability": 0.7790477969780992,
+        "probability": 0.7790477969780993,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 0.9672714352991706,
+        "entropy_drop": 0.9672714352991708,
         "passed": true
       },
       {
@@ -1027,12 +1027,12 @@
         "split": "test",
         "expected": "Python版本与包不兼容",
         "predicted": "Python版本与包不兼容",
-        "probability": 0.9349565217391305,
+        "probability": 0.9060379467255648,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 1.2587438275118177,
+        "entropy_drop": 1.1191862573930975,
         "passed": true
       },
       {
@@ -1170,7 +1170,7 @@
         "split": "dev",
         "expected": "必需环境变量缺失",
         "predicted": "必需环境变量缺失",
-        "probability": 0.9509039400073154,
+        "probability": 0.9509039400073153,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
@@ -1222,12 +1222,12 @@
         "split": "test",
         "expected": "目标服务未启动",
         "predicted": "目标服务未启动",
-        "probability": 0.7680711099672911,
+        "probability": 0.768071109967291,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 1.2445659271661849,
+        "entropy_drop": 1.2445659271661844,
         "passed": true
       },
       {
@@ -1235,7 +1235,7 @@
         "split": "test",
         "expected": "目标服务未启动",
         "predicted": "目标服务未启动",
-        "probability": 0.705275078366118,
+        "probability": 0.7052750783661181,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
@@ -1261,12 +1261,12 @@
         "split": "test",
         "expected": "端口被其他进程占用",
         "predicted": "端口被其他进程占用",
-        "probability": 0.8510806589198069,
+        "probability": 0.8727235513927794,
         "rank": 1,
         "reciprocal_rank": 1.0,
-        "questions": 2,
+        "questions": 3,
         "success_within_3": true,
-        "entropy_drop": 1.4477065509256806,
+        "entropy_drop": 1.5875115061191887,
         "passed": true
       },
       {

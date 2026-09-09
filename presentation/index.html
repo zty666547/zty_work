@@ -1387,16 +1387,16 @@
   <div class="canvas-card">
     <div class="chrome-min"><div class="l">PART 02 · ACTIVE REASONING</div><div class="r">06 / 09</div></div>
     <div data-anim="head" style="display:flex;flex-direction:column;gap:1.4vh">
-      <div class="t-meta">INFORMATION GAIN + BAYES UPDATE</div>
-      <h2 class="h-xl-zh" style="font-size:min(5.2vw,9.2vh)">主动询问与概率更新</h2>
+      <div class="t-meta">ANSWERABILITY-AWARE INFORMATION GAIN</div>
+      <h2 class="h-xl-zh" style="font-size:min(5.2vw,9.2vh)">可回答性感知的主动询问</h2>
     </div>
     <div class="duo-compare" data-anim="compare" style="margin-top:5vh">
       <div class="col">
         <div class="col-tag"><span class="num">01</span> SELECT QUESTION</div>
         <div class="col-ttl">选择下一问</div>
-        <p class="col-desc">计算每个问题对候选原因分布的期望熵下降，并扣除检查成本与风险成本。</p>
-        <div style="font-family:var(--mono);font-size:max(15px,.9vw);line-height:1.8;padding:2vh 1.4vw;background:var(--grey-1)">IG(q) = H(C) − E[H(C | answer)]<br/>Utility = IG − 0.02·cost − 0.05·risk</div>
-        <ul class="col-list"><li>选择 Utility 最大的问题</li><li>问题随当前概率分布动态变化</li></ul>
+        <p class="col-desc">先计算理论信息增益，再根据用户能否回答进行修正，并扣除检查成本与风险成本。</p>
+        <div style="font-family:var(--mono);font-size:max(15px,.9vw);line-height:1.8;padding:2vh 1.4vw;background:var(--grey-1)">ExpectedIG = IG × Answerability<br/>Utility = ExpectedIG − λc·cost − λr·risk</div>
+        <ul class="col-list"><li>优先选择有价值且容易确认的问题</li><li>“不清楚”不计作有效诊断证据</li></ul>
       </div>
       <span class="vrule"></span>
       <div class="col accent">
@@ -1404,7 +1404,7 @@
         <div class="col-ttl">更新候选概率</div>
         <p class="col-desc">用户回答“是”或“否”后，读取图谱中的条件概率，使用贝叶斯公式重新排序原因。</p>
         <div style="font-family:var(--mono);font-size:max(15px,.9vw);line-height:1.8;padding:2vh 1.4vw;background:rgba(0,47,167,.08)">P(cause | answer) ∝ P(answer | cause) · P(cause)</div>
-        <ul class="col-list"><li>最高概率达到阈值后停止</li><li>信息增益不足或达到最大轮数时停止</li></ul>
+        <ul class="col-list"><li>置信度、领先差距与有效回答同时达标</li><li>信息收益不足或达到最大轮数时停止</li></ul>
       </div>
     </div>
   </div>
@@ -1548,9 +1548,9 @@ const SPEAKER_NOTES = [
     transition: '初始候选仍可能有歧义，因此进入主动询问算法'
   },
   {
-    id: 'active-retrieval', title: '主动询问与概率更新', section: '检索与推理', minutes: 0.8,
+    id: 'active-retrieval', title: '可回答性感知的主动询问', section: '检索与推理', minutes: 0.8,
     purpose: '解释项目的核心检索算法',
-    talk: ['系统为每个问题计算回答前后的期望熵下降', '信息增益再扣除检查成本和风险成本，得到问题效用', '系统选择效用最高的问题，而不是按固定顺序询问', '用户回答后，根据图谱保存的条件概率执行贝叶斯更新', '达到置信阈值、问题用尽、信息增益不足或最大轮数时停止'],
+    talk: ['系统先计算每个问题回答前后的期望熵下降', '再用预计可回答率修正信息增益，并扣除检查成本和风险成本', '因此理论信息量很大但普通用户难以确认的问题会降低优先级', '用户回答后，根据图谱保存的条件概率执行贝叶斯更新；不清楚不计入有效证据', '停止时同时检查置信度、首位领先差距和有效回答数'],
     transition: '原因收敛后，还需要控制这些知识怎样进入最终答案'
   },
   {

@@ -39,8 +39,14 @@ class Settings:
     evidence_weight: float = 0.45
     enable_evidence_retrieval: bool = True
     confidence_threshold: float = 0.78
+    confidence_margin: float = 0.20
+    min_informative_answers: int = 2
     max_questions: int = 4
     min_information_gain: float = 0.01
+    question_cost_weight: float = 0.02
+    question_risk_weight: float = 0.05
+    enable_answerability_adjustment: bool = True
+    enable_robust_stopping: bool = True
     raw_dir: Path = ROOT_DIR / "data" / "raw"
     processed_dir: Path = ROOT_DIR / "data" / "processed"
     kg_dir: Path = ROOT_DIR / "data" / "kg"
@@ -71,8 +77,17 @@ def load_settings() -> Settings:
         enable_evidence_retrieval=os.getenv("ENABLE_EVIDENCE_RETRIEVAL", "true").lower()
         not in {"0", "false", "no"},
         confidence_threshold=float(os.getenv("CONFIDENCE_THRESHOLD", "0.78")),
+        confidence_margin=float(os.getenv("CONFIDENCE_MARGIN", "0.20")),
+        min_informative_answers=int(os.getenv("MIN_INFORMATIVE_ANSWERS", "2")),
         max_questions=int(os.getenv("MAX_QUESTIONS", "4")),
         min_information_gain=float(os.getenv("MIN_INFORMATION_GAIN", "0.01")),
+        question_cost_weight=float(os.getenv("QUESTION_COST_WEIGHT", "0.02")),
+        question_risk_weight=float(os.getenv("QUESTION_RISK_WEIGHT", "0.05")),
+        enable_answerability_adjustment=os.getenv(
+            "ENABLE_ANSWERABILITY_ADJUSTMENT", "true"
+        ).lower() not in {"0", "false", "no"},
+        enable_robust_stopping=os.getenv("ENABLE_ROBUST_STOPPING", "true").lower()
+        not in {"0", "false", "no"},
     )
 
 settings = load_settings()

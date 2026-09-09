@@ -209,10 +209,11 @@ def main() -> None:
         st.subheader("为什么不是普通问答")
         st.markdown(
             "1. **版本化因果图谱**：原因、平台、版本、检查、修复和官方来源分别建模。\n"
-            "2. **主动询问**：对每个未问问题计算期望信息增益，并扣除操作成本与风险。\n"
+            "2. **主动询问**：同时考虑信息增益、用户可回答率、检查成本与风险。\n"
             "3. **受控知识注入**：模型只能编排白名单声明和证据ID；技术内容由已验证模板输出。"
         )
-        st.code("Utility(q) = ExpectedInformationGain(q) - CheckCost(q) - RiskCost(q)", language=None)
+        st.code("Utility(q) = InformationGain(q) × Answerability(q) - CheckCost(q) - RiskCost(q)", language=None)
+        st.caption("停止诊断还要求：有效回答数足够、首位概率达标，并且明显领先第二名。")
         st.caption("候选概率用于决定排查顺序，不替代真实运行结果或专业判断。")
 
 

@@ -32,7 +32,7 @@ DebugPath 面向信息不完整的 AI 开发环境报错。
 
 ### 2. 动态检索
 
-系统先用 BM25 检索相关证据，再结合图谱得到候选原因。每轮通过信息增益选择下一问，并根据用户回答更新原因概率，直到满足停止条件。
+系统先用 BM25 检索相关证据，再结合图谱得到候选原因。每轮综合信息增益、用户可回答率、检查成本和风险选择下一问，并根据用户回答更新原因概率，直到满足停止条件。
 
 ### 3. 安全生成
 
@@ -81,6 +81,7 @@ python scripts/offline_demo.py
 ```bash
 pytest -q
 python scripts/evaluate_diagnosis.py
+python scripts/evaluate_active_algorithm.py
 python scripts/evaluate_ablation.py
 python scripts/evaluate_injection.py
 ```
@@ -94,9 +95,11 @@ python scripts/evaluate_injection.py
 | 不追问 | 73.3% | 0.00 |
 | 固定顺序 | 96.7% | 3.23 |
 | 随机追问 | 97.5% | 3.23 |
-| 信息增益 | 100.0% | 2.80 |
+| 可回答性感知信息增益 | 100.0% | 2.83 |
 
 以上结果用于验证系统机制，不能代表真实环境中的准确率。详细设置见[评测说明](docs/evaluation.md)。
+
+最终阶段正在研究“可回答性感知”的主动诊断：理论上信息量很大、但普通用户难以确认的问题会被降低优先级；回答“不清楚”也不会被计作有效诊断证据。当前信息受限用户压力测试属于确定性模拟，尚不能替代真实用户实验。
 
 ## 答辩展示
 

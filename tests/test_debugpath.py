@@ -117,7 +117,10 @@ def test_priors_are_normalized(service):
 def test_next_question_has_positive_information_gain(service):
     snapshot = service.start("No module named pandas")
     assert snapshot["question"]["information_gain"] > 0
+    assert snapshot["question"]["expected_information_gain"] > 0
+    assert 0 < snapshot["question"]["answerability"] <= 1
     assert "不确定性" in snapshot["question"]["reason"]
+    assert "可回答率" in snapshot["question"]["reason"]
 
 
 def test_answer_changes_candidate_distribution(service):
@@ -136,6 +139,29 @@ def test_unknown_answer_records_without_bayesian_update(service):
     snapshot = service.answer(snapshot["state"], question, "unknown")
     assert snapshot["state"]["probabilities"] == before
     assert snapshot["state"]["answers"][question] == "unknown"
+
+
+def test_unknown_answers_do_not_satisfy_robust_confidence_stop(service):
+    snapshot = service.start("No module named pandas")
+    snapshot["state"]["probabilities"] = {
+        name: (0.9 if index == 0 else 0.1 / (len(snapshot["candidates"]) - 1))
+        for index, name in enumerate(item["name"] for item in snapshot["candidates"])
+    }
+    for _ in range(2):
+        assert snapshot["question"] is not None
+        snapshot = service.answer(
+            snapshot["state"], snapshot["question"]["name"], "unknown"
+        )
+    assert snapshot["state"]["status"] == "questioning"
+
+
+def test_answerability_reduces_effective_information_gain(service):
+    snapshot = service.start("No module named pandas")
+    state = DiagnosisState.from_dict(snapshot["state"])
+    for question in service.engine.available_questions(state):
+        assert question.expected_information_gain == pytest.approx(
+            question.information_gain * question.answerability
+        )
 
 
 def test_duplicate_answer_is_rejected(service):
@@ -225,6 +251,19 @@ def test_injection_guard_evaluation_rejects_all_invalid_cases():
     assert report["invalid_cases"] == 24
     assert report["valid_acceptance_rate"] == 1.0
     assert report["invalid_rejection_rate"] == 1.0
+
+
+def test_answerability_aware_evaluation_is_reproducible():
+    from scripts.evaluate_active_algorithm import evaluate
+    from scripts.evaluate_diagnosis import load_cases
+
+    first = evaluate(load_cases())
+    second = evaluate(load_cases())
+    assert first == second
+    assert [row["algorithm"] for row in first["metrics"]] == [
+        "legacy_information_gain",
+        "answerability_aware",
+    ]
 
 
 def test_neo4j_clear_is_project_scoped():

@@ -33,6 +33,10 @@ class QuestionChoice:
     yes_label: str
     no_label: str
     information_gain: float
+    expected_information_gain: float
+    answerability: float
+    cost: float
+    risk_cost: float
     utility: float
     reason: str
 

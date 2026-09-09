@@ -127,8 +127,14 @@ class DiagnosisEngine:
         gain = max(0.0, self._entropy(state.probabilities) - expected)
         return gain, p_yes
 
-    def available_questions(self, state: DiagnosisState) -> list[QuestionChoice]:
-        """列出尚未回答的问题及其当前信息增益，不改变诊断状态。"""
+    def available_questions(
+        self,
+        state: DiagnosisState,
+        answerability_aware: bool | None = None,
+    ) -> list[QuestionChoice]:
+        """列出候选问题，并计算可回答性修正后的诊断效用。"""
+        if answerability_aware is None:
+            answerability_aware = self.settings.enable_answerability_adjustment
         choices: list[QuestionChoice] = []
         for item in self.issue_questions[state.issue_name]:
             question = item["name"]
@@ -138,7 +144,13 @@ class DiagnosisEngine:
             props = self.nodes[question]
             cost = float(props.get("cost", 1.0))
             risk_cost = float(props.get("risk_cost", 0.0))
-            utility = gain - 0.02 * cost - 0.05 * risk_cost
+            answerability = min(max(float(props.get("answerability", 1.0)), 0.0), 1.0)
+            expected_gain = gain * answerability if answerability_aware else gain
+            utility = (
+                expected_gain
+                - self.settings.question_cost_weight * cost
+                - self.settings.question_risk_weight * risk_cost
+            )
             choices.append(
                 QuestionChoice(
                     name=question,
@@ -146,8 +158,15 @@ class DiagnosisEngine:
                     yes_label=props.get("yes_label", "是"),
                     no_label=props.get("no_label", "否"),
                     information_gain=gain,
+                    expected_information_gain=expected_gain,
+                    answerability=answerability,
+                    cost=cost,
+                    risk_cost=risk_cost,
                     utility=utility,
-                    reason=f"预计可减少 {gain:.3f} bit 不确定性；当前回答“是”的预测概率为 {p_yes:.0%}",
+                    reason=(
+                        f"理论上可减少 {gain:.3f} bit 不确定性；预计可回答率 {answerability:.0%}；"
+                        f"修正后信息收益 {expected_gain:.3f} bit；当前回答“是”的预测概率为 {p_yes:.0%}"
+                    ),
                 )
             )
         return choices
@@ -160,8 +179,16 @@ class DiagnosisEngine:
             state.status = "completed"
             state.stop_reason = "没有剩余问题"
             return None
-        best = max(choices, key=lambda item: (item.utility, item.information_gain, item.name))
-        if best.information_gain < self.settings.min_information_gain:
+        best = max(
+            choices,
+            key=lambda item: (
+                item.utility,
+                item.expected_information_gain,
+                item.information_gain,
+                item.name,
+            ),
+        )
+        if best.expected_information_gain < self.settings.min_information_gain:
             state.status = "completed"
             state.stop_reason = "剩余问题的信息增益不足"
             return None
@@ -188,13 +215,26 @@ class DiagnosisEngine:
                 state.probabilities[cause] = probability * likelihood
             self._normalize(state.probabilities)
 
-        top_probability = max(state.probabilities.values(), default=0.0)
+        ranked_probabilities = sorted(state.probabilities.values(), reverse=True)
+        top_probability = ranked_probabilities[0] if ranked_probabilities else 0.0
+        runner_up = ranked_probabilities[1] if len(ranked_probabilities) > 1 else 0.0
+        confidence_margin = top_probability - runner_up
+        informative_answers = sum(answer != "unknown" for answer in state.answers.values())
+        confidence_ready = top_probability >= self.settings.confidence_threshold
+        if self.settings.enable_robust_stopping:
+            confidence_ready = (
+                confidence_ready
+                and informative_answers >= self.settings.min_informative_answers
+                and confidence_margin >= self.settings.confidence_margin
+            )
+        else:
+            confidence_ready = confidence_ready and len(state.asked_questions) >= 2
         if len(state.asked_questions) >= self.settings.max_questions:
             state.status = "completed"
             state.stop_reason = "达到最大追问轮数"
-        elif len(state.asked_questions) >= 2 and top_probability >= self.settings.confidence_threshold:
+        elif confidence_ready:
             state.status = "completed"
-            state.stop_reason = "最高候选概率达到停止阈值"
+            state.stop_reason = "置信度、领先差距与有效证据达到停止条件"
         elif self.next_question(state) is None:
             state.status = "completed"
         return state
