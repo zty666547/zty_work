@@ -9,6 +9,7 @@ import pytest
 from config.settings import Settings
 from src.data.loader import load_knowledge_base, load_structured
 from src.diagnosis.engine import DiagnosisEngine, UnknownIssueError
+from src.diagnosis.case_export import build_case_export, sanitize_text
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState, PlanItem
 from src.diagnosis.planner import PlanBuilder, verify_plan
@@ -97,6 +98,7 @@ def test_evidence_survives_question_round_trip(service):
     [
         ("ModuleNotFoundError: No module named x", "Python模块无法导入"),
         ("torch.cuda.is_available() False", "PyTorch无法使用GPU"),
+        ("torch.cuda.is_available()返回False", "PyTorch无法使用GPU"),
         ("Neo4j Connection refused", "服务或配置连接失败"),
     ],
 )
@@ -286,6 +288,44 @@ def test_public_cases_exclude_unconfirmed_roots_from_accuracy():
     assert report["confirmed_cases"] == len(confirmed)
     assert report["unconfirmed_cases"] == len(pending)
     assert all(case["root_cause_status"] == "confirmed" for case in confirmed)
+
+
+def test_case_export_redacts_private_environment_data(service):
+    snapshot = service.complete(
+        service.start(
+            "sk-abcdefghijklmnop 在 /Users/alice/project 报错，"
+            "联系 alice@example.com，远端为 192.168.1.8，localhost为127.0.0.1；"
+            "ModuleNotFoundError"
+        )["state"]
+    )
+    exported = build_case_export(
+        snapshot,
+        actual_cause=snapshot["candidates"][0]["name"],
+        confirmed=True,
+        note=r"Bearer abcdefghijklmnop，日志在 C:\Users\alice\work",
+    )
+    encoded = json.dumps(exported, ensure_ascii=False)
+    assert "sk-abcdefghijklmnop" not in encoded
+    assert "alice@example.com" not in encoded
+    assert "192.168.1.8" not in encoded
+    assert "/Users/alice" not in encoded
+    assert r"C:\Users\alice" not in encoded
+    assert "127.0.0.1" in encoded
+    assert exported["include_in_accuracy"]
+
+
+def test_unconfirmed_case_export_cannot_enter_accuracy(service):
+    snapshot = service.complete(service.start("Neo4j Connection refused")["state"])
+    exported = build_case_export(snapshot, actual_cause=None, confirmed=True)
+    assert exported["root_cause_status"] == "unconfirmed"
+    assert not exported["include_in_accuracy"]
+    assert exported["actual_cause"] is None
+
+
+def test_sanitize_text_preserves_non_sensitive_diagnostic_terms():
+    assert sanitize_text("Neo4j localhost:7687 ModuleNotFoundError") == (
+        "Neo4j localhost:7687 ModuleNotFoundError"
+    )
 
 
 def test_neo4j_clear_is_project_scoped():

@@ -35,6 +35,21 @@
       "confirmation": "Issue标题和错误信息明确指向CPU-only构建。"
     },
     {
+      "id": "public_lerobot_windows_cpu_torch",
+      "split": "test",
+      "family": "pytorch_gpu",
+      "report": "Windows 11中NVIDIA GPU和nvidia-smi正常，但uv sync安装torch 2.11.0+cpu，torch.version.cuda为None且torch.cuda.is_available()返回False",
+      "expected_top_cause": "安装了CPU版PyTorch",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-nvidia-smi是否成功": "yes",
+        "Q-PyTorch是否包含CUDA": "no"
+      },
+      "source_url": "https://github.com/huggingface/lerobot/issues/4093",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue在全新环境中复现，并同时给出torch 2.11.0+cpu、CUDA build为None以及正常识别的NVIDIA GPU。"
+    },
+    {
       "id": "public_pytorch_cuda_false_windows",
       "split": "unconfirmed",
       "family": "pytorch_gpu",

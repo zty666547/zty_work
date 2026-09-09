@@ -59,12 +59,18 @@ class DiagnosisEngine:
 
     def identify_issue(self, report: str) -> str:
         normalized = report.casefold()
+        compact = "".join(normalized.split())
         scored: list[tuple[int, str]] = []
         for issue in self.supported_issues():
             terms = [issue["name"], *(issue.get("aliases") or [])]
             if issue.get("example"):
                 terms.append(issue["example"])
-            score = sum(len(term) for term in terms if term.casefold() in normalized)
+            score = sum(
+                len(term)
+                for term in terms
+                if term.casefold() in normalized
+                or "".join(term.casefold().split()) in compact
+            )
             if score:
                 scored.append((score, issue["name"]))
         if not scored:

@@ -7,6 +7,7 @@ import pandas as pd
 
 from config.settings import settings
 from src.diagnosis.engine import UnknownIssueError
+from src.diagnosis.case_export import build_case_export
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.service import DiagnosisService
@@ -112,6 +113,48 @@ def _render_evidence(snapshot: dict) -> None:
             st.caption(item.get("text", ""))
 
 
+def _render_case_export(snapshot: dict) -> None:
+    """让使用者回填实际结果；数据只通过浏览器下载，不自动上传。"""
+    state = snapshot["state"]
+    session_id = state["session_id"]
+    with st.expander("记录真实排查结果"):
+        st.caption(
+            "用于后续真实案例评测。内容只在当前页面生成并下载，不会自动上传；"
+            "密钥、邮箱、IP 和个人目录会自动脱敏。"
+        )
+        options = ["尚未确认", *[item["name"] for item in snapshot["candidates"]]]
+        selected = st.selectbox(
+            "实际根因",
+            options,
+            key=f"actual-cause-{session_id}",
+        )
+        confirmed = st.checkbox(
+            "已通过检查结果或修复结果确认该根因",
+            disabled=selected == "尚未确认",
+            key=f"cause-confirmed-{session_id}",
+        )
+        note = st.text_area(
+            "补充说明（可选）",
+            placeholder="例如：执行了哪项检查，修复后是否恢复。请不要粘贴账号或密钥。",
+            key=f"case-note-{session_id}",
+        )
+        payload = build_case_export(
+            snapshot,
+            actual_cause=None if selected == "尚未确认" else selected,
+            confirmed=confirmed,
+            note=note,
+        )
+        if not payload["include_in_accuracy"]:
+            st.info("当前将作为“未确认案例”导出，不会计入准确率。")
+        st.download_button(
+            "下载脱敏案例（JSON）",
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            file_name=f"debugpath-case-{session_id}.json",
+            mime="application/json",
+            width="stretch",
+        )
+
+
 def main() -> None:
     st.set_page_config(page_title="DebugPath", page_icon="🧭", layout="wide")
     st.title("🧭 DebugPath")
@@ -200,6 +243,7 @@ def main() -> None:
                             st.markdown(render_offline(snapshot))
                     else:
                         st.markdown(render_offline(snapshot))
+                    _render_case_export(snapshot)
             with graph_col:
                 _render_live_graph(snapshot, service)
             _render_evidence(snapshot)

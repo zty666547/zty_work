@@ -1,30 +1,30 @@
 {
   "benchmark": "confirmed_public_case_seed",
-  "confirmed_cases": 3,
+  "confirmed_cases": 4,
   "unconfirmed_cases": 3,
   "warning": "样本量极小，只验证数据流程，不用于算法优劣结论。",
   "metrics": [
     {
       "algorithm": "legacy_information_gain",
-      "cases": 3,
+      "cases": 4,
       "top1": 1.0,
-      "coverage": 0.0,
-      "selective_accuracy": null,
-      "avg_questions": 3.3333333333333335,
-      "avg_unknown_questions": 2.3333333333333335,
-      "avg_cost": 3.6666666666666665,
+      "coverage": 0.25,
+      "selective_accuracy": 1.0,
+      "avg_questions": 3.25,
+      "avg_unknown_questions": 2.0,
+      "avg_cost": 3.5,
       "avg_risk": 0.0,
       "wrong_confident_stop_rate": 0.0
     },
     {
       "algorithm": "answerability_aware",
-      "cases": 3,
+      "cases": 4,
       "top1": 1.0,
-      "coverage": 0.0,
-      "selective_accuracy": null,
-      "avg_questions": 4.0,
-      "avg_unknown_questions": 3.0,
-      "avg_cost": 4.666666666666667,
+      "coverage": 0.25,
+      "selective_accuracy": 1.0,
+      "avg_questions": 3.75,
+      "avg_unknown_questions": 2.5,
+      "avg_cost": 4.25,
       "avg_risk": 0.0,
       "wrong_confident_stop_rate": 0.0
     }
@@ -75,6 +75,21 @@
         "total_cost": 4.0,
         "total_risk": 0.0,
         "stop_reason": "达到最大追问轮数"
+      },
+      {
+        "id": "public_lerobot_windows_cpu_torch",
+        "split": "test",
+        "expected": "安装了CPU版PyTorch",
+        "predicted": "安装了CPU版PyTorch",
+        "probability": 0.8172171891748988,
+        "passed": true,
+        "decision_sufficient": true,
+        "resolved_correctly": true,
+        "questions": 3,
+        "unknown_questions": 1,
+        "total_cost": 3.0,
+        "total_risk": 0.0,
+        "stop_reason": "置信度、领先差距与有效证据达到停止条件"
       }
     ],
     "answerability_aware": [
@@ -122,6 +137,21 @@
         "total_cost": 4.0,
         "total_risk": 0.0,
         "stop_reason": "达到最大追问轮数，但有效证据不足"
+      },
+      {
+        "id": "public_lerobot_windows_cpu_torch",
+        "split": "test",
+        "expected": "安装了CPU版PyTorch",
+        "predicted": "安装了CPU版PyTorch",
+        "probability": 0.8172171891748988,
+        "passed": true,
+        "decision_sufficient": true,
+        "resolved_correctly": true,
+        "questions": 3,
+        "unknown_questions": 1,
+        "total_cost": 3.0,
+        "total_risk": 0.0,
+        "stop_reason": "置信度、领先差距与有效证据达到停止条件"
       }
     ]
   },
