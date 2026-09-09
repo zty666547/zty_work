@@ -35,6 +35,7 @@ data/kg/*.graphml
 *.joblib
 .cache/
 outputs/
+.codex-pptx-build/
 
 # ---- 本地运行时（JDK/Neo4j 等大体积工具，不入库）----
 .runtime/
