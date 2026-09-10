@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import streamlit as st
 import json
+import os
 import pandas as pd
 
 from config.settings import settings
@@ -163,7 +164,13 @@ def main() -> None:
 
     with st.sidebar:
         st.header("演示设置")
-        platform_label = st.selectbox("目标环境", ["macOS", "Windows", "Linux"])
+        platform_labels = ["macOS", "Windows", "Linux"]
+        platform_defaults = {"macos": 0, "windows": 1, "linux": 2}
+        platform_label = st.selectbox(
+            "目标环境",
+            platform_labels,
+            index=platform_defaults.get(settings.platform, 0),
+        )
         platform = {"macOS": "macos", "Windows": "windows", "Linux": "linux"}[platform_label]
         modes = ["离线稳定模式"]
         if settings.deepseek_api_key:
@@ -173,6 +180,10 @@ def main() -> None:
         if st.button("重新开始", width="stretch"):
             st.session_state.pop("diagnosis", None)
             st.rerun()
+        if os.getenv("DEBUGPATH_PACKAGED") == "1":
+            st.caption("Windows 便携版正在本机运行。")
+            if st.button("关闭 DebugPath", width="stretch"):
+                os._exit(0)
 
     diagnose_tab, graph_tab, method_tab = st.tabs(["主动诊断", "诊断轨迹", "方法说明"])
     with diagnose_tab:

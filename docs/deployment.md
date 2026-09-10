@@ -1,5 +1,17 @@
 # DebugPath 答辩部署说明
 
+## Windows 单文件版本
+
+仓库标签 `windows-v*` 会触发 Windows 自动打包。流水线生成 `DebugPath.exe` 后会实际启动程序并访问健康检查接口；只有检查成功才会发布到 GitHub Releases。便携版内置离线知识库，不读取 API 密钥，也不依赖 Neo4j。
+
+使用方法：
+
+1. 从 GitHub Releases 下载 `DebugPath.exe`；
+2. 双击运行，等待浏览器自动打开；
+3. 演示结束后点击侧栏的“关闭 DebugPath”，或在任务管理器中结束程序。
+
+学校电脑可能禁止未签名程序，因此在线演示和录屏仍应作为答辩兜底。
+
 ## 推荐：Streamlit Community Cloud
 
 部署后，学校电脑只需要浏览器和网络，不需要安装 Python。

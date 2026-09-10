@@ -54,6 +54,14 @@ DebugPath 面向信息不完整的 AI 开发环境报错。
 
 ## 快速运行
 
+### Windows 免安装版
+
+从 [Releases](https://github.com/zty666547/zty_work/releases) 下载 `DebugPath.exe`，双击后会自动启动本地服务并打开浏览器。该版本内置知识图谱，固定使用离线模式，不需要安装 Python、Neo4j，也不需要 API 密钥。演示结束后点击侧栏的“关闭 DebugPath”；也可以在任务管理器中结束程序。
+
+如果 Windows 显示来源未知，请先核对同一发布页中的 SHA-256 文件；学校电脑若禁止运行未签名程序，请改用在线演示或下面的 Python 备用方式。
+
+### Python 运行方式
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -138,5 +146,6 @@ Neo4j 构建与演示方法见[Neo4j 演示](docs/neo4j_demo.md)。
 - 概率参数尚未通过大规模真实案例校准。
 - 系统只展示检查命令，不会自动执行。
 - 知识库外的问题会明确拒绝，不让大模型自由补全。
+- Windows 便携版尚未进行代码签名，部分单位电脑可能被安全策略拦截。
 
 更多内容见[系统架构](docs/architecture.md)、[数据字典](docs/data_dictionary.md)、[答辩方案](docs/midterm_defense.md)和[修改记录](CHANGELOG.md)。培养方案旧版本保留在 `archive/curriculum-graphrag-v1` 分支和同名标签中。
