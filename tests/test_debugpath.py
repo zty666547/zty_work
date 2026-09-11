@@ -438,6 +438,17 @@ def test_benchmark_is_balanced_and_source_traceable(service):
     assert {item["expected_top_cause"] for item in cases} == expected_causes
 
 
+def test_service_config_public_error_aliases_are_identified(service):
+    samples = [
+        "APIConnectionError: Connection error while calling local model",
+        "AuthenticationError: Incorrect API key provided",
+        "Error: No API key provided",
+    ]
+    for report in samples:
+        match = service.engine.identify_issue(report)
+        assert match == "服务或配置连接失败", (report, match)
+
+
 def test_hybrid_ablation_improves_initial_ranking():
     from scripts.evaluate_ablation import evaluate_ablation
     from scripts.evaluate_diagnosis import load_cases

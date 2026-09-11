@@ -1,5 +1,5 @@
 {
-  "description": "从公开项目Issue整理的独立案例种子。只有root_cause_status为confirmed的案例参与准确率；缺少的观察统一视为unknown。",
+  "description": "从公开项目Issue与可复现排障记录整理的独立案例种子。只有root_cause_status为confirmed的案例参与准确率；缺少的观察统一视为unknown。",
   "cases": [
     {
       "id": "public_cpython_local_shadow",
@@ -303,6 +303,81 @@
       "source_url": "https://github.com/openai/codex/issues/2000",
       "root_cause_status": "confirmed",
       "confirmation": "Issue提供撤销密钥后稳定出现401 invalid_api_key的可复现步骤，能够确认凭据已失效。"
+    },
+    {
+      "id": "public_openai_windows_process_missing_key",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "Windows的PyCharm虚拟环境调用OpenAI接口时报No API key provided；在其他终端执行set后，当前IDE进程仍未读取到OPENAI_API_KEY",
+      "expected_top_cause": "必需环境变量缺失",
+      "answers": {
+        "Q-变量是否缺失": "yes",
+        "Q-是否认证失败": "no"
+      },
+      "source_url": "https://github.com/openai/openai-cookbook/issues/147",
+      "root_cause_status": "confirmed",
+      "confirmation": "OpenAI Cookbook Issue记录了Windows终端与PyCharm进程环境不一致的复现，客户端直接确认当前进程没有取得API key。"
+    },
+    {
+      "id": "public_khoj_docker_ollama_address",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "宿主机已启动Ollama并安装模型，但Khoj容器使用localhost或不可达的宿主机地址时持续出现APIConnectionError: Connection error",
+      "expected_top_cause": "服务地址配置错误",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "yes",
+        "Q-是否认证失败": "no",
+        "Q-健康检查是否成功": "no"
+      },
+      "source_url": "https://github.com/khoj-ai/khoj/issues/1100",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue的复现先启动了宿主机Ollama，失败只发生在自托管Docker中的调用地址，能够排除目标服务未启动。"
+    },
+    {
+      "id": "public_vllm_self_occupied_port",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "vLLM启动API服务时报Address already in use；启动代码预先绑定了同一地址和端口，移除重复占用端口的代码后服务可启动",
+      "expected_top_cause": "端口被其他进程占用",
+      "answers": {
+        "Q-是否连接被拒绝": "no",
+        "Q-健康检查是否成功": "no",
+        "Q-端口是否被占用": "yes"
+      },
+      "source_url": "https://github.com/vllm-project/vllm/issues/9172",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue提供重复绑定端口的代码和错误栈，并确认移除预先占用端口的代码后问题消失。"
+    },
+    {
+      "id": "public_nvidia_ollama_service_not_running",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "本地编码代理访问localhost:11434出现connection refused，进程检查显示Ollama服务未运行；启动ollama serve后健康检查恢复",
+      "expected_top_cause": "目标服务未启动",
+      "answers": {
+        "Q-是否连接被拒绝": "yes",
+        "Q-健康检查是否成功": "no",
+        "Q-端口是否被占用": "no"
+      },
+      "source_url": "https://github.com/NVIDIA/dgx-spark-playbooks/blob/main/nvidia/station-local-coding-agent/README.md",
+      "root_cause_status": "confirmed",
+      "confirmation": "NVIDIA官方运行手册给出该故障的可复现映射：localhost:11434拒绝连接对应Ollama服务未运行，启动服务是验证步骤。"
+    },
+    {
+      "id": "public_openai_netrc_wrong_auth_value",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "OPENAI_API_KEY存在且curl请求成功，但Python客户端读取.netrc中的其他登录值后返回AuthenticationError: Incorrect API key provided",
+      "expected_top_cause": "认证信息无效",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "no",
+        "Q-是否认证失败": "yes"
+      },
+      "source_url": "https://github.com/openai/openai-python/issues/494",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue用同一有效密钥证明curl成功，并通过最小.netrc复现证明Python客户端实际发送了错误的认证值。"
     },
     {
       "id": "public_pytorch_cuda_false_windows",
