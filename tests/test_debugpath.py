@@ -323,6 +323,16 @@ def test_frozen_test_seal_matches_current_cases():
     assert saved["cause_count"] == 14
 
 
+def test_frozen_test_evaluation_preflight_does_not_run_cases():
+    from scripts.evaluate_frozen_test import prepare_evaluation
+
+    cases, model, seal = prepare_evaluation()
+    assert len(cases) == 14
+    assert len({case["expected_top_cause"] for case in cases}) == 14
+    assert model["frozen"] is True
+    assert seal["case_ids"] == [case["id"] for case in cases]
+
+
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():
     from scripts.evaluate_calibration import evaluate
 
