@@ -131,6 +131,17 @@
       "confirmation": "CUDA初始化直接返回803错误并说明显示驱动与CUDA驱动组合不受支持；更换为兼容基础镜像后CUDA可用。"
     },
     {
+      "id": "public_nvidia_driver_not_loaded_at_boot",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "系统启动时nvidia-cdi-refresh执行过早，报Failed to initialize NVML: Driver Not Loaded；驱动完成加载后再运行即可",
+      "expected_top_cause": "NVIDIA驱动不可用",
+      "answers": {"Q-nvidia-smi是否成功": "no"},
+      "source_url": "https://github.com/NVIDIA/nvidia-container-toolkit/discussions/1873",
+      "root_cause_status": "confirmed",
+      "confirmation": "NVIDIA维护讨论根据日志确认服务启动早于驱动加载，延后执行后规避该错误。"
+    },
+    {
       "id": "public_pytorch_cuda_major_mismatch",
       "split": "candidate",
       "family": "pytorch_gpu",
@@ -144,6 +155,21 @@
       "source_url": "https://github.com/pytorch/pytorch/issues/160293",
       "root_cause_status": "confirmed",
       "confirmation": "错误直接给出系统CUDA 13.0与PyTorch cu129不一致；维护者说明不同CUDA主版本不能混用并给出cu130安装方案。"
+    },
+    {
+      "id": "public_vllm_torch_cuda_mismatch",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "构建vLLM时报The detected CUDA version 11.8 mismatches the version that was used to compile PyTorch 12.1",
+      "expected_top_cause": "PyTorch与CUDA构建不匹配",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-nvidia-smi是否成功": "yes",
+        "Q-PyTorch是否包含CUDA": "yes"
+      },
+      "source_url": "https://github.com/vllm-project/vllm/issues/1283",
+      "root_cause_status": "confirmed",
+      "confirmation": "构建栈直接记录系统CUDA 11.8与PyTorch CUDA 12.1不一致，属于可复现的主版本错配。"
     },
     {
       "id": "public_pytorch_macos_no_cuda",
@@ -160,6 +186,20 @@
       "confirmation": "Issue环境为macOS和AMD GPU，并明确说明PyTorch不在非NVIDIA GPU上支持CUDA。"
     },
     {
+      "id": "public_pytorch_apple_mps_no_cuda",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "Apple M1 Pro的macOS上使用MPS设备运行torch.compile，出现Torch not compiled with CUDA enabled；环境报告显示CUDA不可用且MPS可用",
+      "expected_top_cause": "当前平台不提供CUDA",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "no",
+        "Q-是否为macOS": "yes"
+      },
+      "source_url": "https://github.com/pytorch/pytorch/issues/96976",
+      "root_cause_status": "confirmed",
+      "confirmation": "PyTorch Issue提供Apple M1 Pro与macOS环境，环境采集明确显示No CUDA并使用MPS后端。"
+    },
+    {
       "id": "public_nvidia_docker_build_no_gpu",
       "split": "candidate",
       "family": "pytorch_gpu",
@@ -174,6 +214,21 @@
       "source_url": "https://github.com/NVIDIA/nvidia-container-toolkit/issues/221",
       "root_cause_status": "confirmed",
       "confirmation": "同一镜像运行后可使用GPU，只有Docker构建阶段无法注入GPU，能够排除主机硬件和PyTorch构建本身。"
+    },
+    {
+      "id": "public_nvidia_wsl_cdi_missing_gpu_mount",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "WSL2宿主机存在NVIDIA GPU和驱动，但CDI生成结果缺少libdxcore.so挂载，容器内nvidia-smi报Failed to initialize NVML；补充挂载后恢复",
+      "expected_top_cause": "容器未获得GPU设备",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-nvidia-smi是否成功": "no",
+        "Q-是否运行在容器": "yes"
+      },
+      "source_url": "https://github.com/NVIDIA/nvidia-container-toolkit/issues/1739",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue证明宿主机库存在而CDI规格没有注入容器；手动补充挂载并切换CDI模式后容器内NVML恢复。"
     },
     {
       "id": "public_openai_api_key_missing",

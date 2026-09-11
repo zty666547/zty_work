@@ -8,7 +8,7 @@
   "entities": {
     "Issue": [
       {"name": "Python模块无法导入", "props": {"id": "issue_import", "aliases": ["ModuleNotFoundError", "No module named", "ImportError", "找不到模块", "无法导入", "No matching distribution found", "Could not find a version that satisfies", "consider renaming", "same name as the standard library module"], "example": "ModuleNotFoundError: No module named 'pandas'"}},
-      {"name": "PyTorch无法使用GPU", "props": {"id": "issue_torch_gpu", "aliases": ["torch.cuda.is_available() False", "cuda is not available", "CUDA不可用", "检测不到GPU", "PyTorch GPU"], "example": "torch.cuda.is_available() 返回 False"}},
+      {"name": "PyTorch无法使用GPU", "props": {"id": "issue_torch_gpu", "aliases": ["torch.cuda.is_available() False", "cuda is not available", "CUDA不可用", "检测不到GPU", "PyTorch GPU", "Torch not compiled with CUDA enabled", "detected CUDA version", "mismatches the version", "Failed to initialize NVML", "Driver Not Loaded"], "example": "torch.cuda.is_available() 返回 False"}},
       {"name": "服务或配置连接失败", "props": {"id": "issue_service", "aliases": ["Connection refused", "ServiceUnavailable", "Unauthorized", "401", "Neo4j连接失败", "API调用失败", "Address already in use", "端口被占用", "环境变量", "OPENAI_API_KEY", "api_key client option must be set"], "example": "Neo4j Connection refused 或 API 返回 401"}}
     ],
     "Cause": [

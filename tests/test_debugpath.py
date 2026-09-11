@@ -103,6 +103,9 @@ def test_evidence_survives_question_round_trip(service):
         ),
         ("torch.cuda.is_available() False", "PyTorch无法使用GPU"),
         ("torch.cuda.is_available()返回False", "PyTorch无法使用GPU"),
+        ("Torch not compiled with CUDA enabled", "PyTorch无法使用GPU"),
+        ("The detected CUDA version 12.1 mismatches the version", "PyTorch无法使用GPU"),
+        ("Failed to initialize NVML: Driver Not Loaded", "PyTorch无法使用GPU"),
         ("Neo4j Connection refused", "服务或配置连接失败"),
     ],
 )
