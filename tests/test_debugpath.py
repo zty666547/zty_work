@@ -297,6 +297,19 @@ def test_public_cases_exclude_unconfirmed_roots_from_accuracy():
     assert all(case["root_cause_status"] == "confirmed" for case in confirmed)
 
 
+def test_real_case_split_is_complete_and_leak_free():
+    from scripts.audit_real_case_split import build_report
+
+    report = build_report()
+    assert report["development_cases"] == 28
+    assert report["frozen_test_cases"] == 0
+    assert report["unconfirmed_cases"] == 3
+    assert report["development_causes"] == 14
+    assert report["development_min_per_cause"] == 2
+    assert report["source_overlap"] == []
+    assert report["test_ready"] is False
+
+
 def test_second_stage_gap_audit_covers_every_cause():
     from scripts.audit_second_stage import build_report
     from scripts.evaluate_public_cases import load_public_cases

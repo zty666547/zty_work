@@ -1,0 +1,40 @@
+{
+  "version": "2026-09-11",
+  "policy": "已查看的确认案例全部进入开发集；冻结测试集只接收此日期之后新收集、且在参数冻结前不运行的案例。",
+  "development_ids": [
+    "public_cpython_local_shadow",
+    "public_pip_homebrew_wrong_interpreter",
+    "public_pip_setuptools_not_installed",
+    "public_langchain_community_not_installed",
+    "public_tensorflow_python312_unsupported",
+    "public_tensorflow_python313_unsupported",
+    "public_conda_base_environment_leak",
+    "public_cpython_code_module_shadow",
+    "public_pytorch_cpu_only_build",
+    "public_lerobot_windows_cpu_torch",
+    "public_pytorch_driver_cuda_error_803",
+    "public_nvidia_driver_not_loaded_at_boot",
+    "public_pytorch_cuda_major_mismatch",
+    "public_vllm_torch_cuda_mismatch",
+    "public_pytorch_macos_no_cuda",
+    "public_pytorch_apple_mps_no_cuda",
+    "public_nvidia_docker_build_no_gpu",
+    "public_nvidia_wsl_cdi_missing_gpu_mount",
+    "public_openai_api_key_missing",
+    "public_ollama_remote_localhost_address",
+    "public_uvicorn_port_occupied",
+    "public_ollama_server_stopped",
+    "public_codex_revoked_api_key",
+    "public_openai_windows_process_missing_key",
+    "public_khoj_docker_ollama_address",
+    "public_vllm_self_occupied_port",
+    "public_nvidia_ollama_service_not_running",
+    "public_openai_netrc_wrong_auth_value"
+  ],
+  "frozen_test_ids": [],
+  "unconfirmed_ids": [
+    "public_pytorch_cuda_false_windows",
+    "public_pytorch_container_unknown_error",
+    "public_neo4j_connection_refused"
+  ]
+}

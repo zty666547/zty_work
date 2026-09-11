@@ -14,6 +14,7 @@ from scripts.evaluate_active_algorithm import run_case, summarize  # noqa: E402
 from src.diagnosis.service import DiagnosisService  # noqa: E402
 
 DATASET = ROOT / "data/evaluation/public_cases.json"
+SPLIT_DATASET = ROOT / "data/evaluation/real_case_split.json"
 OUTPUT = ROOT / "data/evaluation/public_case_results.json"
 
 
@@ -35,6 +36,11 @@ def load_public_cases() -> tuple[list[dict], list[dict]]:
 
 def evaluate() -> dict:
     confirmed, pending = load_public_cases()
+    split = json.loads(SPLIT_DATASET.read_text(encoding="utf-8"))
+    development_ids = set(split["development_ids"])
+    development = [case for case in confirmed if case["id"] in development_ids]
+    if len(development) != len(development_ids):
+        raise ValueError("开发集清单与公开案例文件不一致")
     algorithms = [
         (
             "legacy_information_gain",
@@ -48,14 +54,16 @@ def evaluate() -> dict:
         ("answerability_aware", DiagnosisService(Settings())),
     ]
     details = {
-        name: [run_case(service, case, unknown_below=0.0) for case in confirmed]
+        name: [run_case(service, case, unknown_below=0.0) for case in development]
         for name, service in algorithms
     }
     return {
-        "benchmark": "exploratory_confirmed_public_case_pool",
+        "benchmark": "public_real_case_development_set",
+        "development_cases": len(development),
         "confirmed_cases": len(confirmed),
+        "frozen_test_cases": len(split["frozen_test_ids"]),
         "unconfirmed_cases": len(pending),
-        "warning": "候选池尚未平衡和冻结，只用于发现问题，不用于最终算法优劣结论。",
+        "warning": "结果来自已查看的开发集，只能用于调整算法；冻结测试集收集完成前不得报告最终性能。",
         "metrics": [summarize(name, details[name]) for name, _ in algorithms],
         "details": details,
         "unconfirmed_ids": [case["id"] for case in pending],
@@ -64,7 +72,11 @@ def evaluate() -> dict:
 
 def main() -> None:
     report = evaluate()
-    print(f"已确认公开案例：{report['confirmed_cases']}；待确认：{report['unconfirmed_cases']}")
+    print(
+        f"真实开发集：{report['development_cases']}；"
+        f"冻结测试集：{report['frozen_test_cases']}；"
+        f"待确认：{report['unconfirmed_cases']}"
+    )
     for row in report["metrics"]:
         print(
             f"{row['algorithm']}: Top-1={row['top1']:.1%}, "
@@ -72,7 +84,7 @@ def main() -> None:
             f"平均追问={row['avg_questions']:.2f}, "
             f"平均无法回答={row['avg_unknown_questions']:.2f}"
         )
-    print("注意：候选池尚未平衡和冻结，当前结果不得作为最终算法结论。")
+    print("注意：当前是开发集结果，冻结测试集收集完成前不得作为最终算法结论。")
     OUTPUT.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

@@ -1,8 +1,10 @@
 {
-  "benchmark": "exploratory_confirmed_public_case_pool",
+  "benchmark": "public_real_case_development_set",
+  "development_cases": 28,
   "confirmed_cases": 28,
+  "frozen_test_cases": 0,
   "unconfirmed_cases": 3,
-  "warning": "候选池尚未平衡和冻结，只用于发现问题，不用于最终算法优劣结论。",
+  "warning": "结果来自已查看的开发集，只能用于调整算法；冻结测试集收集完成前不得报告最终性能。",
   "metrics": [
     {
       "algorithm": "legacy_information_gain",
