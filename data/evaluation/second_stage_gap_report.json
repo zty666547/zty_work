@@ -5,9 +5,9 @@
     "target_confirmed_cases": 28
   },
   "summary": {
-    "confirmed_cases": 11,
-    "confirmed_case_gap": 17,
-    "causes_with_confirmed_case": 9,
+    "confirmed_cases": 14,
+    "confirmed_case_gap": 14,
+    "causes_with_confirmed_case": 12,
     "structural_gap_causes": []
   },
   "causes": [
@@ -195,10 +195,10 @@
         "version_constraints": 0
       },
       "cases": {
-        "confirmed": 0,
+        "confirmed": 1,
         "unconfirmed_mentions": 0,
         "target_confirmed": 2,
-        "confirmed_gap": 2
+        "confirmed_gap": 1
       }
     },
     {
@@ -214,10 +214,10 @@
         "version_constraints": 1
       },
       "cases": {
-        "confirmed": 0,
+        "confirmed": 1,
         "unconfirmed_mentions": 1,
         "target_confirmed": 2,
-        "confirmed_gap": 2
+        "confirmed_gap": 1
       }
     },
     {
@@ -252,10 +252,10 @@
         "version_constraints": 0
       },
       "cases": {
-        "confirmed": 0,
+        "confirmed": 1,
         "unconfirmed_mentions": 1,
         "target_confirmed": 2,
-        "confirmed_gap": 2
+        "confirmed_gap": 1
       }
     },
     {

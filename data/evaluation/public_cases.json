@@ -143,6 +143,51 @@
       "confirmation": "同一镜像运行后可使用GPU，只有Docker构建阶段无法注入GPU，能够排除主机硬件和PyTorch构建本身。"
     },
     {
+      "id": "public_openai_api_key_missing",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "OpenAI客户端初始化时报The api_key client option must be set either by passing api_key or setting the OPENAI_API_KEY environment variable",
+      "expected_top_cause": "必需环境变量缺失",
+      "answers": {
+        "Q-变量是否缺失": "yes",
+        "Q-是否认证失败": "no"
+      },
+      "source_url": "https://github.com/openai/openai-python/issues/1108",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue给出无API key环境下的复现，OpenAI维护者建议通过环境变量设置API key。"
+    },
+    {
+      "id": "public_ollama_remote_localhost_address",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "Ollama在本机localhost:11434健康检查成功，但远程服务和容器使用localhost地址时Connection refused，因为localhost指向调用方自身",
+      "expected_top_cause": "服务地址配置错误",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "yes",
+        "Q-是否认证失败": "no",
+        "Q-健康检查是否成功": "no"
+      },
+      "source_url": "https://github.com/ollama/ollama/issues/6843",
+      "root_cause_status": "confirmed",
+      "confirmation": "原帖证明Ollama在宿主机正常运行，并明确指出远程环境无法通过自身localhost访问宿主机服务。"
+    },
+    {
+      "id": "public_uvicorn_port_occupied",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "Uvicorn启动时报Address already in use，确认macOS AirPlay Receiver占用5000端口，改用未冲突端口后服务成功启动",
+      "expected_top_cause": "端口被其他进程占用",
+      "answers": {
+        "Q-是否连接被拒绝": "no",
+        "Q-健康检查是否成功": "no",
+        "Q-端口是否被占用": "yes"
+      },
+      "source_url": "https://github.com/encode/uvicorn/discussions/1854",
+      "root_cause_status": "confirmed",
+      "confirmation": "被采纳回答确认5000端口由AirPlay Receiver占用，更换端口后恢复。"
+    },
+    {
       "id": "public_pytorch_cuda_false_windows",
       "split": "unconfirmed",
       "family": "pytorch_gpu",
