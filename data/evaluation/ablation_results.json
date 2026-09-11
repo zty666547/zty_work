@@ -33,9 +33,9 @@
       "trajectories": 30,
       "top1": 1.0,
       "mrr": 1.0,
-      "avg_questions": 3.1666666666666665,
-      "success_within_3": 0.6333333333333333,
-      "avg_entropy_drop": 1.2959812449183987
+      "avg_questions": 3.2333333333333334,
+      "success_within_3": 0.5666666666666667,
+      "avg_entropy_drop": 1.2879004575978892
     },
     {
       "strategy": "hybrid_active",
@@ -43,8 +43,8 @@
       "top1": 1.0,
       "mrr": 1.0,
       "avg_questions": 2.8333333333333335,
-      "success_within_3": 0.6666666666666666,
-      "avg_entropy_drop": 1.3682020835706687
+      "success_within_3": 0.7,
+      "avg_entropy_drop": 1.371150978088893
     }
   ],
   "details": {
@@ -1230,12 +1230,12 @@
         "split": "dev",
         "expected": "目标包未安装",
         "predicted": "目标包未安装",
-        "probability": 0.8302486036578688,
+        "probability": 0.8386757750919601,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 3,
         "success_within_3": true,
-        "entropy_drop": 1.1437177668069998,
+        "entropy_drop": 1.0892640427070859,
         "passed": true
       },
       {
@@ -1243,12 +1243,12 @@
         "split": "test",
         "expected": "目标包未安装",
         "predicted": "目标包未安装",
-        "probability": 0.8302486036578688,
+        "probability": 0.8386757750919601,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 3,
         "success_within_3": true,
-        "entropy_drop": 1.1437177668069998,
+        "entropy_drop": 1.0892640427070859,
         "passed": true
       },
       {
@@ -1256,12 +1256,12 @@
         "split": "test",
         "expected": "目标包未安装",
         "predicted": "目标包未安装",
-        "probability": 0.8302486036578688,
+        "probability": 0.8386757750919601,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 3,
         "success_within_3": true,
-        "entropy_drop": 1.1437177668069998,
+        "entropy_drop": 1.0892640427070859,
         "passed": true
       },
       {
@@ -1269,12 +1269,12 @@
         "split": "dev",
         "expected": "pip与Python指向不同环境",
         "predicted": "pip与Python指向不同环境",
-        "probability": 0.7232053422370617,
+        "probability": 0.713864914412837,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 1.0770357143742886,
+        "entropy_drop": 1.0037629433511226,
         "passed": true
       },
       {
@@ -1282,12 +1282,12 @@
         "split": "test",
         "expected": "pip与Python指向不同环境",
         "predicted": "pip与Python指向不同环境",
-        "probability": 0.7232053422370617,
+        "probability": 0.713864914412837,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 1.0770357143742886,
+        "entropy_drop": 1.0037629433511226,
         "passed": true
       },
       {
@@ -1295,12 +1295,12 @@
         "split": "test",
         "expected": "pip与Python指向不同环境",
         "predicted": "pip与Python指向不同环境",
-        "probability": 0.7232053422370617,
+        "probability": 0.713864914412837,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 1.0770357143742886,
+        "entropy_drop": 1.0037629433511226,
         "passed": true
       },
       {
@@ -1308,12 +1308,12 @@
         "split": "test",
         "expected": "本地文件遮蔽第三方模块",
         "predicted": "本地文件遮蔽第三方模块",
-        "probability": 0.9357045143638851,
+        "probability": 0.9647390691114245,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 1.5537832689437792,
+        "entropy_drop": 1.701315601815498,
         "passed": true
       },
       {
@@ -1321,12 +1321,12 @@
         "split": "test",
         "expected": "本地文件遮蔽第三方模块",
         "predicted": "本地文件遮蔽第三方模块",
-        "probability": 0.9357045143638851,
+        "probability": 0.9647390691114245,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 1.5537832689437792,
+        "entropy_drop": 1.701315601815498,
         "passed": true
       },
       {
@@ -1334,12 +1334,12 @@
         "split": "dev",
         "expected": "Python版本与包不兼容",
         "predicted": "Python版本与包不兼容",
-        "probability": 0.8949950932286556,
+        "probability": 0.8843085106382979,
         "rank": 1,
         "reciprocal_rank": 1.0,
-        "questions": 3,
-        "success_within_3": true,
-        "entropy_drop": 1.3658124120710324,
+        "questions": 4,
+        "success_within_3": false,
+        "entropy_drop": 1.2886580120762885,
         "passed": true
       },
       {
@@ -1347,12 +1347,12 @@
         "split": "test",
         "expected": "Python版本与包不兼容",
         "predicted": "Python版本与包不兼容",
-        "probability": 0.8949950932286556,
+        "probability": 0.8843085106382979,
         "rank": 1,
         "reciprocal_rank": 1.0,
-        "questions": 3,
-        "success_within_3": true,
-        "entropy_drop": 1.3658124120710324,
+        "questions": 4,
+        "success_within_3": false,
+        "entropy_drop": 1.2886580120762885,
         "passed": true
       },
       {
@@ -1622,12 +1622,12 @@
         "split": "dev",
         "expected": "目标包未安装",
         "predicted": "目标包未安装",
-        "probability": 0.9018814632615519,
+        "probability": 0.8973307120048457,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 3,
         "success_within_3": true,
-        "entropy_drop": 1.2535393154993781,
+        "entropy_drop": 1.1979803648078284,
         "passed": true
       },
       {
@@ -1635,12 +1635,12 @@
         "split": "test",
         "expected": "目标包未安装",
         "predicted": "目标包未安装",
-        "probability": 0.8577684689834678,
+        "probability": 0.8803823408396776,
         "rank": 1,
         "reciprocal_rank": 1.0,
-        "questions": 2,
+        "questions": 3,
         "success_within_3": true,
-        "entropy_drop": 0.9507605503134765,
+        "entropy_drop": 1.0702601631387674,
         "passed": true
       },
       {
@@ -1648,12 +1648,12 @@
         "split": "test",
         "expected": "目标包未安装",
         "predicted": "目标包未安装",
-        "probability": 0.8843328490000244,
+        "probability": 0.8751581164023748,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 3,
         "success_within_3": true,
-        "entropy_drop": 1.2163506225820826,
+        "entropy_drop": 1.1364191499795222,
         "passed": true
       },
       {
@@ -1661,12 +1661,12 @@
         "split": "dev",
         "expected": "pip与Python指向不同环境",
         "predicted": "pip与Python指向不同环境",
-        "probability": 0.711020198158537,
+        "probability": 0.7070284276175018,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 0.8704423953115303,
+        "entropy_drop": 0.8317862694893552,
         "passed": true
       },
       {
@@ -1674,12 +1674,12 @@
         "split": "test",
         "expected": "pip与Python指向不同环境",
         "predicted": "pip与Python指向不同环境",
-        "probability": 0.7790477969780993,
+        "probability": 0.8002703215565076,
         "rank": 1,
         "reciprocal_rank": 1.0,
-        "questions": 4,
-        "success_within_3": false,
-        "entropy_drop": 0.9672714352991708,
+        "questions": 3,
+        "success_within_3": true,
+        "entropy_drop": 0.9589600320515917,
         "passed": true
       },
       {
@@ -1687,12 +1687,12 @@
         "split": "test",
         "expected": "pip与Python指向不同环境",
         "predicted": "pip与Python指向不同环境",
-        "probability": 0.7431994337930379,
+        "probability": 0.7391772203003036,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 0.9165863354242919,
+        "entropy_drop": 0.8787827657626156,
         "passed": true
       },
       {
@@ -1700,12 +1700,12 @@
         "split": "test",
         "expected": "本地文件遮蔽第三方模块",
         "predicted": "本地文件遮蔽第三方模块",
-        "probability": 0.9807079824192865,
+        "probability": 0.989141030102979,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 1.6708078341256731,
+        "entropy_drop": 1.7296703159993494,
         "passed": true
       },
       {
@@ -1713,12 +1713,12 @@
         "split": "test",
         "expected": "本地文件遮蔽第三方模块",
         "predicted": "本地文件遮蔽第三方模块",
-        "probability": 0.9783059017787115,
+        "probability": 0.98763619562205,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 1.661640509788167,
+        "entropy_drop": 1.7253450105969037,
         "passed": true
       },
       {
@@ -1726,12 +1726,12 @@
         "split": "dev",
         "expected": "Python版本与包不兼容",
         "predicted": "Python版本与包不兼容",
-        "probability": 0.8305610225073452,
+        "probability": 0.7813430631755391,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 1.0566028390956537,
+        "entropy_drop": 0.947743589952307,
         "passed": true
       },
       {
@@ -1739,12 +1739,12 @@
         "split": "test",
         "expected": "Python版本与包不兼容",
         "predicted": "Python版本与包不兼容",
-        "probability": 0.9060379467255648,
+        "probability": 0.8824179874677479,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 2,
         "success_within_3": true,
-        "entropy_drop": 1.1191862573930975,
+        "entropy_drop": 1.023849770421223,
         "passed": true
       },
       {
@@ -1934,12 +1934,12 @@
         "split": "test",
         "expected": "目标服务未启动",
         "predicted": "目标服务未启动",
-        "probability": 0.768071109967291,
+        "probability": 0.8853428415281689,
         "rank": 1,
         "reciprocal_rank": 1.0,
         "questions": 4,
         "success_within_3": false,
-        "entropy_drop": 1.2445659271661844,
+        "entropy_drop": 1.5154234253459813,
         "passed": true
       },
       {

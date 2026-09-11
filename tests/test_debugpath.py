@@ -35,8 +35,8 @@ def test_knowledge_graph_is_valid_and_substantial():
 
 def test_evidence_layer_is_merged_into_runtime_graph(service):
     assert len(service.graph.entities["EvidenceChunk"]) == 30
-    assert sum(map(len, service.graph.entities.values())) == 130
-    assert len(service.graph.relations) == 338
+    assert sum(map(len, service.graph.entities.values())) == 132
+    assert len(service.graph.relations) == 345
 
 
 def test_processed_graph_artifact_is_deterministic():
@@ -46,8 +46,8 @@ def test_processed_graph_artifact_is_deterministic():
     first = create_graph_artifact(graph, ["knowledge", "evidence"])
     second = create_graph_artifact(graph, ["evidence", "knowledge"])
     assert first == second
-    assert first["stats"]["nodes"] == 130
-    assert first["stats"]["relationships"] == 338
+    assert first["stats"]["nodes"] == 132
+    assert first["stats"]["relationships"] == 345
     assert len(first["content_sha256"]) == 64
 
 
@@ -310,6 +310,18 @@ def test_real_case_split_is_complete_and_leak_free():
     assert report["test_ready"] is False
 
 
+def test_calibration_ablation_is_reproducible_and_scoped_to_development():
+    from scripts.evaluate_calibration import evaluate
+
+    first = evaluate()
+    second = evaluate()
+    assert first == second
+    assert first["case_count"] == 28
+    metrics = {item["algorithm"]: item for item in first["metrics"]}
+    assert metrics["combined"]["top1"] >= metrics["before_calibration"]["top1"]
+    assert metrics["combined"]["wrong_confident_stop_rate"] == 0.0
+
+
 def test_second_stage_gap_audit_covers_every_cause():
     from scripts.audit_second_stage import build_report
     from scripts.evaluate_public_cases import load_public_cases
@@ -460,6 +472,18 @@ def test_service_config_public_error_aliases_are_identified(service):
     for report in samples:
         match = service.engine.identify_issue(report)
         assert match == "服务或配置连接失败", (report, match)
+
+
+def test_host_local_health_observation_separates_wrong_address_from_stopped_service(service):
+    snapshot = service.start("APIConnectionError: Connection refused")
+    snapshot = service.answer(snapshot["state"], "Q-是否连接被拒绝", "yes")
+    snapshot = service.answer(
+        snapshot["state"], "Q-目标主机本机检查是否成功", "yes"
+    )
+    probabilities = {
+        item["name"]: item["probability"] for item in snapshot["candidates"]
+    }
+    assert probabilities["服务地址配置错误"] > probabilities["目标服务未启动"]
 
 
 def test_hybrid_ablation_improves_initial_ranking():

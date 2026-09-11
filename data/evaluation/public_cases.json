@@ -254,7 +254,8 @@
         "Q-变量是否缺失": "no",
         "Q-是否连接被拒绝": "yes",
         "Q-是否认证失败": "no",
-        "Q-健康检查是否成功": "no"
+        "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "yes"
       },
       "source_url": "https://github.com/ollama/ollama/issues/6843",
       "root_cause_status": "confirmed",
@@ -283,7 +284,8 @@
       "expected_top_cause": "目标服务未启动",
       "answers": {
         "Q-是否连接被拒绝": "yes",
-        "Q-健康检查是否成功": "no"
+        "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "no"
       },
       "source_url": "https://github.com/ollama/ollama/issues/3221",
       "root_cause_status": "confirmed",
@@ -328,7 +330,8 @@
         "Q-变量是否缺失": "no",
         "Q-是否连接被拒绝": "yes",
         "Q-是否认证失败": "no",
-        "Q-健康检查是否成功": "no"
+        "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "yes"
       },
       "source_url": "https://github.com/khoj-ai/khoj/issues/1100",
       "root_cause_status": "confirmed",
@@ -358,6 +361,7 @@
       "answers": {
         "Q-是否连接被拒绝": "yes",
         "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "no",
         "Q-端口是否被占用": "no"
       },
       "source_url": "https://github.com/NVIDIA/dgx-spark-playbooks/blob/main/nvidia/station-local-coding-agent/README.md",

@@ -70,4 +70,4 @@ Neo4j只是持久化与可视化后端。核心算法不依赖数据库或网络
 
 ## 图谱构建可复现性
 
-`scripts/prepare_graph.py`读取基础因果图谱和证据层，先执行实体类型、关系类型、关系方向、重复项与端点完整性校验，再稳定排序并计算内容指纹。相同输入会得到相同的`data/processed/debugpath_graph.json`。`scripts/build_kg.py`使用同一产物写入Neo4j，写入后必须得到130个节点和338条关系，否则构建失败。`scripts/check_neo4j.py`进一步只读核对实体类型和关系类型分布，避免本地图谱与演示数据库悄悄不同步。
+`scripts/prepare_graph.py`读取基础因果图谱和证据层，先执行实体类型、关系类型、关系方向、重复项与端点完整性校验，再稳定排序并计算内容指纹。相同输入会得到相同的`data/processed/debugpath_graph.json`。`scripts/build_kg.py`使用同一产物写入Neo4j，写入后必须得到132个节点和345条关系，否则构建失败。`scripts/check_neo4j.py`进一步只读核对实体类型和关系类型分布，避免本地图谱与演示数据库悄悄不同步。

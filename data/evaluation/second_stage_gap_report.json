@@ -186,7 +186,7 @@
       "issue": "服务或配置连接失败",
       "cause": "必需环境变量缺失",
       "graph": {
-        "observations": 5,
+        "observations": 6,
         "checks": 1,
         "repairs": 1,
         "direct_sources": 1,
@@ -205,7 +205,7 @@
       "issue": "服务或配置连接失败",
       "cause": "服务地址配置错误",
       "graph": {
-        "observations": 5,
+        "observations": 6,
         "checks": 1,
         "repairs": 1,
         "direct_sources": 1,
@@ -224,7 +224,7 @@
       "issue": "服务或配置连接失败",
       "cause": "目标服务未启动",
       "graph": {
-        "observations": 5,
+        "observations": 6,
         "checks": 1,
         "repairs": 1,
         "direct_sources": 1,
@@ -243,7 +243,7 @@
       "issue": "服务或配置连接失败",
       "cause": "端口被其他进程占用",
       "graph": {
-        "observations": 5,
+        "observations": 6,
         "checks": 1,
         "repairs": 1,
         "direct_sources": 1,
@@ -262,7 +262,7 @@
       "issue": "服务或配置连接失败",
       "cause": "认证信息无效",
       "graph": {
-        "observations": 5,
+        "observations": 6,
         "checks": 1,
         "repairs": 1,
         "direct_sources": 1,
