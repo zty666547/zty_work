@@ -301,6 +301,10 @@ def test_second_stage_gap_audit_covers_every_cause():
     assert len({row["cause"] for row in report["causes"]}) == 14
     assert report["summary"]["confirmed_cases"] == len(confirmed)
     assert report["summary"]["causes_with_confirmed_case"] == len(confirmed_causes)
+    assert (
+        report["summary"]["causes_with_confirmed_case"]
+        == report["target"]["total_causes"]
+    )
     assert all(
         row["graph"][field] > 0
         for row in report["causes"]

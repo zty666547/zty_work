@@ -1,30 +1,30 @@
 {
   "benchmark": "exploratory_confirmed_public_case_pool",
-  "confirmed_cases": 14,
+  "confirmed_cases": 16,
   "unconfirmed_cases": 3,
   "warning": "候选池尚未平衡和冻结，只用于发现问题，不用于最终算法优劣结论。",
   "metrics": [
     {
       "algorithm": "legacy_information_gain",
-      "cases": 14,
-      "top1": 0.7857142857142857,
-      "coverage": 0.2857142857142857,
+      "cases": 16,
+      "top1": 0.8125,
+      "coverage": 0.3125,
       "selective_accuracy": 1.0,
-      "avg_questions": 3.2142857142857144,
-      "avg_unknown_questions": 1.4285714285714286,
-      "avg_cost": 3.642857142857143,
+      "avg_questions": 3.1875,
+      "avg_unknown_questions": 1.4375,
+      "avg_cost": 3.625,
       "avg_risk": 0.0,
       "wrong_confident_stop_rate": 0.0
     },
     {
       "algorithm": "answerability_aware",
-      "cases": 14,
-      "top1": 0.8571428571428571,
-      "coverage": 0.2857142857142857,
+      "cases": 16,
+      "top1": 0.875,
+      "coverage": 0.3125,
       "selective_accuracy": 1.0,
-      "avg_questions": 3.5,
-      "avg_unknown_questions": 1.6428571428571428,
-      "avg_cost": 4.0,
+      "avg_questions": 3.4375,
+      "avg_unknown_questions": 1.625,
+      "avg_cost": 3.9375,
       "avg_risk": 0.0,
       "wrong_confident_stop_rate": 0.0
     }
@@ -240,6 +240,36 @@
         "total_cost": 3.0,
         "total_risk": 0.0,
         "stop_reason": "置信度、领先差距与有效证据达到停止条件"
+      },
+      {
+        "id": "public_ollama_server_stopped",
+        "split": "candidate",
+        "expected": "目标服务未启动",
+        "predicted": "目标服务未启动",
+        "probability": 0.4898191566271957,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 4,
+        "unknown_questions": 3,
+        "total_cost": 5.0,
+        "total_risk": 0.0,
+        "stop_reason": "达到最大追问轮数"
+      },
+      {
+        "id": "public_codex_revoked_api_key",
+        "split": "candidate",
+        "expected": "认证信息无效",
+        "predicted": "认证信息无效",
+        "probability": 0.887844643363455,
+        "passed": true,
+        "decision_sufficient": true,
+        "resolved_correctly": true,
+        "questions": 2,
+        "unknown_questions": 0,
+        "total_cost": 2.0,
+        "total_risk": 0.0,
+        "stop_reason": "置信度、领先差距与有效证据达到停止条件"
       }
     ],
     "answerability_aware": [
@@ -452,6 +482,36 @@
         "total_cost": 5.0,
         "total_risk": 0.0,
         "stop_reason": "达到最大追问轮数，但有效证据不足"
+      },
+      {
+        "id": "public_ollama_server_stopped",
+        "split": "candidate",
+        "expected": "目标服务未启动",
+        "predicted": "目标服务未启动",
+        "probability": 0.4898191566271957,
+        "passed": true,
+        "decision_sufficient": false,
+        "resolved_correctly": false,
+        "questions": 4,
+        "unknown_questions": 3,
+        "total_cost": 5.0,
+        "total_risk": 0.0,
+        "stop_reason": "达到最大追问轮数，但有效证据不足"
+      },
+      {
+        "id": "public_codex_revoked_api_key",
+        "split": "candidate",
+        "expected": "认证信息无效",
+        "predicted": "认证信息无效",
+        "probability": 0.887844643363455,
+        "passed": true,
+        "decision_sufficient": true,
+        "resolved_correctly": true,
+        "questions": 2,
+        "unknown_questions": 0,
+        "total_cost": 2.0,
+        "total_risk": 0.0,
+        "stop_reason": "置信度、领先差距与有效证据达到停止条件"
       }
     ]
   },

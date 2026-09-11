@@ -188,6 +188,35 @@
       "confirmation": "被采纳回答确认5000端口由AirPlay Receiver占用，更换端口后恢复。"
     },
     {
+      "id": "public_ollama_server_stopped",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "Ollama兼容OpenAI API的客户端请求出现Connection refused；复现场景明确为ollama serve已经停止",
+      "expected_top_cause": "目标服务未启动",
+      "answers": {
+        "Q-是否连接被拒绝": "yes",
+        "Q-健康检查是否成功": "no"
+      },
+      "source_url": "https://github.com/ollama/ollama/issues/3221",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue给出服务停止时的完整ConnectionRefusedError调用栈，故障状态由复现条件直接确认。"
+    },
+    {
+      "id": "public_codex_revoked_api_key",
+      "split": "candidate",
+      "family": "service_config",
+      "report": "撤销Codex CLI自动生成的API key后，请求返回401 Incorrect API key provided，错误码invalid_api_key",
+      "expected_top_cause": "认证信息无效",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "no",
+        "Q-是否认证失败": "yes"
+      },
+      "source_url": "https://github.com/openai/codex/issues/2000",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue提供撤销密钥后稳定出现401 invalid_api_key的可复现步骤，能够确认凭据已失效。"
+    },
+    {
       "id": "public_pytorch_cuda_false_windows",
       "split": "unconfirmed",
       "family": "pytorch_gpu",
