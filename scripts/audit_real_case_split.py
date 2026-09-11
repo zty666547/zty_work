@@ -47,14 +47,29 @@ def build_report() -> dict:
     cause_counts = Counter(
         by_id[case_id]["expected_top_cause"] for case_id in groups["development"]
     )
+    test_cause_counts = Counter(
+        by_id[case_id]["expected_top_cause"] for case_id in groups["frozen_test"]
+    )
+    freeze = json.loads(
+        (ROOT / "data/evaluation/model_freeze.json").read_text(encoding="utf-8")
+    )
+    protocol = freeze["test_protocol"]
+    test_ready = (
+        len(groups["frozen_test"]) >= protocol["minimum_cases"]
+        and len(test_cause_counts) == 14
+        and min(test_cause_counts.values(), default=0)
+        >= protocol["minimum_cases_per_cause"]
+    )
     return {
         "development_cases": len(groups["development"]),
         "frozen_test_cases": len(groups["frozen_test"]),
         "unconfirmed_cases": len(groups["unconfirmed"]),
         "development_causes": len(cause_counts),
         "development_min_per_cause": min(cause_counts.values(), default=0),
+        "frozen_test_causes": len(test_cause_counts),
+        "frozen_test_min_per_cause": min(test_cause_counts.values(), default=0),
         "source_overlap": overlap,
-        "test_ready": bool(groups["frozen_test"]),
+        "test_ready": test_ready,
     }
 
 
@@ -68,6 +83,10 @@ def main() -> None:
     print(
         f"开发集覆盖：{report['development_causes']}类原因，"
         f"每类至少{report['development_min_per_cause']}条"
+    )
+    print(
+        f"测试集覆盖：{report['frozen_test_causes']}/14类原因；"
+        f"当前{report['frozen_test_cases']}/14条"
     )
     print("测试集状态：" + ("可运行" if report["test_ready"] else "尚未收集，禁止报告最终性能"))
 

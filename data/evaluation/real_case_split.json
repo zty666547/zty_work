@@ -31,7 +31,12 @@
     "public_nvidia_ollama_service_not_running",
     "public_openai_netrc_wrong_auth_value"
   ],
-  "frozen_test_ids": [],
+  "frozen_test_ids": [
+    "test_pydantic_missing_torch_dependency",
+    "test_sklearn_installed_in_system_not_venv",
+    "test_cpython_numpy_file_shadow",
+    "test_tensorflow_241_python39_unsupported"
+  ],
   "unconfirmed_ids": [
     "public_pytorch_cuda_false_windows",
     "public_pytorch_container_unknown_error",

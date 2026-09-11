@@ -384,6 +384,60 @@
       "confirmation": "Issue用同一有效密钥证明curl成功，并通过最小.netrc复现证明Python客户端实际发送了错误的认证值。"
     },
     {
+      "id": "test_pydantic_missing_torch_dependency",
+      "split": "frozen_test",
+      "family": "python_import",
+      "report": "Pydantic ImportString加载自定义模块时，模块内部import torch触发ModuleNotFoundError: No module named 'torch'；复现环境明确没有安装torch",
+      "expected_top_cause": "目标包未安装",
+      "answers": {
+        "Q-包是否可见": "no"
+      },
+      "source_url": "https://github.com/pydantic/pydantic/issues/12715",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue给出最小复现并明确要求不安装torch，直接导入自定义模块时稳定出现缺失torch的异常。"
+    },
+    {
+      "id": "test_sklearn_installed_in_system_not_venv",
+      "split": "frozen_test",
+      "family": "python_import",
+      "report": "PyCharm虚拟环境导入sklearn.linear_model时报ModuleNotFoundError；维护者检查路径后确认scikit-learn安装在系统Python而不是当前venv",
+      "expected_top_cause": "pip与Python指向不同环境",
+      "answers": {
+        "Q-包是否可见": "no",
+        "Q-解释器是否一致": "no"
+      },
+      "source_url": "https://github.com/scikit-learn/scikit-learn/issues/21929",
+      "root_cause_status": "confirmed",
+      "confirmation": "scikit-learn维护者根据pip和解释器路径明确定位：包位于系统Python的site-packages，而运行程序使用venv。"
+    },
+    {
+      "id": "test_cpython_numpy_file_shadow",
+      "split": "frozen_test",
+      "family": "python_import",
+      "report": "脚本文件命名为numpy.py，运行import numpy as np后出现module 'numpy' has no attribute 'array'，错误信息提示该文件与目标库同名",
+      "expected_top_cause": "本地文件遮蔽第三方模块",
+      "answers": {
+        "Q-是否存在同名文件": "yes"
+      },
+      "source_url": "https://github.com/python/cpython/blob/main/Doc/whatsnew/3.13.rst",
+      "root_cause_status": "confirmed",
+      "confirmation": "CPython官方文档给出numpy.py遮蔽第三方numpy的完整可复现示例，并展示专门的重命名提示。"
+    },
+    {
+      "id": "test_tensorflow_241_python39_unsupported",
+      "split": "frozen_test",
+      "family": "python_import",
+      "report": "macOS使用Python 3.9.6安装TensorFlow 2.4.1时报No matching distribution found；该TensorFlow版本只支持Python 3.6至3.8",
+      "expected_top_cause": "Python版本与包不兼容",
+      "answers": {
+        "Q-包是否可见": "no",
+        "Q-Python版本是否受支持": "no"
+      },
+      "source_url": "https://github.com/tensorflow/tensorflow/issues/53709",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue记录Python 3.9.6与TensorFlow 2.4.1，社区回复依据官方支持范围定位版本不兼容，并给出使用受支持Python版本的解决方法。"
+    },
+    {
       "id": "public_pytorch_cuda_false_windows",
       "split": "unconfirmed",
       "family": "pytorch_gpu",

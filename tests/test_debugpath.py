@@ -302,10 +302,11 @@ def test_real_case_split_is_complete_and_leak_free():
 
     report = build_report()
     assert report["development_cases"] == 28
-    assert report["frozen_test_cases"] == 0
+    assert report["frozen_test_cases"] == 4
     assert report["unconfirmed_cases"] == 3
     assert report["development_causes"] == 14
     assert report["development_min_per_cause"] == 2
+    assert report["frozen_test_causes"] == 4
     assert report["source_overlap"] == []
     assert report["test_ready"] is False
 
