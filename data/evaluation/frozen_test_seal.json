@@ -1,0 +1,35 @@
+{
+  "seal_id": "debugpath-frozen-test-v1",
+  "split_version": "2026-09-11",
+  "case_count": 14,
+  "cause_count": 14,
+  "source_overlap_with_development": [],
+  "sealed_fields": [
+    "id",
+    "family",
+    "report",
+    "expected_top_cause",
+    "answers",
+    "source_url",
+    "root_cause_status",
+    "confirmation"
+  ],
+  "case_ids": [
+    "test_pydantic_missing_torch_dependency",
+    "test_sklearn_installed_in_system_not_venv",
+    "test_cpython_numpy_file_shadow",
+    "test_tensorflow_241_python39_unsupported",
+    "test_pytorch_conda_cpuonly_build",
+    "test_pytorch_nvidia_kernel_driver_failed",
+    "test_pytorch3d_cuda121_torch117_mismatch",
+    "test_video_retalking_apple_mps_not_cuda",
+    "test_nvidia_container_loses_gpu_after_reload",
+    "test_mcp_google_maps_env_not_exported",
+    "test_open_webui_docker_wrong_ollama_address",
+    "test_hermes_openviking_server_not_started",
+    "test_jumpstarter_stale_process_occupies_port",
+    "test_huggingface_stale_env_token_invalid"
+  ],
+  "content_sha256": "cfe86f3d9c97f038d47b2fa69f70059f14624276b19f8c62a0c350151dd0acd6",
+  "policy": "首次正式评测后不得修改本测试集；模型若更新，必须建立新版本和新的未见测试集。"
+}

@@ -515,6 +515,87 @@
       "confirmation": "NVIDIA公告提供完整复现：daemon-reload后容器丢失GPU设备访问，并给出显式设备挂载和cgroup驱动修复验证。"
     },
     {
+      "id": "test_mcp_google_maps_env_not_exported",
+      "split": "frozen_test",
+      "family": "service_config",
+      "report": "Google Maps MCP服务启动时报GOOGLE_MAPS_API_KEY environment variable is not set；密钥只写在客户端配置中，服务进程没有取得必需环境变量",
+      "expected_top_cause": "必需环境变量缺失",
+      "answers": {
+        "Q-变量是否缺失": "yes",
+        "Q-是否认证失败": "no",
+        "Q-是否连接被拒绝": "no"
+      },
+      "source_url": "https://github.com/modelcontextprotocol/servers/issues/383",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue给出服务进程的明确错误：GOOGLE_MAPS_API_KEY未出现在环境变量中；客户端配置里存在密钥不能替代向服务进程传入该变量。"
+    },
+    {
+      "id": "test_open_webui_docker_wrong_ollama_address",
+      "split": "frozen_test",
+      "family": "service_config",
+      "report": "宿主机Ollama能够通过浏览器和curl访问，但Open WebUI容器使用宿主机局域网地址时Connect call failed；改用host.docker.internal后可以连接",
+      "expected_top_cause": "服务地址配置错误",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "yes",
+        "Q-是否认证失败": "no",
+        "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "yes"
+      },
+      "source_url": "https://github.com/open-webui/open-webui/issues/10493",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue证明Ollama在宿主机正常，失败只发生在Open WebUI容器使用原地址时；更换为容器可达的host.docker.internal后恢复。"
+    },
+    {
+      "id": "test_hermes_openviking_server_not_started",
+      "split": "frozen_test",
+      "family": "service_config",
+      "report": "Hermes配置OpenViking本地记忆服务后健康检查失败，127.0.0.1:1933没有进程监听；必须另行启动openviking-server",
+      "expected_top_cause": "目标服务未启动",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "yes",
+        "Q-是否认证失败": "no",
+        "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "no",
+        "Q-端口是否被占用": "no"
+      },
+      "source_url": "https://github.com/NousResearch/hermes-agent/issues/39981",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue给出本地端点、失败的健康检查以及端口无人监听状态，并明确说明OpenViking不会自动启动，需要手动运行服务。"
+    },
+    {
+      "id": "test_jumpstarter_stale_process_occupies_port",
+      "split": "frozen_test",
+      "family": "service_config",
+      "report": "Jumpstarter中止一次storage flash后，遗留的flasher服务继续占用8080端口；下一次操作绑定同一端口时报Errno 98 address already in use",
+      "expected_top_cause": "端口被其他进程占用",
+      "answers": {
+        "Q-是否连接被拒绝": "no",
+        "Q-是否认证失败": "no",
+        "Q-健康检查是否成功": "no",
+        "Q-端口是否被占用": "yes"
+      },
+      "source_url": "https://github.com/jumpstarter-dev/jumpstarter/issues/888",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue给出稳定复现步骤：异常中止后旧服务仍绑定8080端口，后续服务因端口已占用而无法启动，并由关联修复处理遗留进程。"
+    },
+    {
+      "id": "test_huggingface_stale_env_token_invalid",
+      "split": "frozen_test",
+      "family": "service_config",
+      "report": "Hugging Face已经重新登录并保存新令牌，但过期的HF_TOKEN环境变量优先级更高，whoami继续返回Invalid user token",
+      "expected_top_cause": "认证信息无效",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "no",
+        "Q-是否认证失败": "yes"
+      },
+      "source_url": "https://github.com/huggingface/huggingface_hub/issues/2809",
+      "root_cause_status": "confirmed",
+      "confirmation": "Hugging Face维护者明确记录了该认证路径：过期HF_TOKEN会覆盖本地登录文件中的新令牌，使whoami判定当前发送的用户令牌无效。"
+    },
+    {
       "id": "public_pytorch_cuda_false_windows",
       "split": "unconfirmed",
       "family": "pytorch_gpu",

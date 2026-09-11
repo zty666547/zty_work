@@ -40,7 +40,12 @@
     "test_pytorch_nvidia_kernel_driver_failed",
     "test_pytorch3d_cuda121_torch117_mismatch",
     "test_video_retalking_apple_mps_not_cuda",
-    "test_nvidia_container_loses_gpu_after_reload"
+    "test_nvidia_container_loses_gpu_after_reload",
+    "test_mcp_google_maps_env_not_exported",
+    "test_open_webui_docker_wrong_ollama_address",
+    "test_hermes_openviking_server_not_started",
+    "test_jumpstarter_stale_process_occupies_port",
+    "test_huggingface_stale_env_token_invalid"
   ],
   "unconfirmed_ids": [
     "public_pytorch_cuda_false_windows",

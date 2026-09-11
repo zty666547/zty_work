@@ -302,13 +302,25 @@ def test_real_case_split_is_complete_and_leak_free():
 
     report = build_report()
     assert report["development_cases"] == 28
-    assert report["frozen_test_cases"] == 9
+    assert report["frozen_test_cases"] == 14
     assert report["unconfirmed_cases"] == 3
     assert report["development_causes"] == 14
     assert report["development_min_per_cause"] == 2
-    assert report["frozen_test_causes"] == 9
+    assert report["frozen_test_causes"] == 14
+    assert report["frozen_test_min_per_cause"] == 1
     assert report["source_overlap"] == []
-    assert report["test_ready"] is False
+    assert report["test_ready"] is True
+
+
+def test_frozen_test_seal_matches_current_cases():
+    from scripts.seal_frozen_test import build_seal
+
+    saved = json.loads(
+        (ROOT / "data/evaluation/frozen_test_seal.json").read_text(encoding="utf-8")
+    )
+    assert build_seal() == saved
+    assert saved["case_count"] == 14
+    assert saved["cause_count"] == 14
 
 
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():
