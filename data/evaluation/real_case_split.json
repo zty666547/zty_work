@@ -35,7 +35,12 @@
     "test_pydantic_missing_torch_dependency",
     "test_sklearn_installed_in_system_not_venv",
     "test_cpython_numpy_file_shadow",
-    "test_tensorflow_241_python39_unsupported"
+    "test_tensorflow_241_python39_unsupported",
+    "test_pytorch_conda_cpuonly_build",
+    "test_pytorch_nvidia_kernel_driver_failed",
+    "test_pytorch3d_cuda121_torch117_mismatch",
+    "test_video_retalking_apple_mps_not_cuda",
+    "test_nvidia_container_loses_gpu_after_reload"
   ],
   "unconfirmed_ids": [
     "public_pytorch_cuda_false_windows",

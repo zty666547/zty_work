@@ -438,6 +438,83 @@
       "confirmation": "Issue记录Python 3.9.6与TensorFlow 2.4.1，社区回复依据官方支持范围定位版本不兼容，并给出使用受支持Python版本的解决方法。"
     },
     {
+      "id": "test_pytorch_conda_cpuonly_build",
+      "split": "frozen_test",
+      "family": "pytorch_gpu",
+      "report": "Windows安装cudatoolkit 11.3后使用CUDA张量仍报Torch not compiled with CUDA enabled；环境清单显示pytorch、torchvision和torchaudio均为cpu或cpuonly构建",
+      "expected_top_cause": "安装了CPU版PyTorch",
+      "answers": {
+        "Q-PyTorch是否包含CUDA": "no",
+        "Q-是否为macOS": "no"
+      },
+      "source_url": "https://github.com/pytorch/pytorch/issues/67069",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue的环境清单明确标出三个PyTorch包均为cpu构建，能够直接解释CUDA初始化断言。"
+    },
+    {
+      "id": "test_pytorch_nvidia_kernel_driver_failed",
+      "split": "frozen_test",
+      "family": "pytorch_gpu",
+      "report": "Linux安装NVIDIA驱动后nvidia.ko内核模块加载失败，nvidia-smi提示无法与NVIDIA driver通信，GPU运行环境不可用",
+      "expected_top_cause": "NVIDIA驱动不可用",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-nvidia-smi是否成功": "no",
+        "Q-是否为macOS": "no"
+      },
+      "source_url": "https://github.com/pytorch/pytorch/issues/88352",
+      "root_cause_status": "confirmed",
+      "confirmation": "PyTorch Issue日志同时记录nvidia.ko加载失败和nvidia-smi退出失败，根因位于主机驱动层。"
+    },
+    {
+      "id": "test_pytorch3d_cuda121_torch117_mismatch",
+      "split": "frozen_test",
+      "family": "pytorch_gpu",
+      "report": "编译PyTorch3D扩展时报The detected CUDA version 12.1 mismatches the version that was used to compile PyTorch 11.7",
+      "expected_top_cause": "PyTorch与CUDA构建不匹配",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-PyTorch是否包含CUDA": "yes",
+        "Q-是否运行在容器": "no",
+        "Q-是否为macOS": "no"
+      },
+      "source_url": "https://github.com/facebookresearch/pytorch3d/issues/1518",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue给出系统CUDA 12.1与PyTorch cu117的明确版本对照，并列出安装同版本CUDA或匹配PyTorch构建的修复路径。"
+    },
+    {
+      "id": "test_video_retalking_apple_mps_not_cuda",
+      "split": "frozen_test",
+      "family": "pytorch_gpu",
+      "report": "Apple M1 Mac运行只支持cuda设备的代码，torch.cuda.is_available()为False；改为检测torch.backends.mps并使用mps设备后可以运行",
+      "expected_top_cause": "当前平台不提供CUDA",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "no",
+        "Q-PyTorch是否包含CUDA": "no",
+        "Q-是否运行在容器": "no",
+        "Q-是否为macOS": "yes"
+      },
+      "source_url": "https://github.com/OpenTalker/video-retalking/issues/30",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue中的M1用户将硬编码CUDA路径改为MPS并报告成功运行，确认该平台应走MPS而非CUDA。"
+    },
+    {
+      "id": "test_nvidia_container_loses_gpu_after_reload",
+      "split": "frozen_test",
+      "family": "pytorch_gpu",
+      "report": "宿主机GPU与驱动正常，Docker容器启动时可见GPU，但systemctl daemon-reload后容器内nvidia-smi变为Failed to initialize NVML: Unknown Error；按NVIDIA设备挂载方案后恢复",
+      "expected_top_cause": "容器未获得GPU设备",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-nvidia-smi是否成功": "no",
+        "Q-是否运行在容器": "yes",
+        "Q-是否为macOS": "no"
+      },
+      "source_url": "https://github.com/NVIDIA/nvidia-container-toolkit/issues/48",
+      "root_cause_status": "confirmed",
+      "confirmation": "NVIDIA公告提供完整复现：daemon-reload后容器丢失GPU设备访问，并给出显式设备挂载和cgroup驱动修复验证。"
+    },
+    {
       "id": "public_pytorch_cuda_false_windows",
       "split": "unconfirmed",
       "family": "pytorch_gpu",
