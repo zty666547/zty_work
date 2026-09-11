@@ -93,6 +93,8 @@ python scripts/evaluate_injection.py
 
 数据边界已由`data/evaluation/real_case_split.json`固定：现有28条确认记录全部属于开发集；新测试案例必须来自未重复的来源，完成参数冻结后才允许首次运行。
 
+当前模型已按`data/evaluation/model_freeze.json`冻结：图谱指纹、BM25融合权重、信息增益成本项和停止阈值均不得在看到测试结果后修改。冻结测试集最低收集14条，每个候选原因至少1条，且来源不能与开发集重复。
+
 ## 知识注入边界测试
 
 三个故障族分别测试`diagnosis/checks/safety`三种合法编排，共9次；每个故障族再测试未知声明、遗漏声明、重复声明、未召回证据、重复证据、非法侧重点、自由文本和畸形类型，共24次非法编排。

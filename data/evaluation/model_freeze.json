@@ -1,0 +1,29 @@
+{
+  "freeze_id": "debugpath-stage2-2026-09-11",
+  "frozen_after_commit": "214ceca",
+  "graph_content_sha256": "60661204541834a4a07ca86b6deb0e73615412ca8ee2714fcb7d5d0f573ca6c2",
+  "algorithm": "answerability_aware_information_gain_with_bayesian_update",
+  "settings": {
+    "evidence_top_k": 5,
+    "evidence_weight": 0.45,
+    "enable_evidence_retrieval": true,
+    "confidence_threshold": 0.78,
+    "confidence_margin": 0.2,
+    "min_informative_answers": 2,
+    "max_questions": 4,
+    "min_information_gain": 0.01,
+    "question_cost_weight": 0.02,
+    "question_risk_weight": 0.05,
+    "enable_answerability_adjustment": true,
+    "enable_robust_stopping": true
+  },
+  "test_protocol": {
+    "minimum_cases": 14,
+    "minimum_cases_per_cause": 1,
+    "source_must_not_appear_in_development": true,
+    "root_cause_must_be_confirmed": true,
+    "missing_answers_remain_unknown": true,
+    "run_once_after_collection": true
+  },
+  "status": "parameters_frozen_test_collection_open"
+}

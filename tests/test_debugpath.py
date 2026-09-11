@@ -322,6 +322,16 @@ def test_calibration_ablation_is_reproducible_and_scoped_to_development():
     assert metrics["combined"]["wrong_confident_stop_rate"] == 0.0
 
 
+def test_stage2_model_freeze_matches_current_graph_and_settings():
+    from scripts.audit_model_freeze import build_report
+
+    report = build_report()
+    assert report["frozen"] is True
+    assert report["graph_matches"] is True
+    assert report["settings_checked"] == 12
+    assert report["test_protocol"]["minimum_cases"] == 14
+
+
 def test_second_stage_gap_audit_covers_every_cause():
     from scripts.audit_second_stage import build_report
     from scripts.evaluate_public_cases import load_public_cases
