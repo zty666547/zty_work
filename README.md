@@ -140,3 +140,5 @@ Neo4j 构建与演示方法见[Neo4j 演示](docs/neo4j_demo.md)。
 - 知识库外的问题会明确拒绝，不让大模型自由补全。
 
 更多内容见[系统架构](docs/architecture.md)、[数据字典](docs/data_dictionary.md)、[答辩方案](docs/midterm_defense.md)和[修改记录](CHANGELOG.md)。培养方案旧版本保留在 `archive/curriculum-graphrag-v1` 分支和同名标签中。
+
+第二阶段的节点、关系、概率语义与扩展约束见[因果图谱设计](docs/causal_graph_design.md)。逐原因案例缺口可通过`python scripts/audit_second_stage.py`重新生成。

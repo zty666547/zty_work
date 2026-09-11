@@ -52,10 +52,10 @@ def evaluate() -> dict:
         for name, service in algorithms
     }
     return {
-        "benchmark": "confirmed_public_case_seed",
+        "benchmark": "exploratory_confirmed_public_case_pool",
         "confirmed_cases": len(confirmed),
         "unconfirmed_cases": len(pending),
-        "warning": "样本量极小，只验证数据流程，不用于算法优劣结论。",
+        "warning": "候选池尚未平衡和冻结，只用于发现问题，不用于最终算法优劣结论。",
         "metrics": [summarize(name, details[name]) for name, _ in algorithms],
         "details": details,
         "unconfirmed_ids": [case["id"] for case in pending],
@@ -72,7 +72,7 @@ def main() -> None:
             f"平均追问={row['avg_questions']:.2f}, "
             f"平均无法回答={row['avg_unknown_questions']:.2f}"
         )
-    print("注意：样本量极小，当前结果不得用于算法优劣结论。")
+    print("注意：候选池尚未平衡和冻结，当前结果不得作为最终算法结论。")
     OUTPUT.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

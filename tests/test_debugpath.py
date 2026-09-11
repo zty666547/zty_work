@@ -290,6 +290,24 @@ def test_public_cases_exclude_unconfirmed_roots_from_accuracy():
     assert all(case["root_cause_status"] == "confirmed" for case in confirmed)
 
 
+def test_second_stage_gap_audit_covers_every_cause():
+    from scripts.audit_second_stage import build_report
+    from scripts.evaluate_public_cases import load_public_cases
+
+    report = build_report()
+    confirmed, _ = load_public_cases()
+    confirmed_causes = {case["expected_top_cause"] for case in confirmed}
+    assert report["target"]["total_causes"] == 14
+    assert len({row["cause"] for row in report["causes"]}) == 14
+    assert report["summary"]["confirmed_cases"] == len(confirmed)
+    assert report["summary"]["causes_with_confirmed_case"] == len(confirmed_causes)
+    assert all(
+        row["graph"][field] > 0
+        for row in report["causes"]
+        for field in ("observations", "checks", "repairs", "direct_sources")
+    )
+
+
 def test_case_export_redacts_private_environment_data(service):
     snapshot = service.complete(
         service.start(

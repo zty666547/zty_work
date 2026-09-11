@@ -1,0 +1,282 @@
+{
+  "target": {
+    "confirmed_cases_per_cause": 2,
+    "total_causes": 14,
+    "target_confirmed_cases": 28
+  },
+  "summary": {
+    "confirmed_cases": 11,
+    "confirmed_case_gap": 17,
+    "causes_with_confirmed_case": 9,
+    "structural_gap_causes": []
+  },
+  "causes": [
+    {
+      "issue": "Python模块无法导入",
+      "cause": "目标包未安装",
+      "graph": {
+        "observations": 4,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 1,
+        "unconfirmed_mentions": 0,
+        "target_confirmed": 2,
+        "confirmed_gap": 1
+      }
+    },
+    {
+      "issue": "Python模块无法导入",
+      "cause": "pip与Python指向不同环境",
+      "graph": {
+        "observations": 4,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 1,
+        "unconfirmed_mentions": 0,
+        "target_confirmed": 2,
+        "confirmed_gap": 1
+      }
+    },
+    {
+      "issue": "Python模块无法导入",
+      "cause": "本地文件遮蔽第三方模块",
+      "graph": {
+        "observations": 4,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 1,
+        "unconfirmed_mentions": 0,
+        "target_confirmed": 2,
+        "confirmed_gap": 1
+      }
+    },
+    {
+      "issue": "Python模块无法导入",
+      "cause": "Python版本与包不兼容",
+      "graph": {
+        "observations": 4,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 1
+      },
+      "cases": {
+        "confirmed": 2,
+        "unconfirmed_mentions": 0,
+        "target_confirmed": 2,
+        "confirmed_gap": 0
+      }
+    },
+    {
+      "issue": "PyTorch无法使用GPU",
+      "cause": "安装了CPU版PyTorch",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 2,
+        "unconfirmed_mentions": 1,
+        "target_confirmed": 2,
+        "confirmed_gap": 0
+      }
+    },
+    {
+      "issue": "PyTorch无法使用GPU",
+      "cause": "NVIDIA驱动不可用",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 2,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 1,
+        "unconfirmed_mentions": 2,
+        "target_confirmed": 2,
+        "confirmed_gap": 1
+      }
+    },
+    {
+      "issue": "PyTorch无法使用GPU",
+      "cause": "PyTorch与CUDA构建不匹配",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 1
+      },
+      "cases": {
+        "confirmed": 1,
+        "unconfirmed_mentions": 2,
+        "target_confirmed": 2,
+        "confirmed_gap": 1
+      }
+    },
+    {
+      "issue": "PyTorch无法使用GPU",
+      "cause": "容器未获得GPU设备",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 1,
+        "unconfirmed_mentions": 1,
+        "target_confirmed": 2,
+        "confirmed_gap": 1
+      }
+    },
+    {
+      "issue": "PyTorch无法使用GPU",
+      "cause": "当前平台不提供CUDA",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 1,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 1,
+        "unconfirmed_mentions": 0,
+        "target_confirmed": 2,
+        "confirmed_gap": 1
+      }
+    },
+    {
+      "issue": "服务或配置连接失败",
+      "cause": "必需环境变量缺失",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 0,
+        "unconfirmed_mentions": 0,
+        "target_confirmed": 2,
+        "confirmed_gap": 2
+      }
+    },
+    {
+      "issue": "服务或配置连接失败",
+      "cause": "服务地址配置错误",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 1
+      },
+      "cases": {
+        "confirmed": 0,
+        "unconfirmed_mentions": 1,
+        "target_confirmed": 2,
+        "confirmed_gap": 2
+      }
+    },
+    {
+      "issue": "服务或配置连接失败",
+      "cause": "目标服务未启动",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 0,
+        "unconfirmed_mentions": 1,
+        "target_confirmed": 2,
+        "confirmed_gap": 2
+      }
+    },
+    {
+      "issue": "服务或配置连接失败",
+      "cause": "端口被其他进程占用",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 0,
+        "unconfirmed_mentions": 1,
+        "target_confirmed": 2,
+        "confirmed_gap": 2
+      }
+    },
+    {
+      "issue": "服务或配置连接失败",
+      "cause": "认证信息无效",
+      "graph": {
+        "observations": 5,
+        "checks": 1,
+        "repairs": 1,
+        "direct_sources": 1,
+        "evidence_chunks": 0,
+        "platform_constraints": 0,
+        "version_constraints": 0
+      },
+      "cases": {
+        "confirmed": 0,
+        "unconfirmed_mentions": 0,
+        "target_confirmed": 2,
+        "confirmed_gap": 2
+      }
+    }
+  ],
+  "interpretation": "结构完整只表示原因具有观察、检查、修复和来源；真实案例数量才用于估计参数和独立评测。"
+}

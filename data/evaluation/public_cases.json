@@ -3,7 +3,7 @@
   "cases": [
     {
       "id": "public_cpython_local_shadow",
-      "split": "test",
+      "split": "candidate",
       "family": "python_import",
       "report": "ImportError: partially initialized module 'random' has no attribute 'randint'，脚本文件名为random.py",
       "expected_top_cause": "本地文件遮蔽第三方模块",
@@ -14,7 +14,7 @@
     },
     {
       "id": "public_pip_homebrew_wrong_interpreter",
-      "split": "test",
+      "split": "candidate",
       "family": "python_import",
       "report": "虚拟环境中运行tox出现ModuleNotFoundError，但包已经安装；脚本shebang指向系统Python",
       "expected_top_cause": "pip与Python指向不同环境",
@@ -24,8 +24,41 @@
       "confirmation": "Issue提供最小复现并定位到虚拟环境脚本指向系统解释器。"
     },
     {
+      "id": "public_pip_setuptools_not_installed",
+      "split": "candidate",
+      "family": "python_import",
+      "report": "ImportError: No module named 'setuptools'，pip freeze中没有setuptools，清理残留egg后重新安装成功",
+      "expected_top_cause": "目标包未安装",
+      "answers": {"Q-包是否可见": "no", "Q-解释器是否一致": "yes"},
+      "source_url": "https://github.com/pypa/pip/issues/3710",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue展示导入失败和pip freeze无记录；清理残留后重新安装setuptools成功。"
+    },
+    {
+      "id": "public_tensorflow_python312_unsupported",
+      "split": "candidate",
+      "family": "python_import",
+      "report": "Python 3.12安装tf-nightly时出现Could not find a version that satisfies the requirement和No matching distribution found，当时没有Python 3.12兼容wheel",
+      "expected_top_cause": "Python版本与包不兼容",
+      "answers": {"Q-包是否可见": "no", "Q-Python版本是否受支持": "no"},
+      "source_url": "https://github.com/tensorflow/tensorflow/issues/62003",
+      "root_cause_status": "confirmed",
+      "confirmation": "TensorFlow官方跟踪Issue给出Python 3.12最小复现，并明确当时尚未提供兼容wheel。"
+    },
+    {
+      "id": "public_tensorflow_python313_unsupported",
+      "split": "candidate",
+      "family": "python_import",
+      "report": "Windows 10和Python 3.13安装TensorFlow 2.18时出现No matching distribution found，维护者确认该版本只支持Python 3.9到3.12",
+      "expected_top_cause": "Python版本与包不兼容",
+      "answers": {"Q-包是否可见": "no", "Q-Python版本是否受支持": "no"},
+      "source_url": "https://github.com/tensorflow/tensorflow/issues/79349",
+      "root_cause_status": "confirmed",
+      "confirmation": "TensorFlow贡献者明确将失败原因定位为TensorFlow 2.18与Python 3.13不兼容。"
+    },
+    {
       "id": "public_pytorch_cpu_only_build",
-      "split": "test",
+      "split": "candidate",
       "family": "pytorch_gpu",
       "report": "torch.cuda.is_available() False，调用CUDA时报错 Cannot initialize CUDA without ATen_cuda library，当前为CPU-only build",
       "expected_top_cause": "安装了CPU版PyTorch",
@@ -36,7 +69,7 @@
     },
     {
       "id": "public_lerobot_windows_cpu_torch",
-      "split": "test",
+      "split": "candidate",
       "family": "pytorch_gpu",
       "report": "Windows 11中NVIDIA GPU和nvidia-smi正常，但uv sync安装torch 2.11.0+cpu，torch.version.cuda为None且torch.cuda.is_available()返回False",
       "expected_top_cause": "安装了CPU版PyTorch",
@@ -50,11 +83,72 @@
       "confirmation": "Issue在全新环境中复现，并同时给出torch 2.11.0+cpu、CUDA build为None以及正常识别的NVIDIA GPU。"
     },
     {
+      "id": "public_pytorch_driver_cuda_error_803",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "PyTorch 2.4.1+cu124在NVIDIA A40环境中torch.cuda.is_available()返回False，并明确报错Error 803: system has unsupported display driver / cuda driver combination",
+      "expected_top_cause": "NVIDIA驱动不可用",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-PyTorch是否包含CUDA": "yes",
+        "Q-是否运行在容器": "yes"
+      },
+      "source_url": "https://github.com/pytorch/pytorch/issues/135508",
+      "root_cause_status": "confirmed",
+      "confirmation": "CUDA初始化直接返回803错误并说明显示驱动与CUDA驱动组合不受支持；更换为兼容基础镜像后CUDA可用。"
+    },
+    {
+      "id": "public_pytorch_cuda_major_mismatch",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "PyTorch GPU扩展使用cu129构建，但系统检测到CUDA 13.0，编译时报The detected CUDA version mismatches the version that was used to compile PyTorch",
+      "expected_top_cause": "PyTorch与CUDA构建不匹配",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-nvidia-smi是否成功": "yes",
+        "Q-PyTorch是否包含CUDA": "yes"
+      },
+      "source_url": "https://github.com/pytorch/pytorch/issues/160293",
+      "root_cause_status": "confirmed",
+      "confirmation": "错误直接给出系统CUDA 13.0与PyTorch cu129不一致；维护者说明不同CUDA主版本不能混用并给出cu130安装方案。"
+    },
+    {
+      "id": "public_pytorch_macos_no_cuda",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "macOS Intel设备使用AMD Radeon GPU，PyTorch CUDA不可用并报Torch not compiled with CUDA enabled，torch.cuda.is_available()为False",
+      "expected_top_cause": "当前平台不提供CUDA",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "no",
+        "Q-是否为macOS": "yes"
+      },
+      "source_url": "https://github.com/pytorch/pytorch/issues/141973",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue环境为macOS和AMD GPU，并明确说明PyTorch不在非NVIDIA GPU上支持CUDA。"
+    },
+    {
+      "id": "public_nvidia_docker_build_no_gpu",
+      "split": "candidate",
+      "family": "pytorch_gpu",
+      "report": "Docker运行阶段PyTorch GPU可用，但docker build阶段执行CUDA操作提示Found no NVIDIA driver，构建过程没有获得GPU设备",
+      "expected_top_cause": "容器未获得GPU设备",
+      "answers": {
+        "Q-是否有NVIDIA硬件": "yes",
+        "Q-nvidia-smi是否成功": "yes",
+        "Q-PyTorch是否包含CUDA": "yes",
+        "Q-是否运行在容器": "yes"
+      },
+      "source_url": "https://github.com/NVIDIA/nvidia-container-toolkit/issues/221",
+      "root_cause_status": "confirmed",
+      "confirmation": "同一镜像运行后可使用GPU，只有Docker构建阶段无法注入GPU，能够排除主机硬件和PyTorch构建本身。"
+    },
+    {
       "id": "public_pytorch_cuda_false_windows",
       "split": "unconfirmed",
       "family": "pytorch_gpu",
       "report": "Windows笔记本中nvidia-smi正常，但torch.cuda.is_available()返回False",
       "answers": {"Q-是否有NVIDIA硬件": "yes", "Q-nvidia-smi是否成功": "yes"},
+      "candidate_causes": ["安装了CPU版PyTorch", "NVIDIA驱动不可用", "PyTorch与CUDA构建不匹配"],
       "source_url": "https://github.com/pytorch/pytorch/issues/51858",
       "root_cause_status": "unconfirmed",
       "confirmation": "原帖没有唯一确认根因，不参与准确率。"
@@ -65,6 +159,7 @@
       "family": "pytorch_gpu",
       "report": "容器内出现CUDA unknown error，torch.cuda.is_available()返回False，torch.version.cuda为12.1",
       "answers": {"Q-是否运行在容器": "yes", "Q-PyTorch是否包含CUDA": "yes"},
+      "candidate_causes": ["容器未获得GPU设备", "NVIDIA驱动不可用", "PyTorch与CUDA构建不匹配"],
       "source_url": "https://github.com/pytorch/pytorch/issues/144835",
       "root_cause_status": "unconfirmed",
       "confirmation": "环境变量只是错误信息中的可能原因，原帖未确认最终修复。"
@@ -75,6 +170,7 @@
       "family": "service_config",
       "report": "Neo4j Python Driver连接localhost:7687时返回ServiceUnavailable和Connection refused",
       "answers": {"Q-是否连接被拒绝": "yes"},
+      "candidate_causes": ["目标服务未启动", "服务地址配置错误", "端口被其他进程占用"],
       "source_url": "https://github.com/neo4j/neo4j-python-driver/issues/251",
       "root_cause_status": "unconfirmed",
       "confirmation": "维护者指出这是TCP层通用故障，缺少足够环境信息，不能标注唯一根因。"
