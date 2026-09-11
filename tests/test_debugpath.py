@@ -97,6 +97,10 @@ def test_evidence_survives_question_round_trip(service):
     ("report", "issue"),
     [
         ("ModuleNotFoundError: No module named x", "Python模块无法导入"),
+        (
+            "module 'code' has no attribute 'InteractiveConsole' (consider renaming code.py)",
+            "Python模块无法导入",
+        ),
         ("torch.cuda.is_available() False", "PyTorch无法使用GPU"),
         ("torch.cuda.is_available()返回False", "PyTorch无法使用GPU"),
         ("Neo4j Connection refused", "服务或配置连接失败"),

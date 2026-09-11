@@ -35,6 +35,17 @@
       "confirmation": "Issue展示导入失败和pip freeze无记录；清理残留后重新安装setuptools成功。"
     },
     {
+      "id": "public_langchain_community_not_installed",
+      "split": "candidate",
+      "family": "python_import",
+      "report": "升级到LangChain 0.2后导入时报ModuleNotFoundError: No module named 'langchain_community'；该集成包不会随langchain自动安装",
+      "expected_top_cause": "目标包未安装",
+      "answers": {"Q-包是否可见": "no"},
+      "source_url": "https://github.com/langchain-ai/langchain/issues/21880",
+      "root_cause_status": "confirmed",
+      "confirmation": "LangChain贡献者明确说明langchain-community不会自动安装，多名用户确认手动安装该包后解决。"
+    },
+    {
       "id": "public_tensorflow_python312_unsupported",
       "split": "candidate",
       "family": "python_import",
@@ -55,6 +66,28 @@
       "source_url": "https://github.com/tensorflow/tensorflow/issues/79349",
       "root_cause_status": "confirmed",
       "confirmation": "TensorFlow贡献者明确将失败原因定位为TensorFlow 2.18与Python 3.13不兼容。"
+    },
+    {
+      "id": "public_conda_base_environment_leak",
+      "split": "candidate",
+      "family": "python_import",
+      "report": "Conda环境中安装Django 1.10.8后运行manage.py，却从base环境加载Django 2.0.4并触发ModuleNotFoundError",
+      "expected_top_cause": "pip与Python指向不同环境",
+      "answers": {"Q-解释器是否一致": "no"},
+      "source_url": "https://github.com/conda/conda/issues/7230",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue同时列出目标环境和base环境的包版本，异常栈明确从base环境site-packages加载模块。"
+    },
+    {
+      "id": "public_cpython_code_module_shadow",
+      "split": "candidate",
+      "family": "python_import",
+      "report": "Python 3.13 REPL启动时，本地code.py覆盖标准库code模块并导致AttributeError，错误信息包含consider renaming code.py since it has the same name as the standard library module",
+      "expected_top_cause": "本地文件遮蔽第三方模块",
+      "answers": {"Q-是否存在同名文件": "yes"},
+      "source_url": "https://github.com/python/cpython/issues/125140",
+      "root_cause_status": "confirmed",
+      "confirmation": "CPython Issue给出最小复现和实际加载的本地code.py路径，能够直接确认模块遮蔽。"
     },
     {
       "id": "public_pytorch_cpu_only_build",
