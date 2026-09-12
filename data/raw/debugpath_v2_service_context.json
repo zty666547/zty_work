@@ -1,0 +1,145 @@
+{
+  "description": "Open WebUI容器访问宿主机Ollama的服务感知诊断叠加层。",
+  "source": {
+    "title": "Docker、Open WebUI与Ollama官方文档",
+    "urls": [
+      "https://docs.docker.com/desktop/features/networking/networking-how-tos/",
+      "https://docs.openwebui.com/getting-started/quick-start/",
+      "https://docs.ollama.com/api/tags"
+    ]
+  },
+  "entities": {
+    "Service": [
+      {
+        "name": "Open WebUI",
+        "props": {
+          "role": "client",
+          "description": "运行在Docker容器中的模型交互界面。"
+        }
+      },
+      {
+        "name": "Ollama",
+        "props": {
+          "role": "target",
+          "description": "运行在宿主机并提供HTTP API的模型服务。"
+        }
+      }
+    ],
+    "Endpoint": [
+      {
+        "name": "Ollama /api/tags",
+        "props": {
+          "method": "GET",
+          "host_url": "http://localhost:11434/api/tags",
+          "container_url": "http://host.docker.internal:11434/api/tags",
+          "description": "Ollama用于列出本地模型的健康检查端点。"
+        }
+      }
+    ],
+    "DeploymentContext": [
+      {
+        "name": "Open WebUI容器访问宿主机Ollama",
+        "props": {
+          "client_runtime": "docker",
+          "target_runtime": "host",
+          "description": "客户端位于容器，目标Ollama位于宿主机，二者不共享localhost。"
+        }
+      }
+    ],
+    "DiagnosticQuestion": [
+      {
+        "name": "Q-宿主机正常但容器访问失败",
+        "props": {
+          "text": "宿主机访问Ollama正常，但Open WebUI容器使用当前地址访问失败吗？",
+          "yes_label": "宿主机成功、容器失败",
+          "no_label": "宿主机也失败",
+          "cost": 1,
+          "risk_cost": 0,
+          "answerability": 0.9
+        }
+      }
+    ],
+    "Observation": [
+      {
+        "name": "O-宿主机正常但容器访问失败",
+        "props": {
+          "description": "Ollama本身可用，但容器当前配置无法到达宿主机服务。"
+        }
+      }
+    ],
+    "DiagnosticCheck": [
+      {
+        "name": "从Open WebUI容器检查Ollama端点",
+        "props": {
+          "description": "在Open WebUI容器内请求Ollama的/api/tags端点，验证容器到宿主机的实际路径。",
+          "command_macos": "docker exec open-webui python -c \"import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:11434/api/tags').status)\"",
+          "command_linux": "docker exec open-webui python -c \"import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:11434/api/tags').status)\"",
+          "command_windows": "docker exec open-webui python -c \"import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:11434/api/tags').status)\""
+        }
+      }
+    ],
+    "RepairAction": [
+      {
+        "name": "配置Open WebUI的Ollama宿主机地址",
+        "props": {
+          "instruction": "将Open WebUI的OLLAMA_BASE_URL设为http://host.docker.internal:11434，重启容器后再次请求/api/tags。Linux Docker Engine还需确认host-gateway映射。"
+        }
+      }
+    ],
+    "Risk": [
+      {
+        "name": "修改容器配置前保留原值",
+        "props": {
+          "level": "low",
+          "description": "记录原OLLAMA_BASE_URL和容器启动参数，便于恢复。"
+        }
+      }
+    ],
+    "DocumentSource": [
+      {
+        "name": "Docker容器访问宿主机文档",
+        "props": {
+          "title": "Docker networking how-tos",
+          "url": "https://docs.docker.com/desktop/features/networking/networking-how-tos/"
+        }
+      },
+      {
+        "name": "Open WebUI快速开始文档",
+        "props": {
+          "title": "Open WebUI Quick Start",
+          "url": "https://docs.openwebui.com/getting-started/quick-start/"
+        }
+      },
+      {
+        "name": "Ollama模型列表API文档",
+        "props": {
+          "title": "Ollama List models API",
+          "url": "https://docs.ollama.com/api/tags"
+        }
+      }
+    ]
+  },
+  "relations": [
+    {"source": "服务或配置连接失败", "target": "Q-宿主机正常但容器访问失败", "type": "HAS_QUESTION"},
+    {"source": "Q-宿主机正常但容器访问失败", "target": "O-宿主机正常但容器访问失败", "type": "CHECKS"},
+    {"source": "O-宿主机正常但容器访问失败", "target": "服务地址配置错误", "type": "OBSERVATION_SUPPORTS", "props": {"p_yes_given_cause": 0.97}},
+    {"source": "O-宿主机正常但容器访问失败", "target": "目标服务未启动", "type": "OBSERVATION_SUPPORTS", "props": {"p_yes_given_cause": 0.04}},
+    {"source": "O-宿主机正常但容器访问失败", "target": "端口被其他进程占用", "type": "OBSERVATION_SUPPORTS", "props": {"p_yes_given_cause": 0.10}},
+    {"source": "O-宿主机正常但容器访问失败", "target": "必需环境变量缺失", "type": "OBSERVATION_SUPPORTS", "props": {"p_yes_given_cause": 0.08}},
+    {"source": "O-宿主机正常但容器访问失败", "target": "认证信息无效", "type": "OBSERVATION_SUPPORTS", "props": {"p_yes_given_cause": 0.03}},
+    {"source": "服务地址配置错误", "target": "Open WebUI容器访问宿主机Ollama", "type": "CAUSE_CONTEXTUALIZED_BY"},
+    {"source": "Open WebUI容器访问宿主机Ollama", "target": "Open WebUI", "type": "CONTEXT_INVOLVES_CLIENT"},
+    {"source": "Open WebUI", "target": "Ollama", "type": "CLIENT_CONNECTS_TO"},
+    {"source": "Ollama", "target": "Ollama /api/tags", "type": "SERVICE_EXPOSES"},
+    {"source": "Ollama /api/tags", "target": "Open WebUI容器访问宿主机Ollama", "type": "ENDPOINT_REACHABLE_FROM"},
+    {"source": "Open WebUI容器访问宿主机Ollama", "target": "从Open WebUI容器检查Ollama端点", "type": "CONTEXT_CHECKED_BY"},
+    {"source": "Open WebUI容器访问宿主机Ollama", "target": "配置Open WebUI的Ollama宿主机地址", "type": "CONTEXT_RESOLVED_BY"},
+    {"source": "从Open WebUI容器检查Ollama端点", "target": "Ollama /api/tags", "type": "CHECK_TARGETS_ENDPOINT"},
+    {"source": "配置Open WebUI的Ollama宿主机地址", "target": "Ollama /api/tags", "type": "REPAIR_CONFIGURES_ENDPOINT"},
+    {"source": "配置Open WebUI的Ollama宿主机地址", "target": "从Open WebUI容器检查Ollama端点", "type": "REPAIR_REQUIRES"},
+    {"source": "配置Open WebUI的Ollama宿主机地址", "target": "修改容器配置前保留原值", "type": "REPAIR_HAS_RISK"},
+    {"source": "从Open WebUI容器检查Ollama端点", "target": "Docker容器访问宿主机文档", "type": "CHECK_SUPPORTED_BY"},
+    {"source": "从Open WebUI容器检查Ollama端点", "target": "Ollama模型列表API文档", "type": "CHECK_SUPPORTED_BY"},
+    {"source": "配置Open WebUI的Ollama宿主机地址", "target": "Open WebUI快速开始文档", "type": "REPAIR_SUPPORTED_BY"}
+  ]
+}

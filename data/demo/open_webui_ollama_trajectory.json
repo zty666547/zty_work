@@ -1,0 +1,1372 @@
+{
+  "format": "debugpath-demo-v2",
+  "scenario": {
+    "id": "demo_open_webui_ollama_host_gateway",
+    "title": "Open WebUI容器无法连接宿主机Ollama",
+    "report": "宿主机Ollama能够通过浏览器和curl访问，但Open WebUI容器使用宿主机局域网地址时Connect call failed",
+    "answers": {
+      "Q-宿主机正常但容器访问失败": "yes",
+      "Q-变量是否缺失": "no"
+    },
+    "expected_cause": "服务地址配置错误",
+    "scope": "固定演示案例，不参与第二版外部测试。"
+  },
+  "graph": {
+    "nodes": 144,
+    "relations": 366
+  },
+  "routing": {
+    "status": "routed",
+    "selected_issue": "服务或配置连接失败",
+    "margin": 0.12994823402897365,
+    "clarification": null,
+    "candidates": [
+      {
+        "issue": "服务或配置连接失败",
+        "score": 0.45,
+        "signature_score": 0.0,
+        "evidence_score": 1.0,
+        "matched_signatures": [],
+        "evidence": [
+          {
+            "chunk_id": "E023",
+            "name": "E023-URI不支持嵌套路径",
+            "score": 0.5320162684526225,
+            "supports_causes": [
+              "服务地址配置错误"
+            ]
+          },
+          {
+            "chunk_id": "E025",
+            "name": "E025-连接被拒绝",
+            "score": 0.3978516027227944,
+            "supports_causes": [
+              "目标服务未启动"
+            ]
+          },
+          {
+            "chunk_id": "E022",
+            "name": "E022-Neo4j连接URI",
+            "score": 0.3739156158389355,
+            "supports_causes": [
+              "服务地址配置错误"
+            ]
+          }
+        ]
+      },
+      {
+        "issue": "PyTorch无法使用GPU",
+        "score": 0.32005176597102636,
+        "signature_score": 0.0,
+        "evidence_score": 0.7112261466022808,
+        "matched_signatures": [],
+        "evidence": [
+          {
+            "chunk_id": "E015",
+            "name": "E015-容器GPU映射",
+            "score": 1.0,
+            "supports_causes": [
+              "容器未获得GPU设备"
+            ]
+          },
+          {
+            "chunk_id": "E016",
+            "name": "E016-容器可见设备变量",
+            "score": 0.2465555803383302,
+            "supports_causes": [
+              "容器未获得GPU设备"
+            ]
+          },
+          {
+            "chunk_id": "E012",
+            "name": "E012-驱动检查",
+            "score": 0.2459877321416925,
+            "supports_causes": [
+              "NVIDIA驱动不可用"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "service_context": "Open WebUI容器访问宿主机Ollama",
+  "trajectory": [
+    {
+      "step": 0,
+      "round": 0,
+      "event": "initial",
+      "issue_name": "服务或配置连接失败",
+      "question": null,
+      "answer": null,
+      "observation": null,
+      "candidates": [
+        {
+          "name": "服务地址配置错误",
+          "probability": 0.36746380558460723,
+          "description": "URI、协议、主机名、端口或路径与实际服务不一致。"
+        },
+        {
+          "name": "目标服务未启动",
+          "probability": 0.3300361944153928,
+          "description": "客户端配置存在，但目标进程没有监听指定地址。"
+        },
+        {
+          "name": "必需环境变量缺失",
+          "probability": 0.1375,
+          "description": "当前进程未读取到API密钥、URI或其他必需配置。"
+        },
+        {
+          "name": "端口被其他进程占用",
+          "probability": 0.0825,
+          "description": "预期服务无法绑定端口，或请求到错误进程。"
+        },
+        {
+          "name": "认证信息无效",
+          "probability": 0.0825,
+          "description": "服务可达，但用户名、密码或令牌未通过认证。"
+        }
+      ],
+      "entropy": 2.0460701681248867,
+      "next_question": {
+        "name": "Q-宿主机正常但容器访问失败",
+        "text": "宿主机访问Ollama正常，但Open WebUI容器使用当前地址访问失败吗？",
+        "yes_label": "宿主机成功、容器失败",
+        "no_label": "宿主机也失败",
+        "information_gain": 0.7042493696151659,
+        "expected_information_gain": 0.6338244326536494,
+        "answerability": 0.9,
+        "cost": 1.0,
+        "risk_cost": 0.0,
+        "utility": 0.6138244326536494,
+        "reason": "理论上可减少 0.704 bit 不确定性；预计可回答率 90%；修正后信息收益 0.634 bit；当前回答“是”的预测概率为 39%"
+      },
+      "status": "questioning",
+      "stop_reason": "",
+      "routing": {
+        "status": "routed",
+        "selected_issue": "服务或配置连接失败",
+        "margin": 0.12994823402897365,
+        "clarification": null,
+        "candidates": [
+          {
+            "issue": "服务或配置连接失败",
+            "score": 0.45,
+            "signature_score": 0.0,
+            "evidence_score": 1.0,
+            "matched_signatures": [],
+            "evidence": [
+              {
+                "chunk_id": "E023",
+                "name": "E023-URI不支持嵌套路径",
+                "score": 0.5320162684526225,
+                "supports_causes": [
+                  "服务地址配置错误"
+                ]
+              },
+              {
+                "chunk_id": "E025",
+                "name": "E025-连接被拒绝",
+                "score": 0.3978516027227944,
+                "supports_causes": [
+                  "目标服务未启动"
+                ]
+              },
+              {
+                "chunk_id": "E022",
+                "name": "E022-Neo4j连接URI",
+                "score": 0.3739156158389355,
+                "supports_causes": [
+                  "服务地址配置错误"
+                ]
+              }
+            ]
+          },
+          {
+            "issue": "PyTorch无法使用GPU",
+            "score": 0.32005176597102636,
+            "signature_score": 0.0,
+            "evidence_score": 0.7112261466022808,
+            "matched_signatures": [],
+            "evidence": [
+              {
+                "chunk_id": "E015",
+                "name": "E015-容器GPU映射",
+                "score": 1.0,
+                "supports_causes": [
+                  "容器未获得GPU设备"
+                ]
+              },
+              {
+                "chunk_id": "E016",
+                "name": "E016-容器可见设备变量",
+                "score": 0.2465555803383302,
+                "supports_causes": [
+                  "容器未获得GPU设备"
+                ]
+              },
+              {
+                "chunk_id": "E012",
+                "name": "E012-驱动检查",
+                "score": 0.2459877321416925,
+                "supports_causes": [
+                  "NVIDIA驱动不可用"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "service_context": "Open WebUI容器访问宿主机Ollama"
+    },
+    {
+      "step": 1,
+      "round": 1,
+      "event": "answer",
+      "issue_name": "服务或配置连接失败",
+      "question": {
+        "name": "Q-宿主机正常但容器访问失败",
+        "text": "宿主机访问Ollama正常，但Open WebUI容器使用当前地址访问失败吗？",
+        "yes_label": "宿主机成功、容器失败",
+        "no_label": "宿主机也失败",
+        "information_gain": 0.7042493696151659,
+        "expected_information_gain": 0.6338244326536494,
+        "answerability": 0.9,
+        "cost": 1.0,
+        "risk_cost": 0.0,
+        "utility": 0.6138244326536494,
+        "reason": "理论上可减少 0.704 bit 不确定性；预计可回答率 90%；修正后信息收益 0.634 bit；当前回答“是”的预测概率为 39%"
+      },
+      "answer": "yes",
+      "observation": "O-宿主机正常但容器访问失败",
+      "candidates": [
+        {
+          "name": "服务地址配置错误",
+          "probability": 0.9107576603328402,
+          "description": "URI、协议、主机名、端口或路径与实际服务不一致。"
+        },
+        {
+          "name": "目标服务未启动",
+          "probability": 0.033731689352267974,
+          "description": "客户端配置存在，但目标进程没有监听指定地址。"
+        },
+        {
+          "name": "必需环境变量缺失",
+          "probability": 0.028106658387287035,
+          "description": "当前进程未读取到API密钥、URI或其他必需配置。"
+        },
+        {
+          "name": "端口被其他进程占用",
+          "probability": 0.021079993790465275,
+          "description": "预期服务无法绑定端口，或请求到错误进程。"
+        },
+        {
+          "name": "认证信息无效",
+          "probability": 0.0063239981371395835,
+          "description": "服务可达，但用户名、密码或令牌未通过认证。"
+        }
+      ],
+      "entropy": 0.5961666911005529,
+      "next_question": {
+        "name": "Q-变量是否缺失",
+        "text": "检查当前进程后，必需的环境变量是否为空或不存在？",
+        "yes_label": "缺失",
+        "no_label": "存在",
+        "information_gain": 0.07881547446762516,
+        "expected_information_gain": 0.05911160585071887,
+        "answerability": 0.75,
+        "cost": 1.0,
+        "risk_cost": 0.0,
+        "utility": 0.039111605850718864,
+        "reason": "理论上可减少 0.079 bit 不确定性；预计可回答率 75%；修正后信息收益 0.059 bit；当前回答“是”的预测概率为 12%"
+      },
+      "status": "questioning",
+      "stop_reason": "",
+      "routing": {
+        "status": "routed",
+        "selected_issue": "服务或配置连接失败",
+        "margin": 0.12994823402897365,
+        "clarification": null,
+        "candidates": [
+          {
+            "issue": "服务或配置连接失败",
+            "score": 0.45,
+            "signature_score": 0.0,
+            "evidence_score": 1.0,
+            "matched_signatures": [],
+            "evidence": [
+              {
+                "chunk_id": "E023",
+                "name": "E023-URI不支持嵌套路径",
+                "score": 0.5320162684526225,
+                "supports_causes": [
+                  "服务地址配置错误"
+                ]
+              },
+              {
+                "chunk_id": "E025",
+                "name": "E025-连接被拒绝",
+                "score": 0.3978516027227944,
+                "supports_causes": [
+                  "目标服务未启动"
+                ]
+              },
+              {
+                "chunk_id": "E022",
+                "name": "E022-Neo4j连接URI",
+                "score": 0.3739156158389355,
+                "supports_causes": [
+                  "服务地址配置错误"
+                ]
+              }
+            ]
+          },
+          {
+            "issue": "PyTorch无法使用GPU",
+            "score": 0.32005176597102636,
+            "signature_score": 0.0,
+            "evidence_score": 0.7112261466022808,
+            "matched_signatures": [],
+            "evidence": [
+              {
+                "chunk_id": "E015",
+                "name": "E015-容器GPU映射",
+                "score": 1.0,
+                "supports_causes": [
+                  "容器未获得GPU设备"
+                ]
+              },
+              {
+                "chunk_id": "E016",
+                "name": "E016-容器可见设备变量",
+                "score": 0.2465555803383302,
+                "supports_causes": [
+                  "容器未获得GPU设备"
+                ]
+              },
+              {
+                "chunk_id": "E012",
+                "name": "E012-驱动检查",
+                "score": 0.2459877321416925,
+                "supports_causes": [
+                  "NVIDIA驱动不可用"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "service_context": "Open WebUI容器访问宿主机Ollama"
+    },
+    {
+      "step": 2,
+      "round": 2,
+      "event": "answer",
+      "issue_name": "服务或配置连接失败",
+      "question": {
+        "name": "Q-变量是否缺失",
+        "text": "检查当前进程后，必需的环境变量是否为空或不存在？",
+        "yes_label": "缺失",
+        "no_label": "存在",
+        "information_gain": 0.07881547446762516,
+        "expected_information_gain": 0.05911160585071887,
+        "answerability": 0.75,
+        "cost": 1.0,
+        "risk_cost": 0.0,
+        "utility": 0.039111605850718864,
+        "reason": "理论上可减少 0.079 bit 不确定性；预计可回答率 75%；修正后信息收益 0.059 bit；当前回答“是”的预测概率为 12%"
+      },
+      "answer": "no",
+      "observation": "O-必需变量缺失",
+      "candidates": [
+        {
+          "name": "服务地址配置错误",
+          "probability": 0.9330113020454478,
+          "description": "URI、协议、主机名、端口或路径与实际服务不一致。"
+        },
+        {
+          "name": "目标服务未启动",
+          "probability": 0.036475668476444345,
+          "description": "客户端配置存在，但目标进程没有监听指定地址。"
+        },
+        {
+          "name": "端口被其他进程占用",
+          "probability": 0.022794792663855083,
+          "description": "预期服务无法绑定端口，或请求到错误进程。"
+        },
+        {
+          "name": "认证信息无效",
+          "probability": 0.006118602241350577,
+          "description": "服务可达，但用户名、密码或令牌未通过认证。"
+        },
+        {
+          "name": "必需环境变量缺失",
+          "probability": 0.0015996345729021129,
+          "description": "当前进程未读取到API密钥、URI或其他必需配置。"
+        }
+      ],
+      "entropy": 0.45176789132564477,
+      "next_question": null,
+      "status": "completed",
+      "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+      "routing": {
+        "status": "routed",
+        "selected_issue": "服务或配置连接失败",
+        "margin": 0.12994823402897365,
+        "clarification": null,
+        "candidates": [
+          {
+            "issue": "服务或配置连接失败",
+            "score": 0.45,
+            "signature_score": 0.0,
+            "evidence_score": 1.0,
+            "matched_signatures": [],
+            "evidence": [
+              {
+                "chunk_id": "E023",
+                "name": "E023-URI不支持嵌套路径",
+                "score": 0.5320162684526225,
+                "supports_causes": [
+                  "服务地址配置错误"
+                ]
+              },
+              {
+                "chunk_id": "E025",
+                "name": "E025-连接被拒绝",
+                "score": 0.3978516027227944,
+                "supports_causes": [
+                  "目标服务未启动"
+                ]
+              },
+              {
+                "chunk_id": "E022",
+                "name": "E022-Neo4j连接URI",
+                "score": 0.3739156158389355,
+                "supports_causes": [
+                  "服务地址配置错误"
+                ]
+              }
+            ]
+          },
+          {
+            "issue": "PyTorch无法使用GPU",
+            "score": 0.32005176597102636,
+            "signature_score": 0.0,
+            "evidence_score": 0.7112261466022808,
+            "matched_signatures": [],
+            "evidence": [
+              {
+                "chunk_id": "E015",
+                "name": "E015-容器GPU映射",
+                "score": 1.0,
+                "supports_causes": [
+                  "容器未获得GPU设备"
+                ]
+              },
+              {
+                "chunk_id": "E016",
+                "name": "E016-容器可见设备变量",
+                "score": 0.2465555803383302,
+                "supports_causes": [
+                  "容器未获得GPU设备"
+                ]
+              },
+              {
+                "chunk_id": "E012",
+                "name": "E012-驱动检查",
+                "score": 0.2459877321416925,
+                "supports_causes": [
+                  "NVIDIA驱动不可用"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "service_context": "Open WebUI容器访问宿主机Ollama"
+    }
+  ],
+  "subgraphs": [
+    {
+      "step": 0,
+      "event": "initial",
+      "status": "questioning",
+      "stop_reason": "",
+      "nodes": [
+        {
+          "name": "E022-Neo4j连接URI",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "E023-URI不支持嵌套路径",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "E025-连接被拒绝",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Ollama",
+          "type": "Service",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Ollama /api/tags",
+          "type": "Endpoint",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Open WebUI",
+          "type": "Service",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Open WebUI容器访问宿主机Ollama",
+          "type": "DeploymentContext",
+          "role": "deployment_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Q-宿主机正常但容器访问失败",
+          "type": "DiagnosticQuestion",
+          "role": "current_question",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "必需环境变量缺失",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.1375,
+          "probability_change": 0.0
+        },
+        {
+          "name": "服务地址配置错误",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.36746380558460723,
+          "probability_change": 0.0
+        },
+        {
+          "name": "服务或配置连接失败",
+          "type": "Issue",
+          "role": "issue",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "目标服务未启动",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.3300361944153928,
+          "probability_change": 0.0
+        },
+        {
+          "name": "端口被其他进程占用",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.0825,
+          "probability_change": 0.0
+        },
+        {
+          "name": "认证信息无效",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.0825,
+          "probability_change": 0.0
+        }
+      ],
+      "edges": [
+        {
+          "source": "服务或配置连接失败",
+          "target": "必需环境变量缺失",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.25
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "服务地址配置错误",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.2
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "目标服务未启动",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.25
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "端口被其他进程占用",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.15
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "认证信息无效",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.15
+          }
+        },
+        {
+          "source": "E022-Neo4j连接URI",
+          "target": "服务地址配置错误",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "E023-URI不支持嵌套路径",
+          "target": "服务地址配置错误",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "E025-连接被拒绝",
+          "target": "目标服务未启动",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "Q-宿主机正常但容器访问失败",
+          "type": "HAS_QUESTION",
+          "props": {}
+        },
+        {
+          "source": "服务地址配置错误",
+          "target": "Open WebUI容器访问宿主机Ollama",
+          "type": "CAUSE_CONTEXTUALIZED_BY",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI容器访问宿主机Ollama",
+          "target": "Open WebUI",
+          "type": "CONTEXT_INVOLVES_CLIENT",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI",
+          "target": "Ollama",
+          "type": "CLIENT_CONNECTS_TO",
+          "props": {}
+        },
+        {
+          "source": "Ollama",
+          "target": "Ollama /api/tags",
+          "type": "SERVICE_EXPOSES",
+          "props": {}
+        },
+        {
+          "source": "Ollama /api/tags",
+          "target": "Open WebUI容器访问宿主机Ollama",
+          "type": "ENDPOINT_REACHABLE_FROM",
+          "props": {}
+        }
+      ]
+    },
+    {
+      "step": 1,
+      "event": "answer",
+      "status": "questioning",
+      "stop_reason": "",
+      "nodes": [
+        {
+          "name": "E022-Neo4j连接URI",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "E023-URI不支持嵌套路径",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "E025-连接被拒绝",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "O-宿主机正常但容器访问失败",
+          "type": "Observation",
+          "role": "user_observation",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Ollama",
+          "type": "Service",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Ollama /api/tags",
+          "type": "Endpoint",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Open WebUI",
+          "type": "Service",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Open WebUI容器访问宿主机Ollama",
+          "type": "DeploymentContext",
+          "role": "deployment_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Q-宿主机正常但容器访问失败",
+          "type": "DiagnosticQuestion",
+          "role": "current_question",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "必需环境变量缺失",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.028106658387287035,
+          "probability_change": -0.10939334161271297
+        },
+        {
+          "name": "服务地址配置错误",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.9107576603328402,
+          "probability_change": 0.543293854748233
+        },
+        {
+          "name": "服务或配置连接失败",
+          "type": "Issue",
+          "role": "issue",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "目标服务未启动",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.033731689352267974,
+          "probability_change": -0.2963045050631248
+        },
+        {
+          "name": "端口被其他进程占用",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.021079993790465275,
+          "probability_change": -0.06142000620953473
+        },
+        {
+          "name": "认证信息无效",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.0063239981371395835,
+          "probability_change": -0.07617600186286042
+        }
+      ],
+      "edges": [
+        {
+          "source": "服务或配置连接失败",
+          "target": "必需环境变量缺失",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.25
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "服务地址配置错误",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.2
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "目标服务未启动",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.25
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "端口被其他进程占用",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.15
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "认证信息无效",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.15
+          }
+        },
+        {
+          "source": "E022-Neo4j连接URI",
+          "target": "服务地址配置错误",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "E023-URI不支持嵌套路径",
+          "target": "服务地址配置错误",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "E025-连接被拒绝",
+          "target": "目标服务未启动",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "Q-宿主机正常但容器访问失败",
+          "type": "HAS_QUESTION",
+          "props": {}
+        },
+        {
+          "source": "Q-宿主机正常但容器访问失败",
+          "target": "O-宿主机正常但容器访问失败",
+          "type": "CHECKS",
+          "props": {}
+        },
+        {
+          "source": "O-宿主机正常但容器访问失败",
+          "target": "服务地址配置错误",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.97
+          }
+        },
+        {
+          "source": "O-宿主机正常但容器访问失败",
+          "target": "目标服务未启动",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.04
+          }
+        },
+        {
+          "source": "O-宿主机正常但容器访问失败",
+          "target": "端口被其他进程占用",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.1
+          }
+        },
+        {
+          "source": "O-宿主机正常但容器访问失败",
+          "target": "必需环境变量缺失",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.08
+          }
+        },
+        {
+          "source": "O-宿主机正常但容器访问失败",
+          "target": "认证信息无效",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.03
+          }
+        },
+        {
+          "source": "服务地址配置错误",
+          "target": "Open WebUI容器访问宿主机Ollama",
+          "type": "CAUSE_CONTEXTUALIZED_BY",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI容器访问宿主机Ollama",
+          "target": "Open WebUI",
+          "type": "CONTEXT_INVOLVES_CLIENT",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI",
+          "target": "Ollama",
+          "type": "CLIENT_CONNECTS_TO",
+          "props": {}
+        },
+        {
+          "source": "Ollama",
+          "target": "Ollama /api/tags",
+          "type": "SERVICE_EXPOSES",
+          "props": {}
+        },
+        {
+          "source": "Ollama /api/tags",
+          "target": "Open WebUI容器访问宿主机Ollama",
+          "type": "ENDPOINT_REACHABLE_FROM",
+          "props": {}
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "event": "answer",
+      "status": "completed",
+      "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+      "nodes": [
+        {
+          "name": "Docker容器访问宿主机文档",
+          "type": "DocumentSource",
+          "role": "final_source",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "E022-Neo4j连接URI",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "E023-URI不支持嵌套路径",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "E025-连接被拒绝",
+          "type": "EvidenceChunk",
+          "role": "routing_evidence",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Neo4j Python连接手册",
+          "type": "DocumentSource",
+          "role": "final_source",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "O-必需变量缺失",
+          "type": "Observation",
+          "role": "user_observation",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Ollama",
+          "type": "Service",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Ollama /api/tags",
+          "type": "Endpoint",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Ollama模型列表API文档",
+          "type": "DocumentSource",
+          "role": "final_source",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Open WebUI",
+          "type": "Service",
+          "role": "service_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Open WebUI容器访问宿主机Ollama",
+          "type": "DeploymentContext",
+          "role": "deployment_context",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Open WebUI快速开始文档",
+          "type": "DocumentSource",
+          "role": "final_source",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "Q-变量是否缺失",
+          "type": "DiagnosticQuestion",
+          "role": "current_question",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "从Open WebUI容器检查Ollama端点",
+          "type": "DiagnosticCheck",
+          "role": "final_check",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "修改容器配置前保留原值",
+          "type": "Risk",
+          "role": "final_risk",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "必需环境变量缺失",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.0015996345729021129,
+          "probability_change": -0.02650702381438492
+        },
+        {
+          "name": "服务地址配置错误",
+          "type": "Cause",
+          "role": "final_cause",
+          "probability": 0.9330113020454478,
+          "probability_change": 0.022253641712607575
+        },
+        {
+          "name": "服务或配置连接失败",
+          "type": "Issue",
+          "role": "issue",
+          "probability": null,
+          "probability_change": null
+        },
+        {
+          "name": "目标服务未启动",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.036475668476444345,
+          "probability_change": 0.002743979124176371
+        },
+        {
+          "name": "端口被其他进程占用",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.022794792663855083,
+          "probability_change": 0.0017147988733898084
+        },
+        {
+          "name": "认证信息无效",
+          "type": "Cause",
+          "role": "candidate_cause",
+          "probability": 0.006118602241350577,
+          "probability_change": -0.00020539589578900692
+        },
+        {
+          "name": "配置Open WebUI的Ollama宿主机地址",
+          "type": "RepairAction",
+          "role": "final_repair",
+          "probability": null,
+          "probability_change": null
+        }
+      ],
+      "edges": [
+        {
+          "source": "服务或配置连接失败",
+          "target": "必需环境变量缺失",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.25
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "服务地址配置错误",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.2
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "目标服务未启动",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.25
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "端口被其他进程占用",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.15
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "认证信息无效",
+          "type": "HAS_POSSIBLE_CAUSE",
+          "props": {
+            "prior": 0.15
+          }
+        },
+        {
+          "source": "服务或配置连接失败",
+          "target": "Q-变量是否缺失",
+          "type": "HAS_QUESTION",
+          "props": {}
+        },
+        {
+          "source": "Q-变量是否缺失",
+          "target": "O-必需变量缺失",
+          "type": "CHECKS",
+          "props": {}
+        },
+        {
+          "source": "O-必需变量缺失",
+          "target": "必需环境变量缺失",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.95
+          }
+        },
+        {
+          "source": "O-必需变量缺失",
+          "target": "服务地址配置错误",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.1
+          }
+        },
+        {
+          "source": "O-必需变量缺失",
+          "target": "目标服务未启动",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.05
+          }
+        },
+        {
+          "source": "O-必需变量缺失",
+          "target": "端口被其他进程占用",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.05
+          }
+        },
+        {
+          "source": "O-必需变量缺失",
+          "target": "认证信息无效",
+          "type": "OBSERVATION_SUPPORTS",
+          "props": {
+            "p_yes_given_cause": 0.15
+          }
+        },
+        {
+          "source": "服务地址配置错误",
+          "target": "Neo4j Python连接手册",
+          "type": "CAUSE_SUPPORTED_BY",
+          "props": {}
+        },
+        {
+          "source": "目标服务未启动",
+          "target": "Neo4j Python连接手册",
+          "type": "CAUSE_SUPPORTED_BY",
+          "props": {}
+        },
+        {
+          "source": "端口被其他进程占用",
+          "target": "Neo4j Python连接手册",
+          "type": "CAUSE_SUPPORTED_BY",
+          "props": {}
+        },
+        {
+          "source": "认证信息无效",
+          "target": "Neo4j Python连接手册",
+          "type": "CAUSE_SUPPORTED_BY",
+          "props": {}
+        },
+        {
+          "source": "E022-Neo4j连接URI",
+          "target": "服务地址配置错误",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "E023-URI不支持嵌套路径",
+          "target": "服务地址配置错误",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "Neo4j Python连接手册",
+          "target": "E025-连接被拒绝",
+          "type": "SOURCE_CONTAINS_CHUNK",
+          "props": {}
+        },
+        {
+          "source": "E025-连接被拒绝",
+          "target": "目标服务未启动",
+          "type": "CHUNK_SUPPORTS_CAUSE",
+          "props": {}
+        },
+        {
+          "source": "服务地址配置错误",
+          "target": "Open WebUI容器访问宿主机Ollama",
+          "type": "CAUSE_CONTEXTUALIZED_BY",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI容器访问宿主机Ollama",
+          "target": "Open WebUI",
+          "type": "CONTEXT_INVOLVES_CLIENT",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI",
+          "target": "Ollama",
+          "type": "CLIENT_CONNECTS_TO",
+          "props": {}
+        },
+        {
+          "source": "Ollama",
+          "target": "Ollama /api/tags",
+          "type": "SERVICE_EXPOSES",
+          "props": {}
+        },
+        {
+          "source": "Ollama /api/tags",
+          "target": "Open WebUI容器访问宿主机Ollama",
+          "type": "ENDPOINT_REACHABLE_FROM",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI容器访问宿主机Ollama",
+          "target": "从Open WebUI容器检查Ollama端点",
+          "type": "CONTEXT_CHECKED_BY",
+          "props": {}
+        },
+        {
+          "source": "Open WebUI容器访问宿主机Ollama",
+          "target": "配置Open WebUI的Ollama宿主机地址",
+          "type": "CONTEXT_RESOLVED_BY",
+          "props": {}
+        },
+        {
+          "source": "从Open WebUI容器检查Ollama端点",
+          "target": "Ollama /api/tags",
+          "type": "CHECK_TARGETS_ENDPOINT",
+          "props": {}
+        },
+        {
+          "source": "配置Open WebUI的Ollama宿主机地址",
+          "target": "Ollama /api/tags",
+          "type": "REPAIR_CONFIGURES_ENDPOINT",
+          "props": {}
+        },
+        {
+          "source": "配置Open WebUI的Ollama宿主机地址",
+          "target": "从Open WebUI容器检查Ollama端点",
+          "type": "REPAIR_REQUIRES",
+          "props": {}
+        },
+        {
+          "source": "配置Open WebUI的Ollama宿主机地址",
+          "target": "修改容器配置前保留原值",
+          "type": "REPAIR_HAS_RISK",
+          "props": {}
+        },
+        {
+          "source": "从Open WebUI容器检查Ollama端点",
+          "target": "Docker容器访问宿主机文档",
+          "type": "CHECK_SUPPORTED_BY",
+          "props": {}
+        },
+        {
+          "source": "从Open WebUI容器检查Ollama端点",
+          "target": "Ollama模型列表API文档",
+          "type": "CHECK_SUPPORTED_BY",
+          "props": {}
+        },
+        {
+          "source": "配置Open WebUI的Ollama宿主机地址",
+          "target": "Open WebUI快速开始文档",
+          "type": "REPAIR_SUPPORTED_BY",
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "final": {
+    "cause": "服务地址配置错误",
+    "probability": 0.9330113020454478,
+    "decision": {
+      "sufficient": true,
+      "top_probability": 0.9330113020454478,
+      "margin": 0.8965356335690035,
+      "informative_answers": 2,
+      "required_informative_answers": 2
+    },
+    "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+    "plan": {
+      "cause": "服务地址配置错误",
+      "probability": 0.9330113020454478,
+      "check": "在Open WebUI容器内请求Ollama的/api/tags端点，验证容器到宿主机的实际路径。",
+      "command": "docker exec open-webui python -c \"import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:11434/api/tags').status)\"",
+      "repair": "将Open WebUI的OLLAMA_BASE_URL设为http://host.docker.internal:11434，重启容器后再次请求/api/tags。Linux Docker Engine还需确认host-gateway映射。",
+      "risk": "修改容器配置前保留原值",
+      "risk_level": "low",
+      "blocked": false,
+      "sources": [
+        {
+          "title": "Docker networking how-tos",
+          "url": "https://docs.docker.com/desktop/features/networking/networking-how-tos/"
+        },
+        {
+          "title": "Ollama List models API",
+          "url": "https://docs.ollama.com/api/tags"
+        },
+        {
+          "title": "Open WebUI Quick Start",
+          "url": "https://docs.openwebui.com/getting-started/quick-start/"
+        }
+      ]
+    },
+    "plan_errors": []
+  }
+}

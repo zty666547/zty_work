@@ -1,0 +1,3996 @@
+{
+  "format": "debugpath-graph-v2",
+  "source_files": [
+    "data/raw/debugpath_evidence.json",
+    "data/raw/debugpath_knowledge.json",
+    "data/raw/debugpath_v2_service_context.json"
+  ],
+  "content_sha256": "9761bd57368deaef5dcbfee4afe0f40c1d33dca5d367f00c11f60d29f860d099",
+  "stats": {
+    "nodes": 144,
+    "relationships": 366,
+    "entity_types": {
+      "Cause": 14,
+      "DeploymentContext": 1,
+      "DiagnosticCheck": 15,
+      "DiagnosticQuestion": 16,
+      "DocumentSource": 17,
+      "Endpoint": 1,
+      "EvidenceChunk": 30,
+      "Issue": 3,
+      "Observation": 16,
+      "Package": 4,
+      "Platform": 3,
+      "RepairAction": 15,
+      "Risk": 4,
+      "Service": 2,
+      "VersionConstraint": 3
+    },
+    "relation_types": {
+      "AFFECTS_PACKAGE": 6,
+      "CAUSE_CHECKED_BY": 14,
+      "CAUSE_CONTEXTUALIZED_BY": 1,
+      "CAUSE_RESOLVED_BY": 14,
+      "CAUSE_SUPPORTED_BY": 14,
+      "CHECKS": 16,
+      "CHECK_SUPPORTED_BY": 16,
+      "CHECK_TARGETS_ENDPOINT": 1,
+      "CHUNK_SUPPORTS_CAUSE": 30,
+      "CHUNK_SUPPORTS_CHECK": 30,
+      "CHUNK_SUPPORTS_REPAIR": 30,
+      "CLIENT_CONNECTS_TO": 1,
+      "CONTEXT_CHECKED_BY": 1,
+      "CONTEXT_INVOLVES_CLIENT": 1,
+      "CONTEXT_RESOLVED_BY": 1,
+      "ENDPOINT_REACHABLE_FROM": 1,
+      "HAS_POSSIBLE_CAUSE": 14,
+      "HAS_QUESTION": 16,
+      "OBSERVATION_SUPPORTS": 76,
+      "REPAIR_CONFIGURES_ENDPOINT": 1,
+      "REPAIR_HAS_RISK": 15,
+      "REPAIR_REQUIRES": 15,
+      "REPAIR_SUPPORTED_BY": 15,
+      "SERVICE_EXPOSES": 1,
+      "SOURCE_CONTAINS_CHUNK": 30,
+      "SUBJECT_TO_VERSION": 3,
+      "VALID_ON": 3
+    }
+  },
+  "entities": [
+    {
+      "name": "NVIDIA驱动不可用",
+      "type": "Cause",
+      "props": {
+        "description": "系统未正确识别NVIDIA设备或驱动无法工作。"
+      }
+    },
+    {
+      "name": "PyTorch与CUDA构建不匹配",
+      "type": "Cause",
+      "props": {
+        "description": "所安装的PyTorch构建与目标计算平台选择不一致。"
+      }
+    },
+    {
+      "name": "Python版本与包不兼容",
+      "type": "Cause",
+      "props": {
+        "description": "目标包或其依赖不支持当前Python版本。"
+      }
+    },
+    {
+      "name": "pip与Python指向不同环境",
+      "type": "Cause",
+      "props": {
+        "description": "安装包时使用的pip不属于运行程序的Python解释器。"
+      }
+    },
+    {
+      "name": "安装了CPU版PyTorch",
+      "type": "Cause",
+      "props": {
+        "description": "当前PyTorch构建不包含CUDA运行时。"
+      }
+    },
+    {
+      "name": "容器未获得GPU设备",
+      "type": "Cause",
+      "props": {
+        "description": "宿主机有GPU，但容器启动时没有映射GPU设备。"
+      }
+    },
+    {
+      "name": "当前平台不提供CUDA",
+      "type": "Cause",
+      "props": {
+        "description": "例如macOS没有NVIDIA CUDA路径，应选择MPS或CPU。"
+      }
+    },
+    {
+      "name": "必需环境变量缺失",
+      "type": "Cause",
+      "props": {
+        "description": "当前进程未读取到API密钥、URI或其他必需配置。"
+      }
+    },
+    {
+      "name": "服务地址配置错误",
+      "type": "Cause",
+      "props": {
+        "description": "URI、协议、主机名、端口或路径与实际服务不一致。"
+      }
+    },
+    {
+      "name": "本地文件遮蔽第三方模块",
+      "type": "Cause",
+      "props": {
+        "description": "项目中的同名文件或目录优先于第三方包被导入。"
+      }
+    },
+    {
+      "name": "目标包未安装",
+      "type": "Cause",
+      "props": {
+        "description": "当前解释器对应的环境中没有安装目标包。"
+      }
+    },
+    {
+      "name": "目标服务未启动",
+      "type": "Cause",
+      "props": {
+        "description": "客户端配置存在，但目标进程没有监听指定地址。"
+      }
+    },
+    {
+      "name": "端口被其他进程占用",
+      "type": "Cause",
+      "props": {
+        "description": "预期服务无法绑定端口，或请求到错误进程。"
+      }
+    },
+    {
+      "name": "认证信息无效",
+      "type": "Cause",
+      "props": {
+        "description": "服务可达，但用户名、密码或令牌未通过认证。"
+      }
+    },
+    {
+      "name": "Open WebUI容器访问宿主机Ollama",
+      "type": "DeploymentContext",
+      "props": {
+        "client_runtime": "docker",
+        "target_runtime": "host",
+        "description": "客户端位于容器，目标Ollama位于宿主机，二者不共享localhost。"
+      }
+    },
+    {
+      "name": "从Open WebUI容器检查Ollama端点",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "在Open WebUI容器内请求Ollama的/api/tags端点，验证容器到宿主机的实际路径。",
+        "command_macos": "docker exec open-webui python -c \"import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:11434/api/tags').status)\"",
+        "command_linux": "docker exec open-webui python -c \"import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:11434/api/tags').status)\"",
+        "command_windows": "docker exec open-webui python -c \"import urllib.request; print(urllib.request.urlopen('http://host.docker.internal:11434/api/tags').status)\""
+      }
+    },
+    {
+      "name": "执行连接健康检查",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "显式执行连接验证，让连接错误在查询前暴露。",
+        "command_macos": "python scripts/check_neo4j.py",
+        "command_linux": "python scripts/check_neo4j.py",
+        "command_windows": "py scripts/check_neo4j.py"
+      }
+    },
+    {
+      "name": "检查GPU硬件",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "确认操作系统是否识别到目标GPU。",
+        "command_macos": "system_profiler SPDisplaysDataType",
+        "command_linux": "lspci | grep -i nvidia",
+        "command_windows": "nvidia-smi"
+      }
+    },
+    {
+      "name": "检查NVIDIA驱动",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "用NVIDIA管理工具检查驱动和设备状态。",
+        "command_macos": "system_profiler SPDisplaysDataType",
+        "command_linux": "nvidia-smi",
+        "command_windows": "nvidia-smi"
+      }
+    },
+    {
+      "name": "检查PyTorch构建",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "同时查看PyTorch版本、构建CUDA版本和运行时可用性。",
+        "command_macos": "python -c \"import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())\"",
+        "command_linux": "python -c \"import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())\"",
+        "command_windows": "py -c \"import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())\""
+      }
+    },
+    {
+      "name": "检查Python与依赖版本",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "记录Python版本并检查依赖冲突。",
+        "command_macos": "python --version && python -m pip check",
+        "command_linux": "python --version && python -m pip check",
+        "command_windows": "py --version && py -m pip check"
+      }
+    },
+    {
+      "name": "检查容器GPU映射",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "确认容器启动配置是否请求GPU设备。",
+        "command_macos": "docker inspect <container> --format '{{json .HostConfig.DeviceRequests}}'",
+        "command_linux": "docker inspect <container> --format '{{json .HostConfig.DeviceRequests}}'",
+        "command_windows": "docker inspect <container> --format '{{json .HostConfig.DeviceRequests}}'"
+      }
+    },
+    {
+      "name": "检查当前计算平台",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "识别操作系统，并检查MPS或CUDA后端。",
+        "command_macos": "python -c \"import platform, torch; print(platform.platform(), torch.backends.mps.is_available())\"",
+        "command_linux": "python -c \"import platform, torch; print(platform.platform(), torch.cuda.is_available())\"",
+        "command_windows": "py -c \"import platform, torch; print(platform.platform(), torch.cuda.is_available())\""
+      }
+    },
+    {
+      "name": "检查服务地址",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "核对配置中的协议、主机名和端口，不显示凭据。",
+        "command_macos": "python -c \"from config.settings import settings; print(settings.neo4j_uri)\"",
+        "command_linux": "python -c \"from config.settings import settings; print(settings.neo4j_uri)\"",
+        "command_windows": "py -c \"from config.settings import settings; print(settings.neo4j_uri)\""
+      }
+    },
+    {
+      "name": "检查模块解析路径",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "查看Python最终会从哪里加载模块。",
+        "command_macos": "python -c \"import importlib.util; print(importlib.util.find_spec('<module>'))\"",
+        "command_linux": "python -c \"import importlib.util; print(importlib.util.find_spec('<module>'))\"",
+        "command_windows": "py -c \"import importlib.util; print(importlib.util.find_spec('<module>'))\""
+      }
+    },
+    {
+      "name": "检查环境变量",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "只检查变量是否存在，不输出密钥内容。",
+        "command_macos": "python -c \"import os; print(bool(os.getenv('<KEY>')))\"",
+        "command_linux": "python -c \"import os; print(bool(os.getenv('<KEY>')))\"",
+        "command_windows": "py -c \"import os; print(bool(os.getenv('<KEY>')))\""
+      }
+    },
+    {
+      "name": "检查目标包",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "用运行程序的解释器查询包信息。",
+        "command_macos": "python -m pip show <package>",
+        "command_linux": "python -m pip show <package>",
+        "command_windows": "py -m pip show <package>"
+      }
+    },
+    {
+      "name": "检查端口监听者",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "确认目标端口当前由哪个进程监听。",
+        "command_macos": "lsof -nP -iTCP:<port> -sTCP:LISTEN",
+        "command_linux": "ss -ltnp | grep ':<port>'",
+        "command_windows": "netstat -ano | findstr :<port>"
+      }
+    },
+    {
+      "name": "检查解释器路径",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "比较Python可执行文件和pip归属。",
+        "command_macos": "python -c \"import sys; print(sys.executable)\" && python -m pip --version",
+        "command_linux": "python -c \"import sys; print(sys.executable)\" && python -m pip --version",
+        "command_windows": "py -c \"import sys; print(sys.executable)\" && py -m pip --version"
+      }
+    },
+    {
+      "name": "检查认证错误",
+      "type": "DiagnosticCheck",
+      "props": {
+        "description": "执行官方连接验证，并根据异常类型区分连接与认证问题。",
+        "command_macos": "python scripts/check_neo4j.py",
+        "command_linux": "python scripts/check_neo4j.py",
+        "command_windows": "py scripts/check_neo4j.py"
+      }
+    },
+    {
+      "name": "Q-PyTorch是否包含CUDA",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "`torch.version.cuda` 的值不是 None 吗？",
+        "yes_label": "有CUDA版本",
+        "no_label": "是None",
+        "cost": 1,
+        "answerability": 0.8
+      }
+    },
+    {
+      "name": "Q-Python版本是否受支持",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "目标包的官方说明明确支持当前Python版本吗？",
+        "yes_label": "支持",
+        "no_label": "不支持或不确定",
+        "cost": 2,
+        "answerability": 0.6
+      }
+    },
+    {
+      "name": "Q-nvidia-smi是否成功",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "运行 `nvidia-smi` 能正常显示显卡和驱动信息吗？",
+        "yes_label": "正常",
+        "no_label": "失败",
+        "cost": 1,
+        "answerability": 0.85
+      }
+    },
+    {
+      "name": "Q-健康检查是否成功",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "使用当前地址执行服务健康检查或连接验证能够成功吗？",
+        "yes_label": "成功",
+        "no_label": "失败",
+        "cost": 2,
+        "answerability": 0.65
+      }
+    },
+    {
+      "name": "Q-包是否可见",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "用当前Python执行 `python -m pip show 包名` 时，能够看到这个包吗？",
+        "yes_label": "能够看到",
+        "no_label": "提示未找到",
+        "cost": 1,
+        "answerability": 0.95
+      }
+    },
+    {
+      "name": "Q-变量是否缺失",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "检查当前进程后，必需的环境变量是否为空或不存在？",
+        "yes_label": "缺失",
+        "no_label": "存在",
+        "cost": 1,
+        "answerability": 0.75
+      }
+    },
+    {
+      "name": "Q-宿主机正常但容器访问失败",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "宿主机访问Ollama正常，但Open WebUI容器使用当前地址访问失败吗？",
+        "yes_label": "宿主机成功、容器失败",
+        "no_label": "宿主机也失败",
+        "cost": 1,
+        "risk_cost": 0,
+        "answerability": 0.9
+      }
+    },
+    {
+      "name": "Q-是否为macOS",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "当前系统是macOS吗？",
+        "yes_label": "是macOS",
+        "no_label": "不是",
+        "cost": 1,
+        "answerability": 0.99
+      }
+    },
+    {
+      "name": "Q-是否存在同名文件",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "项目目录中是否有与目标模块同名的 `.py` 文件或文件夹？",
+        "yes_label": "有",
+        "no_label": "没有",
+        "cost": 1,
+        "answerability": 0.95
+      }
+    },
+    {
+      "name": "Q-是否有NVIDIA硬件",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "这台机器是否确实安装并识别到NVIDIA GPU？",
+        "yes_label": "是",
+        "no_label": "否",
+        "cost": 1,
+        "answerability": 0.95
+      }
+    },
+    {
+      "name": "Q-是否认证失败",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "服务是否可达，但返回401、Unauthorized或认证失败？",
+        "yes_label": "是",
+        "no_label": "否",
+        "cost": 1,
+        "answerability": 0.9
+      }
+    },
+    {
+      "name": "Q-是否运行在容器",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "程序当前是否运行在Docker等容器中？",
+        "yes_label": "在容器中",
+        "no_label": "直接运行",
+        "cost": 1,
+        "answerability": 0.9
+      }
+    },
+    {
+      "name": "Q-是否连接被拒绝",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "错误信息中是否明确出现 Connection refused、连接被拒绝或无法建立TCP连接？",
+        "yes_label": "出现",
+        "no_label": "没有",
+        "cost": 1,
+        "answerability": 0.95
+      }
+    },
+    {
+      "name": "Q-目标主机本机检查是否成功",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "在目标服务所在机器上，使用服务实际监听的地址执行健康检查能够成功吗？",
+        "yes_label": "本机检查成功",
+        "no_label": "本机也失败",
+        "cost": 2,
+        "answerability": 0.7
+      }
+    },
+    {
+      "name": "Q-端口是否被占用",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "预期端口是否已经被另一个非目标进程监听？",
+        "yes_label": "被占用",
+        "no_label": "没有",
+        "cost": 2,
+        "answerability": 0.6
+      }
+    },
+    {
+      "name": "Q-解释器是否一致",
+      "type": "DiagnosticQuestion",
+      "props": {
+        "text": "运行程序的Python路径和安装包时使用的Python路径一致吗？",
+        "yes_label": "一致",
+        "no_label": "不一致",
+        "cost": 1,
+        "answerability": 0.75
+      }
+    },
+    {
+      "name": "Docker容器访问宿主机文档",
+      "type": "DocumentSource",
+      "props": {
+        "title": "Docker networking how-tos",
+        "url": "https://docs.docker.com/desktop/features/networking/networking-how-tos/"
+      }
+    },
+    {
+      "name": "Neo4j Python连接手册",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://neo4j.com/docs/python-manual/current/connect/",
+        "publisher": "Neo4j"
+      }
+    },
+    {
+      "name": "Neo4j高级连接文档",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://neo4j.com/docs/python-manual/current/connect-advanced/",
+        "publisher": "Neo4j"
+      }
+    },
+    {
+      "name": "Ollama模型列表API文档",
+      "type": "DocumentSource",
+      "props": {
+        "title": "Ollama List models API",
+        "url": "https://docs.ollama.com/api/tags"
+      }
+    },
+    {
+      "name": "Open WebUI快速开始文档",
+      "type": "DocumentSource",
+      "props": {
+        "title": "Open WebUI Quick Start",
+        "url": "https://docs.openwebui.com/getting-started/quick-start/"
+      }
+    },
+    {
+      "name": "PyTorch CUDA可用性文档",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://docs.pytorch.org/docs/stable/generated/torch.cuda.is_available.html",
+        "publisher": "PyTorch Foundation"
+      }
+    },
+    {
+      "name": "PyTorch MPS后端说明",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://docs.pytorch.org/docs/stable/notes/mps.html",
+        "publisher": "PyTorch Foundation"
+      }
+    },
+    {
+      "name": "PyTorch本地安装指南",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://pytorch.org/get-started/locally/",
+        "publisher": "PyTorch Foundation"
+      }
+    },
+    {
+      "name": "PyTorch问题144835",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://github.com/pytorch/pytorch/issues/144835",
+        "publisher": "PyTorch GitHub"
+      }
+    },
+    {
+      "name": "PyTorch问题77520",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://github.com/pytorch/pytorch/issues/77520",
+        "publisher": "PyTorch GitHub"
+      }
+    },
+    {
+      "name": "PyTorch问题81549",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://github.com/pytorch/pytorch/issues/81549",
+        "publisher": "PyTorch GitHub"
+      }
+    },
+    {
+      "name": "Python内置异常文档",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://docs.python.org/3/library/exceptions.html",
+        "publisher": "Python Software Foundation"
+      }
+    },
+    {
+      "name": "Python导入系统文档",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://docs.python.org/3/reference/import.html",
+        "publisher": "Python Software Foundation"
+      }
+    },
+    {
+      "name": "Python环境变量文档",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://docs.python.org/3/library/os.html#os.environ",
+        "publisher": "Python Software Foundation"
+      }
+    },
+    {
+      "name": "pip依赖解析文档",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://pip.pypa.io/en/stable/topics/dependency-resolution/",
+        "publisher": "Python Packaging Authority"
+      }
+    },
+    {
+      "name": "pip用户指南",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://pip.pypa.io/en/stable/user_guide/",
+        "publisher": "Python Packaging Authority"
+      }
+    },
+    {
+      "name": "pip解释器管理文档",
+      "type": "DocumentSource",
+      "props": {
+        "url": "https://pip.pypa.io/en/stable/topics/python-option/",
+        "publisher": "Python Packaging Authority"
+      }
+    },
+    {
+      "name": "Ollama /api/tags",
+      "type": "Endpoint",
+      "props": {
+        "method": "GET",
+        "host_url": "http://localhost:11434/api/tags",
+        "container_url": "http://host.docker.internal:11434/api/tags",
+        "description": "Ollama用于列出本地模型的健康检查端点。"
+      }
+    },
+    {
+      "name": "E001-模块未找到异常",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E001",
+        "text": "当import无法定位目标模块时会引发ModuleNotFoundError，它是ImportError的子类。先确认当前解释器环境中是否安装目标包。",
+        "keywords": [
+          "ModuleNotFoundError",
+          "No module named",
+          "包未安装"
+        ],
+        "source_title": "Python内置异常文档",
+        "url": "https://docs.python.org/3/library/exceptions.html",
+        "section": "ModuleNotFoundError",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E002-python调用pip",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E002",
+        "text": "python -m pip会让pip使用所指定的Python解释器，适合核对安装环境与运行环境是否一致。",
+        "keywords": [
+          "python -m pip",
+          "虚拟环境",
+          "解释器路径"
+        ],
+        "source_title": "pip用户指南",
+        "url": "https://pip.pypa.io/en/stable/user_guide/",
+        "section": "Running pip",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E003-pip指定解释器",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E003",
+        "text": "pip的--python选项可以明确指定要管理的Python或虚拟环境，避免包被安装到另一个解释器。",
+        "keywords": [
+          "pip --python",
+          "wrong environment",
+          "解释器不一致"
+        ],
+        "source_title": "pip解释器管理文档",
+        "url": "https://pip.pypa.io/en/stable/topics/python-option/",
+        "section": "Managing a different Python interpreter",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E004-导入路径搜索",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E004",
+        "text": "Python按sys.path中的位置搜索模块；当前目录中的同名py文件可能先于第三方包被找到。",
+        "keywords": [
+          "sys.path",
+          "同名文件",
+          "module shadowing",
+          "ImportError"
+        ],
+        "source_title": "Python导入系统文档",
+        "url": "https://docs.python.org/3/reference/import.html",
+        "section": "The path based finder",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E005-检查模块来源",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E005",
+        "text": "导入系统从搜索路径定位模块。检查模块的__file__位置可以发现项目目录中的同名模块遮蔽。",
+        "keywords": [
+          "__file__",
+          "同名模块",
+          "导入异常"
+        ],
+        "source_title": "Python导入系统文档",
+        "url": "https://docs.python.org/3/reference/import.html",
+        "section": "Searching",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E006-依赖版本约束",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E006",
+        "text": "pip解析依赖时必须同时满足包和Python版本约束；无兼容候选版本时应调整Python或依赖版本。",
+        "keywords": [
+          "requires python",
+          "版本不兼容",
+          "dependency conflict",
+          "wheel"
+        ],
+        "source_title": "pip依赖解析文档",
+        "url": "https://pip.pypa.io/en/stable/topics/dependency-resolution/",
+        "section": "Dependency resolution",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E007-版本冲突检查",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E007",
+        "text": "安装成功不代表所有依赖兼容，可记录Python版本并使用pip check定位不满足的依赖要求。",
+        "keywords": [
+          "pip check",
+          "Python version",
+          "依赖冲突",
+          "ImportError"
+        ],
+        "source_title": "pip依赖解析文档",
+        "url": "https://pip.pypa.io/en/stable/topics/dependency-resolution/",
+        "section": "Dealing with dependency conflicts",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E008-当前环境查询包",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E008",
+        "text": "应使用运行程序的Python执行python -m pip show包名；普通pip show的结果可能来自另一个环境。",
+        "keywords": [
+          "pip show",
+          "already installed",
+          "No module named",
+          "IDE"
+        ],
+        "source_title": "pip用户指南",
+        "url": "https://pip.pypa.io/en/stable/user_guide/",
+        "section": "Running pip",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E009-PyTorch安装构建",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E009",
+        "text": "PyTorch安装页面要求按操作系统和计算平台选择构建；只安装CPU构建时torch.version.cuda会是None。",
+        "keywords": [
+          "torch.version.cuda None",
+          "CPU build",
+          "CUDA不可用"
+        ],
+        "source_title": "PyTorch本地安装指南",
+        "url": "https://pytorch.org/get-started/locally/",
+        "section": "Start Locally",
+        "platforms": [
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E010-选择CUDA构建",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E010",
+        "text": "有可用NVIDIA GPU时应从官方安装选择器选择匹配的CUDA计算平台版本，而不是CPU选项。",
+        "keywords": [
+          "NVIDIA GPU",
+          "CUDA build",
+          "安装CPU版PyTorch"
+        ],
+        "source_title": "PyTorch本地安装指南",
+        "url": "https://pytorch.org/get-started/locally/",
+        "section": "Compute Platform",
+        "platforms": [
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E011-CUDA可用性检查",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E011",
+        "text": "torch.cuda.is_available返回当前环境是否可以使用CUDA，可作为驱动、构建和设备排查的入口检查。",
+        "keywords": [
+          "torch.cuda.is_available false",
+          "CUDA available",
+          "检测不到GPU"
+        ],
+        "source_title": "PyTorch CUDA可用性文档",
+        "url": "https://docs.pytorch.org/docs/stable/generated/torch.cuda.is_available.html",
+        "section": "torch.cuda.is_available",
+        "platforms": [
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E012-驱动检查",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E012",
+        "text": "系统无法通过nvidia-smi识别显卡和驱动时，应先恢复NVIDIA驱动，再判断PyTorch构建。",
+        "keywords": [
+          "nvidia-smi failed",
+          "NVIDIA driver",
+          "CUDA不可用"
+        ],
+        "source_title": "PyTorch CUDA可用性文档",
+        "url": "https://docs.pytorch.org/docs/stable/generated/torch.cuda.is_available.html",
+        "section": "CUDA availability",
+        "platforms": [
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E013-混合安装环境",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E013",
+        "text": "公开问题中同时出现conda和pip安装的不同torch版本；混合构建可能导致运行时加载的PyTorch与预期CUDA配置不同。",
+        "keywords": [
+          "conda pip torch",
+          "CUDA 11.3",
+          "build mismatch"
+        ],
+        "source_title": "PyTorch问题77520",
+        "url": "https://github.com/pytorch/pytorch/issues/77520",
+        "section": "Environment report",
+        "platforms": [
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E014-CUDA初始化错误802",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E014",
+        "text": "公开问题记录了CUDA initialization error 802，即使更换多个CUDA环境仍不可用，应核对驱动、PyTorch构建和运行时组合。",
+        "keywords": [
+          "error 802",
+          "system not yet initialized",
+          "CUDA initialization"
+        ],
+        "source_title": "PyTorch问题81549",
+        "url": "https://github.com/pytorch/pytorch/issues/81549",
+        "section": "Issue description",
+        "platforms": [
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E015-容器GPU映射",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E015",
+        "text": "宿主机GPU正常而容器内CUDA不可用时，需要确认容器是否获得GPU设备和相应运行时权限。",
+        "keywords": [
+          "Docker",
+          "container GPU",
+          "宿主机",
+          "CUDA unavailable"
+        ],
+        "source_title": "PyTorch问题144835",
+        "url": "https://github.com/pytorch/pytorch/issues/144835",
+        "section": "Container environment",
+        "platforms": [
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E016-容器可见设备变量",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E016",
+        "text": "CUDA_VISIBLE_DEVICES等运行环境设置可能让容器中的可见设备数量变为零，应先检查映射和变量再重装软件。",
+        "keywords": [
+          "CUDA_VISIBLE_DEVICES",
+          "container",
+          "device count zero"
+        ],
+        "source_title": "PyTorch问题144835",
+        "url": "https://github.com/pytorch/pytorch/issues/144835",
+        "section": "CUDA unknown error",
+        "platforms": [
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E017-macOS使用MPS",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E017",
+        "text": "PyTorch在macOS上提供MPS后端以使用Apple GPU；macOS环境不应把CUDA作为默认加速路径。",
+        "keywords": [
+          "macOS",
+          "Apple Silicon",
+          "MPS",
+          "CUDA不可用"
+        ],
+        "source_title": "PyTorch MPS后端说明",
+        "url": "https://docs.pytorch.org/docs/stable/notes/mps.html",
+        "section": "MPS backend",
+        "platforms": [
+          "macos"
+        ]
+      }
+    },
+    {
+      "name": "E018-MPS可用性",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E018",
+        "text": "在Mac上可检查torch.backends.mps.is_available；若MPS不可用则使用CPU或检查系统和PyTorch版本要求。",
+        "keywords": [
+          "torch.backends.mps.is_available",
+          "Intel Mac",
+          "Apple GPU"
+        ],
+        "source_title": "PyTorch MPS后端说明",
+        "url": "https://docs.pytorch.org/docs/stable/notes/mps.html",
+        "section": "Check availability",
+        "platforms": [
+          "macos"
+        ]
+      }
+    },
+    {
+      "name": "E019-驱动先于工具包",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E019",
+        "text": "torch包含CUDA构建但系统驱动不可用时，单纯重装CUDA工具包不能代替恢复可工作的NVIDIA驱动。",
+        "keywords": [
+          "driver unavailable",
+          "nvidia-smi",
+          "torch CUDA build"
+        ],
+        "source_title": "PyTorch本地安装指南",
+        "url": "https://pytorch.org/get-started/locally/",
+        "section": "Prerequisites",
+        "platforms": [
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E020-进程环境变量",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E020",
+        "text": "os.environ表示当前进程可见的环境变量；终端中设置过变量不等于当前应用进程一定能够读取。",
+        "keywords": [
+          "environment variable missing",
+          "API key",
+          "os.environ"
+        ],
+        "source_title": "Python环境变量文档",
+        "url": "https://docs.python.org/3/library/os.html#os.environ",
+        "section": "os.environ",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E021-Neo4j环境配置",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E021",
+        "text": "Neo4j连接示例可从环境变量读取URI、用户名和密码；变量缺失时应在创建驱动前明确报错。",
+        "keywords": [
+          "NEO4J_URI",
+          "NEO4J_PASSWORD",
+          "环境变量为空"
+        ],
+        "source_title": "Neo4j Python连接手册",
+        "url": "https://neo4j.com/docs/python-manual/current/connect/",
+        "section": "Connect to an Aura instance",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E022-Neo4j连接URI",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E022",
+        "text": "Neo4j驱动URI由scheme、host和可选port组成；协议、主机或端口错误会导致连接验证失败。",
+        "keywords": [
+          "neo4j URI",
+          "bolt",
+          "wrong host",
+          "服务地址配置错误"
+        ],
+        "source_title": "Neo4j高级连接文档",
+        "url": "https://neo4j.com/docs/python-manual/current/connect-advanced/",
+        "section": "Connection URI",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E023-URI不支持嵌套路径",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E023",
+        "text": "Neo4j驱动不支持把数据库配置成域名后的嵌套HTTP路径，服务必须能从URI对应主机和Bolt端口访问。",
+        "keywords": [
+          "URI path",
+          "hostname",
+          "connection failed"
+        ],
+        "source_title": "Neo4j高级连接文档",
+        "url": "https://neo4j.com/docs/python-manual/current/connect-advanced/",
+        "section": "Connection URI",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E024-立即验证连接",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E024",
+        "text": "创建Neo4j Driver不会立即建立连接；应调用verify_connectivity检查服务是否运行、地址是否可达及认证是否有效。",
+        "keywords": [
+          "verify_connectivity",
+          "Connection refused",
+          "服务未启动"
+        ],
+        "source_title": "Neo4j Python连接手册",
+        "url": "https://neo4j.com/docs/python-manual/current/connect/",
+        "section": "Connect to the database",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E025-连接被拒绝",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E025",
+        "text": "当目标主机端口没有服务监听时，连接验证可能出现Connection refused，应先确认目标进程和监听地址。",
+        "keywords": [
+          "Connection refused",
+          "localhost 7687",
+          "service stopped"
+        ],
+        "source_title": "Neo4j Python连接手册",
+        "url": "https://neo4j.com/docs/python-manual/current/connect/",
+        "section": "Connection errors",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E026-Neo4j认证",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E026",
+        "text": "Neo4j基本认证需要正确的用户名和密码；服务可达但认证失败时应更新认证配置，而不是修改端口。",
+        "keywords": [
+          "authentication failed",
+          "Unauthorized",
+          "用户名密码"
+        ],
+        "source_title": "Neo4j高级连接文档",
+        "url": "https://neo4j.com/docs/python-manual/current/connect-advanced/",
+        "section": "Authentication methods",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E027-令牌认证失败",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E027",
+        "text": "401 Unauthorized通常表示请求已到达服务但令牌或认证信息未通过校验，应检查密钥是否有效及是否属于当前服务。",
+        "keywords": [
+          "401 Unauthorized",
+          "invalid token",
+          "API认证失败"
+        ],
+        "source_title": "Neo4j高级连接文档",
+        "url": "https://neo4j.com/docs/python-manual/current/connect-advanced/",
+        "section": "Authentication",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E028-Bolt端口",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E028",
+        "text": "连接URI中的可选端口表示Bolt服务端口；应确认预期端口由目标服务监听而不是其他进程占用。",
+        "keywords": [
+          "port 7687",
+          "Address already in use",
+          "端口被占用"
+        ],
+        "source_title": "Neo4j高级连接文档",
+        "url": "https://neo4j.com/docs/python-manual/current/connect-advanced/",
+        "section": "Connection URI",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E029-区分地址与服务状态",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E029",
+        "text": "健康检查失败但未出现明确Connection refused时，应先核对scheme、host和port；明确拒绝连接则优先检查服务是否启动。",
+        "keywords": [
+          "health check failed",
+          "wrong URI",
+          "Connection refused"
+        ],
+        "source_title": "Neo4j Python连接手册",
+        "url": "https://neo4j.com/docs/python-manual/current/connect/",
+        "section": "Verify connectivity",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "E030-连接失败日志",
+      "type": "EvidenceChunk",
+      "props": {
+        "chunk_id": "E030",
+        "text": "verify_connectivity失败时可以启用驱动日志辅助判断地址、认证、版本兼容或服务状态问题。",
+        "keywords": [
+          "driver logs",
+          "ServiceUnavailable",
+          "连接失败"
+        ],
+        "source_title": "Neo4j Python连接手册",
+        "url": "https://neo4j.com/docs/python-manual/current/connect/",
+        "section": "Diagnose connection failure",
+        "platforms": [
+          "macos",
+          "windows",
+          "linux"
+        ]
+      }
+    },
+    {
+      "name": "PyTorch无法使用GPU",
+      "type": "Issue",
+      "props": {
+        "id": "issue_torch_gpu",
+        "aliases": [
+          "torch.cuda.is_available() False",
+          "cuda is not available",
+          "CUDA不可用",
+          "检测不到GPU",
+          "PyTorch GPU",
+          "Torch not compiled with CUDA enabled",
+          "detected CUDA version",
+          "mismatches the version",
+          "Failed to initialize NVML",
+          "Driver Not Loaded"
+        ],
+        "example": "torch.cuda.is_available() 返回 False"
+      }
+    },
+    {
+      "name": "Python模块无法导入",
+      "type": "Issue",
+      "props": {
+        "id": "issue_import",
+        "aliases": [
+          "ModuleNotFoundError",
+          "No module named",
+          "ImportError",
+          "找不到模块",
+          "无法导入",
+          "No matching distribution found",
+          "Could not find a version that satisfies",
+          "consider renaming",
+          "same name as the standard library module"
+        ],
+        "example": "ModuleNotFoundError: No module named 'pandas'"
+      }
+    },
+    {
+      "name": "服务或配置连接失败",
+      "type": "Issue",
+      "props": {
+        "id": "issue_service",
+        "aliases": [
+          "Connection refused",
+          "ServiceUnavailable",
+          "APIConnectionError",
+          "Connection error",
+          "Unauthorized",
+          "AuthenticationError",
+          "Incorrect API key provided",
+          "401",
+          "Neo4j连接失败",
+          "API调用失败",
+          "Address already in use",
+          "端口被占用",
+          "环境变量",
+          "OPENAI_API_KEY",
+          "No API key provided",
+          "api_key client option must be set"
+        ],
+        "example": "Neo4j Connection refused 或 API 返回 401"
+      }
+    },
+    {
+      "name": "O-PyTorch包含CUDA构建",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-Python版本受支持",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-nvidia-smi成功",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-健康检查成功",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-存在NVIDIA硬件",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-存在同名本地模块",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-宿主机正常但容器访问失败",
+      "type": "Observation",
+      "props": {
+        "description": "Ollama本身可用，但容器当前配置无法到达宿主机服务。"
+      }
+    },
+    {
+      "name": "O-平台为macOS",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-当前环境可见目标包",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-必需变量缺失",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-目标主机本机检查成功",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-端口被其他进程占用",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-解释器路径一致",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-认证失败",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-运行在容器",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "O-连接被拒绝",
+      "type": "Observation",
+      "props": {}
+    },
+    {
+      "name": "Neo4j Python Driver",
+      "type": "Package",
+      "props": {}
+    },
+    {
+      "name": "PyTorch",
+      "type": "Package",
+      "props": {}
+    },
+    {
+      "name": "Python包",
+      "type": "Package",
+      "props": {}
+    },
+    {
+      "name": "pip",
+      "type": "Package",
+      "props": {}
+    },
+    {
+      "name": "Linux",
+      "type": "Platform",
+      "props": {}
+    },
+    {
+      "name": "Windows",
+      "type": "Platform",
+      "props": {}
+    },
+    {
+      "name": "macOS",
+      "type": "Platform",
+      "props": {}
+    },
+    {
+      "name": "为容器启用GPU",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "确认宿主机驱动正常后，按容器运行时官方方式映射GPU并重新创建容器。"
+      }
+    },
+    {
+      "name": "使用当前解释器安装目标包",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "确认包名与来源后，使用 `python -m pip install <package>` 安装。"
+      }
+    },
+    {
+      "name": "修正服务URI",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "根据实际部署修正协议、主机和端口，然后重新运行连接健康检查。"
+      }
+    },
+    {
+      "name": "匹配PyTorch与CUDA构建",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "依据PyTorch官方版本页面选择匹配的构建，在独立环境中验证后再替换。"
+      }
+    },
+    {
+      "name": "启动目标服务",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "按照项目启动说明启动目标服务，并等待健康检查通过后再运行应用。"
+      }
+    },
+    {
+      "name": "在macOS改用MPS或CPU",
+      "type": "RepairAction",
+      "props": {
+        "instruction_macos": "将设备选择逻辑改为优先MPS、否则CPU；不要把CUDA作为macOS前置条件。",
+        "instruction": "根据当前平台选择官方支持的计算后端。"
+      }
+    },
+    {
+      "name": "安装匹配计算平台的PyTorch",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "在官方安装选择器中按操作系统和计算平台生成命令，不直接复制未知来源命令。"
+      }
+    },
+    {
+      "name": "恢复NVIDIA驱动",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "根据设备厂商和操作系统文档安装或恢复驱动；需要系统权限时由用户确认。"
+      }
+    },
+    {
+      "name": "更换端口或停止冲突服务",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "先确认监听进程身份；选择新端口，或经用户确认后正常停止冲突服务。"
+      }
+    },
+    {
+      "name": "更新认证配置",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "从服务管理端重新确认用户名、密码或令牌，并在本地安全更新，禁止写入仓库。"
+      }
+    },
+    {
+      "name": "统一Python与pip环境",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "激活正确虚拟环境，并始终通过该解释器执行 `python -m pip`。"
+      }
+    },
+    {
+      "name": "补充必需环境变量",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "在本地 `.env` 或运行环境中设置缺失变量，只验证是否存在，不打印或提交密钥。"
+      }
+    },
+    {
+      "name": "选择兼容的Python和依赖版本",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "根据包的版本要求调整Python或约束文件，先在新虚拟环境验证。"
+      }
+    },
+    {
+      "name": "配置Open WebUI的Ollama宿主机地址",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "将Open WebUI的OLLAMA_BASE_URL设为http://host.docker.internal:11434，重启容器后再次请求/api/tags。Linux Docker Engine还需确认host-gateway映射。"
+      }
+    },
+    {
+      "name": "重命名同名本地模块",
+      "type": "RepairAction",
+      "props": {
+        "instruction": "重命名遮蔽第三方包的本地文件或目录，并清理对应缓存后重新导入。"
+      }
+    },
+    {
+      "name": "中风险",
+      "type": "Risk",
+      "props": {
+        "level": "medium",
+        "description": "会改变依赖、驱动、容器或运行配置，应先备份并由用户确认。"
+      }
+    },
+    {
+      "name": "低风险",
+      "type": "Risk",
+      "props": {
+        "level": "low",
+        "description": "只读检查或局部配置调整，通常容易恢复。"
+      }
+    },
+    {
+      "name": "修改容器配置前保留原值",
+      "type": "Risk",
+      "props": {
+        "level": "low",
+        "description": "记录原OLLAMA_BASE_URL和容器启动参数，便于恢复。"
+      }
+    },
+    {
+      "name": "高风险",
+      "type": "Risk",
+      "props": {
+        "level": "high",
+        "description": "可能删除数据或破坏系统环境，系统只警告而不生成执行建议。"
+      }
+    },
+    {
+      "name": "Ollama",
+      "type": "Service",
+      "props": {
+        "role": "target",
+        "description": "运行在宿主机并提供HTTP API的模型服务。"
+      }
+    },
+    {
+      "name": "Open WebUI",
+      "type": "Service",
+      "props": {
+        "role": "client",
+        "description": "运行在Docker容器中的模型交互界面。"
+      }
+    },
+    {
+      "name": "Neo4j驱动与服务兼容约束",
+      "type": "VersionConstraint",
+      "props": {
+        "description": "驱动、协议和数据库版本需要兼容。"
+      }
+    },
+    {
+      "name": "PyTorch计算平台构建约束",
+      "type": "VersionConstraint",
+      "props": {
+        "description": "操作系统、PyTorch版本与计算平台构建必须匹配。"
+      }
+    },
+    {
+      "name": "Python包版本约束",
+      "type": "VersionConstraint",
+      "props": {
+        "description": "包的Requires-Python与依赖版本范围。"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "source": "PyTorch与CUDA构建不匹配",
+      "target": "PyTorch",
+      "type": "AFFECTS_PACKAGE",
+      "props": {}
+    },
+    {
+      "source": "Python版本与包不兼容",
+      "target": "Python包",
+      "type": "AFFECTS_PACKAGE",
+      "props": {}
+    },
+    {
+      "source": "pip与Python指向不同环境",
+      "target": "pip",
+      "type": "AFFECTS_PACKAGE",
+      "props": {}
+    },
+    {
+      "source": "安装了CPU版PyTorch",
+      "target": "PyTorch",
+      "type": "AFFECTS_PACKAGE",
+      "props": {}
+    },
+    {
+      "source": "服务地址配置错误",
+      "target": "Neo4j Python Driver",
+      "type": "AFFECTS_PACKAGE",
+      "props": {}
+    },
+    {
+      "source": "目标包未安装",
+      "target": "Python包",
+      "type": "AFFECTS_PACKAGE",
+      "props": {}
+    },
+    {
+      "source": "NVIDIA驱动不可用",
+      "target": "检查NVIDIA驱动",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "PyTorch与CUDA构建不匹配",
+      "target": "检查PyTorch构建",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "Python版本与包不兼容",
+      "target": "检查Python与依赖版本",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "pip与Python指向不同环境",
+      "target": "检查解释器路径",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "安装了CPU版PyTorch",
+      "target": "检查PyTorch构建",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "容器未获得GPU设备",
+      "target": "检查容器GPU映射",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "当前平台不提供CUDA",
+      "target": "检查当前计算平台",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "必需环境变量缺失",
+      "target": "检查环境变量",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "服务地址配置错误",
+      "target": "检查服务地址",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "本地文件遮蔽第三方模块",
+      "target": "检查模块解析路径",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "目标包未安装",
+      "target": "检查目标包",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "目标服务未启动",
+      "target": "执行连接健康检查",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "端口被其他进程占用",
+      "target": "检查端口监听者",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "认证信息无效",
+      "target": "检查认证错误",
+      "type": "CAUSE_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "服务地址配置错误",
+      "target": "Open WebUI容器访问宿主机Ollama",
+      "type": "CAUSE_CONTEXTUALIZED_BY",
+      "props": {}
+    },
+    {
+      "source": "NVIDIA驱动不可用",
+      "target": "恢复NVIDIA驱动",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "PyTorch与CUDA构建不匹配",
+      "target": "匹配PyTorch与CUDA构建",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "Python版本与包不兼容",
+      "target": "选择兼容的Python和依赖版本",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "pip与Python指向不同环境",
+      "target": "统一Python与pip环境",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "安装了CPU版PyTorch",
+      "target": "安装匹配计算平台的PyTorch",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "容器未获得GPU设备",
+      "target": "为容器启用GPU",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "当前平台不提供CUDA",
+      "target": "在macOS改用MPS或CPU",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "必需环境变量缺失",
+      "target": "补充必需环境变量",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "服务地址配置错误",
+      "target": "修正服务URI",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "本地文件遮蔽第三方模块",
+      "target": "重命名同名本地模块",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "目标包未安装",
+      "target": "使用当前解释器安装目标包",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "目标服务未启动",
+      "target": "启动目标服务",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "端口被其他进程占用",
+      "target": "更换端口或停止冲突服务",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "认证信息无效",
+      "target": "更新认证配置",
+      "type": "CAUSE_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "NVIDIA驱动不可用",
+      "target": "PyTorch CUDA可用性文档",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "PyTorch与CUDA构建不匹配",
+      "target": "PyTorch本地安装指南",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "Python版本与包不兼容",
+      "target": "pip依赖解析文档",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "pip与Python指向不同环境",
+      "target": "pip用户指南",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "安装了CPU版PyTorch",
+      "target": "PyTorch本地安装指南",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "容器未获得GPU设备",
+      "target": "PyTorch CUDA可用性文档",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "当前平台不提供CUDA",
+      "target": "PyTorch MPS后端说明",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "必需环境变量缺失",
+      "target": "Python环境变量文档",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "服务地址配置错误",
+      "target": "Neo4j Python连接手册",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "本地文件遮蔽第三方模块",
+      "target": "Python内置异常文档",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "目标包未安装",
+      "target": "Python内置异常文档",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "目标服务未启动",
+      "target": "Neo4j Python连接手册",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "端口被其他进程占用",
+      "target": "Neo4j Python连接手册",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "认证信息无效",
+      "target": "Neo4j Python连接手册",
+      "type": "CAUSE_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "Q-PyTorch是否包含CUDA",
+      "target": "O-PyTorch包含CUDA构建",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-Python版本是否受支持",
+      "target": "O-Python版本受支持",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-nvidia-smi是否成功",
+      "target": "O-nvidia-smi成功",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-健康检查是否成功",
+      "target": "O-健康检查成功",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-包是否可见",
+      "target": "O-当前环境可见目标包",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-变量是否缺失",
+      "target": "O-必需变量缺失",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-宿主机正常但容器访问失败",
+      "target": "O-宿主机正常但容器访问失败",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-是否为macOS",
+      "target": "O-平台为macOS",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-是否存在同名文件",
+      "target": "O-存在同名本地模块",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-是否有NVIDIA硬件",
+      "target": "O-存在NVIDIA硬件",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-是否认证失败",
+      "target": "O-认证失败",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-是否运行在容器",
+      "target": "O-运行在容器",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-是否连接被拒绝",
+      "target": "O-连接被拒绝",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-目标主机本机检查是否成功",
+      "target": "O-目标主机本机检查成功",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-端口是否被占用",
+      "target": "O-端口被其他进程占用",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "Q-解释器是否一致",
+      "target": "O-解释器路径一致",
+      "type": "CHECKS",
+      "props": {}
+    },
+    {
+      "source": "从Open WebUI容器检查Ollama端点",
+      "target": "Docker容器访问宿主机文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "从Open WebUI容器检查Ollama端点",
+      "target": "Ollama模型列表API文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "执行连接健康检查",
+      "target": "Neo4j Python连接手册",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查GPU硬件",
+      "target": "PyTorch本地安装指南",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查NVIDIA驱动",
+      "target": "PyTorch CUDA可用性文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查PyTorch构建",
+      "target": "PyTorch CUDA可用性文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查Python与依赖版本",
+      "target": "pip依赖解析文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查容器GPU映射",
+      "target": "PyTorch CUDA可用性文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查当前计算平台",
+      "target": "PyTorch MPS后端说明",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查服务地址",
+      "target": "Neo4j Python连接手册",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查模块解析路径",
+      "target": "Python内置异常文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查环境变量",
+      "target": "Python环境变量文档",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查目标包",
+      "target": "pip用户指南",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查端口监听者",
+      "target": "Neo4j Python连接手册",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查解释器路径",
+      "target": "pip用户指南",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "检查认证错误",
+      "target": "Neo4j Python连接手册",
+      "type": "CHECK_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "从Open WebUI容器检查Ollama端点",
+      "target": "Ollama /api/tags",
+      "type": "CHECK_TARGETS_ENDPOINT",
+      "props": {}
+    },
+    {
+      "source": "E001-模块未找到异常",
+      "target": "目标包未安装",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E002-python调用pip",
+      "target": "pip与Python指向不同环境",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E003-pip指定解释器",
+      "target": "pip与Python指向不同环境",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E004-导入路径搜索",
+      "target": "本地文件遮蔽第三方模块",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E005-检查模块来源",
+      "target": "本地文件遮蔽第三方模块",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E006-依赖版本约束",
+      "target": "Python版本与包不兼容",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E007-版本冲突检查",
+      "target": "Python版本与包不兼容",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E008-当前环境查询包",
+      "target": "pip与Python指向不同环境",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E009-PyTorch安装构建",
+      "target": "安装了CPU版PyTorch",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E010-选择CUDA构建",
+      "target": "安装了CPU版PyTorch",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E011-CUDA可用性检查",
+      "target": "NVIDIA驱动不可用",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E012-驱动检查",
+      "target": "NVIDIA驱动不可用",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E013-混合安装环境",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E014-CUDA初始化错误802",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E015-容器GPU映射",
+      "target": "容器未获得GPU设备",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E016-容器可见设备变量",
+      "target": "容器未获得GPU设备",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E017-macOS使用MPS",
+      "target": "当前平台不提供CUDA",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E018-MPS可用性",
+      "target": "当前平台不提供CUDA",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E019-驱动先于工具包",
+      "target": "NVIDIA驱动不可用",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E020-进程环境变量",
+      "target": "必需环境变量缺失",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E021-Neo4j环境配置",
+      "target": "必需环境变量缺失",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E022-Neo4j连接URI",
+      "target": "服务地址配置错误",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E023-URI不支持嵌套路径",
+      "target": "服务地址配置错误",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E024-立即验证连接",
+      "target": "目标服务未启动",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E025-连接被拒绝",
+      "target": "目标服务未启动",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E026-Neo4j认证",
+      "target": "认证信息无效",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E027-令牌认证失败",
+      "target": "认证信息无效",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E028-Bolt端口",
+      "target": "端口被其他进程占用",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E029-区分地址与服务状态",
+      "target": "服务地址配置错误",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E030-连接失败日志",
+      "target": "目标服务未启动",
+      "type": "CHUNK_SUPPORTS_CAUSE",
+      "props": {}
+    },
+    {
+      "source": "E001-模块未找到异常",
+      "target": "检查目标包",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E002-python调用pip",
+      "target": "检查解释器路径",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E003-pip指定解释器",
+      "target": "检查解释器路径",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E004-导入路径搜索",
+      "target": "检查模块解析路径",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E005-检查模块来源",
+      "target": "检查模块解析路径",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E006-依赖版本约束",
+      "target": "检查Python与依赖版本",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E007-版本冲突检查",
+      "target": "检查Python与依赖版本",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E008-当前环境查询包",
+      "target": "检查解释器路径",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E009-PyTorch安装构建",
+      "target": "检查PyTorch构建",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E010-选择CUDA构建",
+      "target": "检查PyTorch构建",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E011-CUDA可用性检查",
+      "target": "检查NVIDIA驱动",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E012-驱动检查",
+      "target": "检查NVIDIA驱动",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E013-混合安装环境",
+      "target": "检查PyTorch构建",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E014-CUDA初始化错误802",
+      "target": "检查PyTorch构建",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E015-容器GPU映射",
+      "target": "检查容器GPU映射",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E016-容器可见设备变量",
+      "target": "检查容器GPU映射",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E017-macOS使用MPS",
+      "target": "检查当前计算平台",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E018-MPS可用性",
+      "target": "检查当前计算平台",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E019-驱动先于工具包",
+      "target": "检查NVIDIA驱动",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E020-进程环境变量",
+      "target": "检查环境变量",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E021-Neo4j环境配置",
+      "target": "检查环境变量",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E022-Neo4j连接URI",
+      "target": "检查服务地址",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E023-URI不支持嵌套路径",
+      "target": "检查服务地址",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E024-立即验证连接",
+      "target": "执行连接健康检查",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E025-连接被拒绝",
+      "target": "执行连接健康检查",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E026-Neo4j认证",
+      "target": "检查认证错误",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E027-令牌认证失败",
+      "target": "检查认证错误",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E028-Bolt端口",
+      "target": "检查端口监听者",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E029-区分地址与服务状态",
+      "target": "检查服务地址",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E030-连接失败日志",
+      "target": "执行连接健康检查",
+      "type": "CHUNK_SUPPORTS_CHECK",
+      "props": {}
+    },
+    {
+      "source": "E001-模块未找到异常",
+      "target": "使用当前解释器安装目标包",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E002-python调用pip",
+      "target": "统一Python与pip环境",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E003-pip指定解释器",
+      "target": "统一Python与pip环境",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E004-导入路径搜索",
+      "target": "重命名同名本地模块",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E005-检查模块来源",
+      "target": "重命名同名本地模块",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E006-依赖版本约束",
+      "target": "选择兼容的Python和依赖版本",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E007-版本冲突检查",
+      "target": "选择兼容的Python和依赖版本",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E008-当前环境查询包",
+      "target": "统一Python与pip环境",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E009-PyTorch安装构建",
+      "target": "安装匹配计算平台的PyTorch",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E010-选择CUDA构建",
+      "target": "安装匹配计算平台的PyTorch",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E011-CUDA可用性检查",
+      "target": "恢复NVIDIA驱动",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E012-驱动检查",
+      "target": "恢复NVIDIA驱动",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E013-混合安装环境",
+      "target": "匹配PyTorch与CUDA构建",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E014-CUDA初始化错误802",
+      "target": "匹配PyTorch与CUDA构建",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E015-容器GPU映射",
+      "target": "为容器启用GPU",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E016-容器可见设备变量",
+      "target": "为容器启用GPU",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E017-macOS使用MPS",
+      "target": "在macOS改用MPS或CPU",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E018-MPS可用性",
+      "target": "在macOS改用MPS或CPU",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E019-驱动先于工具包",
+      "target": "恢复NVIDIA驱动",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E020-进程环境变量",
+      "target": "补充必需环境变量",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E021-Neo4j环境配置",
+      "target": "补充必需环境变量",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E022-Neo4j连接URI",
+      "target": "修正服务URI",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E023-URI不支持嵌套路径",
+      "target": "修正服务URI",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E024-立即验证连接",
+      "target": "启动目标服务",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E025-连接被拒绝",
+      "target": "启动目标服务",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E026-Neo4j认证",
+      "target": "更新认证配置",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E027-令牌认证失败",
+      "target": "更新认证配置",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E028-Bolt端口",
+      "target": "更换端口或停止冲突服务",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E029-区分地址与服务状态",
+      "target": "修正服务URI",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "E030-连接失败日志",
+      "target": "启动目标服务",
+      "type": "CHUNK_SUPPORTS_REPAIR",
+      "props": {}
+    },
+    {
+      "source": "Open WebUI",
+      "target": "Ollama",
+      "type": "CLIENT_CONNECTS_TO",
+      "props": {}
+    },
+    {
+      "source": "Open WebUI容器访问宿主机Ollama",
+      "target": "从Open WebUI容器检查Ollama端点",
+      "type": "CONTEXT_CHECKED_BY",
+      "props": {}
+    },
+    {
+      "source": "Open WebUI容器访问宿主机Ollama",
+      "target": "Open WebUI",
+      "type": "CONTEXT_INVOLVES_CLIENT",
+      "props": {}
+    },
+    {
+      "source": "Open WebUI容器访问宿主机Ollama",
+      "target": "配置Open WebUI的Ollama宿主机地址",
+      "type": "CONTEXT_RESOLVED_BY",
+      "props": {}
+    },
+    {
+      "source": "Ollama /api/tags",
+      "target": "Open WebUI容器访问宿主机Ollama",
+      "type": "ENDPOINT_REACHABLE_FROM",
+      "props": {}
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "NVIDIA驱动不可用",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.25
+      }
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.2
+      }
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "安装了CPU版PyTorch",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.3
+      }
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "容器未获得GPU设备",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.15
+      }
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "当前平台不提供CUDA",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.1
+      }
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "Python版本与包不兼容",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.2
+      }
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "pip与Python指向不同环境",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.3
+      }
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "本地文件遮蔽第三方模块",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.2
+      }
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "目标包未安装",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.3
+      }
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "必需环境变量缺失",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.25
+      }
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "服务地址配置错误",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.2
+      }
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "目标服务未启动",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.25
+      }
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "端口被其他进程占用",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.15
+      }
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "认证信息无效",
+      "type": "HAS_POSSIBLE_CAUSE",
+      "props": {
+        "prior": 0.15
+      }
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "Q-PyTorch是否包含CUDA",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "Q-nvidia-smi是否成功",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "Q-是否为macOS",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "Q-是否有NVIDIA硬件",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "PyTorch无法使用GPU",
+      "target": "Q-是否运行在容器",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "Q-Python版本是否受支持",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "Q-包是否可见",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "Q-是否存在同名文件",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "Python模块无法导入",
+      "target": "Q-解释器是否一致",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "Q-健康检查是否成功",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "Q-变量是否缺失",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "Q-宿主机正常但容器访问失败",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "Q-是否认证失败",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "Q-是否连接被拒绝",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "Q-目标主机本机检查是否成功",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "服务或配置连接失败",
+      "target": "Q-端口是否被占用",
+      "type": "HAS_QUESTION",
+      "props": {}
+    },
+    {
+      "source": "O-PyTorch包含CUDA构建",
+      "target": "NVIDIA驱动不可用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.65
+      }
+    },
+    {
+      "source": "O-PyTorch包含CUDA构建",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.75
+      }
+    },
+    {
+      "source": "O-PyTorch包含CUDA构建",
+      "target": "安装了CPU版PyTorch",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.03
+      }
+    },
+    {
+      "source": "O-PyTorch包含CUDA构建",
+      "target": "容器未获得GPU设备",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.7
+      }
+    },
+    {
+      "source": "O-PyTorch包含CUDA构建",
+      "target": "当前平台不提供CUDA",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.02
+      }
+    },
+    {
+      "source": "O-Python版本受支持",
+      "target": "Python版本与包不兼容",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-Python版本受支持",
+      "target": "pip与Python指向不同环境",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.8
+      }
+    },
+    {
+      "source": "O-Python版本受支持",
+      "target": "本地文件遮蔽第三方模块",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.8
+      }
+    },
+    {
+      "source": "O-Python版本受支持",
+      "target": "目标包未安装",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.8
+      }
+    },
+    {
+      "source": "O-nvidia-smi成功",
+      "target": "NVIDIA驱动不可用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-nvidia-smi成功",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.55
+      }
+    },
+    {
+      "source": "O-nvidia-smi成功",
+      "target": "安装了CPU版PyTorch",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.85
+      }
+    },
+    {
+      "source": "O-nvidia-smi成功",
+      "target": "容器未获得GPU设备",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.65
+      }
+    },
+    {
+      "source": "O-nvidia-smi成功",
+      "target": "当前平台不提供CUDA",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.02
+      }
+    },
+    {
+      "source": "O-健康检查成功",
+      "target": "必需环境变量缺失",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.65
+      }
+    },
+    {
+      "source": "O-健康检查成功",
+      "target": "服务地址配置错误",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-健康检查成功",
+      "target": "目标服务未启动",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.03
+      }
+    },
+    {
+      "source": "O-健康检查成功",
+      "target": "端口被其他进程占用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.08
+      }
+    },
+    {
+      "source": "O-健康检查成功",
+      "target": "认证信息无效",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.55
+      }
+    },
+    {
+      "source": "O-存在NVIDIA硬件",
+      "target": "NVIDIA驱动不可用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.9
+      }
+    },
+    {
+      "source": "O-存在NVIDIA硬件",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.9
+      }
+    },
+    {
+      "source": "O-存在NVIDIA硬件",
+      "target": "安装了CPU版PyTorch",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.9
+      }
+    },
+    {
+      "source": "O-存在NVIDIA硬件",
+      "target": "容器未获得GPU设备",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.85
+      }
+    },
+    {
+      "source": "O-存在NVIDIA硬件",
+      "target": "当前平台不提供CUDA",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.03
+      }
+    },
+    {
+      "source": "O-存在同名本地模块",
+      "target": "Python版本与包不兼容",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-存在同名本地模块",
+      "target": "pip与Python指向不同环境",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-存在同名本地模块",
+      "target": "本地文件遮蔽第三方模块",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.95
+      }
+    },
+    {
+      "source": "O-存在同名本地模块",
+      "target": "目标包未安装",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-宿主机正常但容器访问失败",
+      "target": "必需环境变量缺失",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.08
+      }
+    },
+    {
+      "source": "O-宿主机正常但容器访问失败",
+      "target": "服务地址配置错误",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.97
+      }
+    },
+    {
+      "source": "O-宿主机正常但容器访问失败",
+      "target": "目标服务未启动",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.04
+      }
+    },
+    {
+      "source": "O-宿主机正常但容器访问失败",
+      "target": "端口被其他进程占用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-宿主机正常但容器访问失败",
+      "target": "认证信息无效",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.03
+      }
+    },
+    {
+      "source": "O-平台为macOS",
+      "target": "NVIDIA驱动不可用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-平台为macOS",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-平台为macOS",
+      "target": "安装了CPU版PyTorch",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-平台为macOS",
+      "target": "容器未获得GPU设备",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-平台为macOS",
+      "target": "当前平台不提供CUDA",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.98
+      }
+    },
+    {
+      "source": "O-当前环境可见目标包",
+      "target": "Python版本与包不兼容",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.25
+      }
+    },
+    {
+      "source": "O-当前环境可见目标包",
+      "target": "pip与Python指向不同环境",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.2
+      }
+    },
+    {
+      "source": "O-当前环境可见目标包",
+      "target": "本地文件遮蔽第三方模块",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.9
+      }
+    },
+    {
+      "source": "O-当前环境可见目标包",
+      "target": "目标包未安装",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-必需变量缺失",
+      "target": "必需环境变量缺失",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.95
+      }
+    },
+    {
+      "source": "O-必需变量缺失",
+      "target": "服务地址配置错误",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-必需变量缺失",
+      "target": "目标服务未启动",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-必需变量缺失",
+      "target": "端口被其他进程占用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-必需变量缺失",
+      "target": "认证信息无效",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.15
+      }
+    },
+    {
+      "source": "O-目标主机本机检查成功",
+      "target": "必需环境变量缺失",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.5
+      }
+    },
+    {
+      "source": "O-目标主机本机检查成功",
+      "target": "服务地址配置错误",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.75
+      }
+    },
+    {
+      "source": "O-目标主机本机检查成功",
+      "target": "目标服务未启动",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.25
+      }
+    },
+    {
+      "source": "O-目标主机本机检查成功",
+      "target": "端口被其他进程占用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.25
+      }
+    },
+    {
+      "source": "O-目标主机本机检查成功",
+      "target": "认证信息无效",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.75
+      }
+    },
+    {
+      "source": "O-端口被其他进程占用",
+      "target": "必需环境变量缺失",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-端口被其他进程占用",
+      "target": "服务地址配置错误",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-端口被其他进程占用",
+      "target": "目标服务未启动",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-端口被其他进程占用",
+      "target": "端口被其他进程占用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.95
+      }
+    },
+    {
+      "source": "O-端口被其他进程占用",
+      "target": "认证信息无效",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-解释器路径一致",
+      "target": "Python版本与包不兼容",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.7
+      }
+    },
+    {
+      "source": "O-解释器路径一致",
+      "target": "pip与Python指向不同环境",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-解释器路径一致",
+      "target": "本地文件遮蔽第三方模块",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.75
+      }
+    },
+    {
+      "source": "O-解释器路径一致",
+      "target": "目标包未安装",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.7
+      }
+    },
+    {
+      "source": "O-认证失败",
+      "target": "必需环境变量缺失",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-认证失败",
+      "target": "服务地址配置错误",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.15
+      }
+    },
+    {
+      "source": "O-认证失败",
+      "target": "目标服务未启动",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.03
+      }
+    },
+    {
+      "source": "O-认证失败",
+      "target": "端口被其他进程占用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.03
+      }
+    },
+    {
+      "source": "O-认证失败",
+      "target": "认证信息无效",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.97
+      }
+    },
+    {
+      "source": "O-运行在容器",
+      "target": "NVIDIA驱动不可用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-运行在容器",
+      "target": "PyTorch与CUDA构建不匹配",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.15
+      }
+    },
+    {
+      "source": "O-运行在容器",
+      "target": "安装了CPU版PyTorch",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.1
+      }
+    },
+    {
+      "source": "O-运行在容器",
+      "target": "容器未获得GPU设备",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.95
+      }
+    },
+    {
+      "source": "O-运行在容器",
+      "target": "当前平台不提供CUDA",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.05
+      }
+    },
+    {
+      "source": "O-连接被拒绝",
+      "target": "必需环境变量缺失",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.15
+      }
+    },
+    {
+      "source": "O-连接被拒绝",
+      "target": "服务地址配置错误",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.55
+      }
+    },
+    {
+      "source": "O-连接被拒绝",
+      "target": "目标服务未启动",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.9
+      }
+    },
+    {
+      "source": "O-连接被拒绝",
+      "target": "端口被其他进程占用",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.75
+      }
+    },
+    {
+      "source": "O-连接被拒绝",
+      "target": "认证信息无效",
+      "type": "OBSERVATION_SUPPORTS",
+      "props": {
+        "p_yes_given_cause": 0.03
+      }
+    },
+    {
+      "source": "配置Open WebUI的Ollama宿主机地址",
+      "target": "Ollama /api/tags",
+      "type": "REPAIR_CONFIGURES_ENDPOINT",
+      "props": {}
+    },
+    {
+      "source": "为容器启用GPU",
+      "target": "中风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "使用当前解释器安装目标包",
+      "target": "中风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "修正服务URI",
+      "target": "低风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "匹配PyTorch与CUDA构建",
+      "target": "中风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "启动目标服务",
+      "target": "低风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "在macOS改用MPS或CPU",
+      "target": "低风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "安装匹配计算平台的PyTorch",
+      "target": "中风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "恢复NVIDIA驱动",
+      "target": "中风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "更换端口或停止冲突服务",
+      "target": "中风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "更新认证配置",
+      "target": "低风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "统一Python与pip环境",
+      "target": "低风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "补充必需环境变量",
+      "target": "低风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "选择兼容的Python和依赖版本",
+      "target": "中风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "配置Open WebUI的Ollama宿主机地址",
+      "target": "修改容器配置前保留原值",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "重命名同名本地模块",
+      "target": "低风险",
+      "type": "REPAIR_HAS_RISK",
+      "props": {}
+    },
+    {
+      "source": "为容器启用GPU",
+      "target": "检查容器GPU映射",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "使用当前解释器安装目标包",
+      "target": "检查目标包",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "修正服务URI",
+      "target": "检查服务地址",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "匹配PyTorch与CUDA构建",
+      "target": "检查PyTorch构建",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "启动目标服务",
+      "target": "执行连接健康检查",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "在macOS改用MPS或CPU",
+      "target": "检查当前计算平台",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "安装匹配计算平台的PyTorch",
+      "target": "检查PyTorch构建",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "恢复NVIDIA驱动",
+      "target": "检查NVIDIA驱动",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "更换端口或停止冲突服务",
+      "target": "检查端口监听者",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "更新认证配置",
+      "target": "检查认证错误",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "统一Python与pip环境",
+      "target": "检查解释器路径",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "补充必需环境变量",
+      "target": "检查环境变量",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "选择兼容的Python和依赖版本",
+      "target": "检查Python与依赖版本",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "配置Open WebUI的Ollama宿主机地址",
+      "target": "从Open WebUI容器检查Ollama端点",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "重命名同名本地模块",
+      "target": "检查模块解析路径",
+      "type": "REPAIR_REQUIRES",
+      "props": {}
+    },
+    {
+      "source": "为容器启用GPU",
+      "target": "PyTorch CUDA可用性文档",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "使用当前解释器安装目标包",
+      "target": "pip用户指南",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "修正服务URI",
+      "target": "Neo4j Python连接手册",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "匹配PyTorch与CUDA构建",
+      "target": "PyTorch本地安装指南",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "启动目标服务",
+      "target": "Neo4j Python连接手册",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "在macOS改用MPS或CPU",
+      "target": "PyTorch MPS后端说明",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "安装匹配计算平台的PyTorch",
+      "target": "PyTorch本地安装指南",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "恢复NVIDIA驱动",
+      "target": "PyTorch本地安装指南",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "更换端口或停止冲突服务",
+      "target": "Neo4j Python连接手册",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "更新认证配置",
+      "target": "Neo4j Python连接手册",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "统一Python与pip环境",
+      "target": "pip用户指南",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "补充必需环境变量",
+      "target": "Python环境变量文档",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "选择兼容的Python和依赖版本",
+      "target": "pip依赖解析文档",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "配置Open WebUI的Ollama宿主机地址",
+      "target": "Open WebUI快速开始文档",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "重命名同名本地模块",
+      "target": "Python内置异常文档",
+      "type": "REPAIR_SUPPORTED_BY",
+      "props": {}
+    },
+    {
+      "source": "Ollama",
+      "target": "Ollama /api/tags",
+      "type": "SERVICE_EXPOSES",
+      "props": {}
+    },
+    {
+      "source": "Neo4j Python连接手册",
+      "target": "E021-Neo4j环境配置",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j Python连接手册",
+      "target": "E024-立即验证连接",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j Python连接手册",
+      "target": "E025-连接被拒绝",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j Python连接手册",
+      "target": "E029-区分地址与服务状态",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j Python连接手册",
+      "target": "E030-连接失败日志",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j高级连接文档",
+      "target": "E022-Neo4j连接URI",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j高级连接文档",
+      "target": "E023-URI不支持嵌套路径",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j高级连接文档",
+      "target": "E026-Neo4j认证",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j高级连接文档",
+      "target": "E027-令牌认证失败",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Neo4j高级连接文档",
+      "target": "E028-Bolt端口",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch CUDA可用性文档",
+      "target": "E011-CUDA可用性检查",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch CUDA可用性文档",
+      "target": "E012-驱动检查",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch MPS后端说明",
+      "target": "E017-macOS使用MPS",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch MPS后端说明",
+      "target": "E018-MPS可用性",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch本地安装指南",
+      "target": "E009-PyTorch安装构建",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch本地安装指南",
+      "target": "E010-选择CUDA构建",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch本地安装指南",
+      "target": "E019-驱动先于工具包",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch问题144835",
+      "target": "E015-容器GPU映射",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch问题144835",
+      "target": "E016-容器可见设备变量",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch问题77520",
+      "target": "E013-混合安装环境",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch问题81549",
+      "target": "E014-CUDA初始化错误802",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Python内置异常文档",
+      "target": "E001-模块未找到异常",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Python导入系统文档",
+      "target": "E004-导入路径搜索",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Python导入系统文档",
+      "target": "E005-检查模块来源",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "Python环境变量文档",
+      "target": "E020-进程环境变量",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "pip依赖解析文档",
+      "target": "E006-依赖版本约束",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "pip依赖解析文档",
+      "target": "E007-版本冲突检查",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "pip用户指南",
+      "target": "E002-python调用pip",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "pip用户指南",
+      "target": "E008-当前环境查询包",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "pip解释器管理文档",
+      "target": "E003-pip指定解释器",
+      "type": "SOURCE_CONTAINS_CHUNK",
+      "props": {}
+    },
+    {
+      "source": "PyTorch与CUDA构建不匹配",
+      "target": "PyTorch计算平台构建约束",
+      "type": "SUBJECT_TO_VERSION",
+      "props": {}
+    },
+    {
+      "source": "Python版本与包不兼容",
+      "target": "Python包版本约束",
+      "type": "SUBJECT_TO_VERSION",
+      "props": {}
+    },
+    {
+      "source": "服务地址配置错误",
+      "target": "Neo4j驱动与服务兼容约束",
+      "type": "SUBJECT_TO_VERSION",
+      "props": {}
+    },
+    {
+      "source": "NVIDIA驱动不可用",
+      "target": "Linux",
+      "type": "VALID_ON",
+      "props": {}
+    },
+    {
+      "source": "NVIDIA驱动不可用",
+      "target": "Windows",
+      "type": "VALID_ON",
+      "props": {}
+    },
+    {
+      "source": "当前平台不提供CUDA",
+      "target": "macOS",
+      "type": "VALID_ON",
+      "props": {}
+    }
+  ]
+}

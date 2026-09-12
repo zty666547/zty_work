@@ -1,0 +1,11 @@
+{
+  "id": "demo_open_webui_ollama_host_gateway",
+  "title": "Open WebUI容器无法连接宿主机Ollama",
+  "report": "宿主机Ollama能够通过浏览器和curl访问，但Open WebUI容器使用宿主机局域网地址时Connect call failed",
+  "answers": {
+    "Q-宿主机正常但容器访问失败": "yes",
+    "Q-变量是否缺失": "no"
+  },
+  "expected_cause": "服务地址配置错误",
+  "scope": "固定演示案例，不参与第二版外部测试。"
+}

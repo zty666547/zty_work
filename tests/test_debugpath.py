@@ -441,6 +441,74 @@ def test_v2_router_requests_cross_family_clarification(service):
         DiagnosisServiceV2().start(report)
 
 
+def test_v2_service_context_graph_drives_ollama_specific_plan():
+    from src.diagnosis.service_v2 import DiagnosisServiceV2
+
+    service = DiagnosisServiceV2()
+    snapshot = service.start(
+        "宿主机Ollama可以访问，但Docker中的Open WebUI连接失败"
+    )
+    assert snapshot["service_context"] == "Open WebUI容器访问宿主机Ollama"
+    assert snapshot["question"]["name"] == "Q-宿主机正常但容器访问失败"
+
+    snapshot = service.answer(
+        snapshot["state"],
+        snapshot["question"]["name"],
+        "yes",
+    )
+    snapshot = service.answer(
+        snapshot["state"],
+        snapshot["question"]["name"],
+        "no",
+    )
+    assert snapshot["state"]["status"] == "completed"
+    assert snapshot["candidates"][0]["name"] == "服务地址配置错误"
+    assert snapshot["candidates"][0]["probability"] > 0.90
+    assert snapshot["decision"]["sufficient"] is True
+    assert "/api/tags" in snapshot["plan"][0]["command"]
+    assert "OLLAMA_BASE_URL" in snapshot["plan"][0]["repair"]
+    assert snapshot["plan"][0]["risk_level"] == "low"
+    assert len(snapshot["plan"][0]["sources"]) == 3
+    assert snapshot["plan_errors"] == []
+
+
+def test_v2_demo_subgraph_contains_every_used_node_type():
+    from scripts.export_v2_demo import build_demo
+
+    report = build_demo()
+    assert report["final"]["cause"] == "服务地址配置错误"
+    assert report["final"]["decision"]["sufficient"] is True
+    final_types = {node["type"] for node in report["subgraphs"][-1]["nodes"]}
+    assert {
+        "Issue",
+        "Cause",
+        "DiagnosticQuestion",
+        "Observation",
+        "EvidenceChunk",
+        "Service",
+        "Endpoint",
+        "DeploymentContext",
+        "DiagnosticCheck",
+        "RepairAction",
+        "Risk",
+        "DocumentSource",
+    } <= final_types
+
+
+def test_v2_graph_artifact_is_deterministic_and_service_aware():
+    from scripts.prepare_graph_v2 import prepare
+
+    first = prepare()["artifact"]
+    second = prepare()["artifact"]
+    assert first["format"] == "debugpath-graph-v2"
+    assert first["content_sha256"] == second["content_sha256"]
+    assert first["stats"]["nodes"] == 144
+    assert first["stats"]["relationships"] == 366
+    assert first["stats"]["entity_types"]["Service"] == 2
+    assert first["stats"]["entity_types"]["Endpoint"] == 1
+    assert first["stats"]["entity_types"]["DeploymentContext"] == 1
+
+
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():
     from scripts.evaluate_calibration import evaluate
 
