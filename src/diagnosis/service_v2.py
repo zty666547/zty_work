@@ -6,7 +6,8 @@ from copy import deepcopy
 
 from config.settings import Settings
 from src.data.loader_v2 import load_v2_knowledge_base
-from src.diagnosis.engine import DiagnosisEngine, UnknownIssueError
+from src.diagnosis.engine import UnknownIssueError
+from src.diagnosis.engine_v2 import DiagnosisEngineV2, detect_contexts
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.planner_v2 import PlanBuilderV2
 from src.diagnosis.planner import verify_plan
@@ -42,7 +43,7 @@ class DiagnosisServiceV2(DiagnosisService):
             evidence_path,
             overlay_path,
         )
-        self.engine = DiagnosisEngine(self.graph, self.settings)
+        self.engine = DiagnosisEngineV2(self.graph, self.settings)
         self.planner = PlanBuilderV2(self.graph)
         self.retriever = EvidenceRetriever(self.graph)
         self.issue_router = IssueRouter(self.graph)
@@ -51,13 +52,8 @@ class DiagnosisServiceV2(DiagnosisService):
 
     @staticmethod
     def _detect_context(report: str) -> str | None:
-        normalized = report.casefold()
-        has_open_webui = "open webui" in normalized or "openwebui" in normalized
-        if "ollama" in normalized and has_open_webui and (
-            "docker" in normalized or "容器" in normalized
-        ):
-            return "Open WebUI容器访问宿主机Ollama"
-        return None
+        contexts = detect_contexts(report)
+        return sorted(contexts)[0] if contexts else None
 
     def start(self, report: str) -> dict:
         report = report.strip()

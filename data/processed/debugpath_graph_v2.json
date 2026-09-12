@@ -5,7 +5,7 @@
     "data/raw/debugpath_knowledge.json",
     "data/raw/debugpath_v2_service_context.json"
   ],
-  "content_sha256": "9761bd57368deaef5dcbfee4afe0f40c1d33dca5d367f00c11f60d29f860d099",
+  "content_sha256": "4a6b4a0d14d52226a538feb8509abb07faab53fa6551e572490ec47181339725",
   "stats": {
     "nodes": 144,
     "relationships": 366,
@@ -389,7 +389,8 @@
         "no_label": "宿主机也失败",
         "cost": 1,
         "risk_cost": 0,
-        "answerability": 0.9
+        "answerability": 0.9,
+        "required_context": "Open WebUI容器访问宿主机Ollama"
       }
     },
     {

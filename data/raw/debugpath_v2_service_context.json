@@ -55,7 +55,8 @@
           "no_label": "宿主机也失败",
           "cost": 1,
           "risk_cost": 0,
-          "answerability": 0.9
+          "answerability": 0.9,
+          "required_context": "Open WebUI容器访问宿主机Ollama"
         }
       }
     ],

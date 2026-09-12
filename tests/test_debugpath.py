@@ -472,6 +472,17 @@ def test_v2_service_context_graph_drives_ollama_specific_plan():
     assert snapshot["plan_errors"] == []
 
 
+def test_v2_context_question_does_not_leak_into_unrelated_service_cases():
+    from src.diagnosis.models import DiagnosisState
+    from src.diagnosis.service_v2 import DiagnosisServiceV2
+
+    service = DiagnosisServiceV2()
+    snapshot = service.start("uvicorn启动失败，Address already in use，端口被占用")
+    state = DiagnosisState.from_dict(snapshot["state"])
+    names = {choice.name for choice in service.engine.available_questions(state)}
+    assert "Q-宿主机正常但容器访问失败" not in names
+
+
 def test_v2_demo_subgraph_contains_every_used_node_type():
     from scripts.export_v2_demo import build_demo
 
@@ -507,6 +518,24 @@ def test_v2_graph_artifact_is_deterministic_and_service_aware():
     assert first["stats"]["entity_types"]["Service"] == 2
     assert first["stats"]["entity_types"]["Endpoint"] == 1
     assert first["stats"]["entity_types"]["DeploymentContext"] == 1
+
+
+def test_v2_strategy_development_comparison_is_scoped_and_reproducible():
+    from scripts.evaluate_v2_strategy import evaluate
+
+    report = evaluate()
+    assert "不是第二版无偏测试成绩" in report["warning"]
+    assert len(report["summaries"]) == 4
+    assert report["initial_question_difference_count"] > 0
+    by_key = {
+        (item["cohort"], item["strategy"]): item
+        for item in report["summaries"]
+    }
+    assert by_key[("original_development", "answerability_aware")]["top1"] == 1.0
+    assert (
+        by_key[("original_development", "answerability_aware")]["top1"]
+        >= by_key[("original_development", "pure_information_gain")]["top1"]
+    )
 
 
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():
