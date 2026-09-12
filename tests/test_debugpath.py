@@ -394,6 +394,8 @@ def test_stage2_model_freeze_matches_current_graph_and_settings():
     assert report["frozen"] is True
     assert report["graph_matches"] is True
     assert report["settings_checked"] == 12
+    assert report["implementation_files_checked"] == 6
+    assert all(report["implementation_matches"].values())
     assert report["test_protocol"]["minimum_cases"] == 14
 
 

@@ -107,7 +107,7 @@ python scripts/evaluate_injection.py
 
 数据边界已由`data/evaluation/real_case_split.json`固定：28条确认记录属于开发集，另有14条新来源案例构成首次冻结测试集。
 
-模型已按`data/evaluation/model_freeze.json`冻结，并于2026-09-12完成唯一一次正式对比。图谱指纹、BM25融合权重、信息增益成本项和停止阈值不得根据该结果回改；下一模型版本必须使用新的外部测试集验证。
+模型已按`data/evaluation/model_freeze.json`冻结，并于2026-09-12完成唯一一次正式对比。冻结清单同时记录图谱指纹、12项参数和6个核心实现文件的内容指纹，防止只改代码却绕过审计。下一模型版本必须使用新的外部测试集验证。
 
 ## 知识注入边界测试
 

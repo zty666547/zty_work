@@ -1,7 +1,16 @@
 {
   "freeze_id": "debugpath-stage2-2026-09-11",
   "frozen_after_commit": "214ceca",
+  "implementation_commit": "214ceca1bc0f47be7f5cb7838a3fe798d7f84724",
   "graph_content_sha256": "60661204541834a4a07ca86b6deb0e73615412ca8ee2714fcb7d5d0f573ca6c2",
+  "implementation_files": {
+    "config/settings.py": "0b697f19e284338fdca3dc8ad5c06a27cf2967ef4d7bbc66299580f85f8fd98e",
+    "src/data/loader.py": "80dc517b12f2b7ec02d3af8b7ab8c47b626f96e57d3d5ceb0cb0ca3d5a5d4f00",
+    "src/diagnosis/engine.py": "b341c8b384328b78aab74153fe171ad862e0657169962ccbc9d9bdfdf1b59a67",
+    "src/diagnosis/planner.py": "c3659876ee88d24d57ab64d1602a5c82db0f7940025f95923883661cf864b333",
+    "src/diagnosis/service.py": "8179662ab47cbdefd9ef2ff56b493e453a54156259f543a92f415975ad560ada",
+    "src/retrieval/bm25.py": "7f475d9d30a0606585e48d4be613a21a271c43c546327c282578fb9247e3dc69"
+  },
   "algorithm": "answerability_aware_information_gain_with_bayesian_update",
   "settings": {
     "evidence_top_k": 5,
