@@ -353,6 +353,28 @@ def test_pure_information_gain_policy_uses_raw_gain_only(service):
     assert actual.name == expected.name
 
 
+def test_frozen_evaluator_counts_unrecognized_report_as_end_to_end_failure(service):
+    from scripts.evaluate_frozen_test import run_strategy_case
+    from src.diagnosis.policies import DirectPolicy
+
+    row = run_strategy_case(
+        service,
+        {
+            "id": "unrecognized_case",
+            "family": "dependency",
+            "report": "这是一条当前系统无法归类的全新故障描述",
+            "expected_top_cause": "依赖包未安装",
+            "answers": {},
+        },
+        DirectPolicy(),
+    )
+    assert row["passed"] is False
+    assert row["rank"] is None
+    assert row["questions"] == 0
+    assert row["stop_reason"] == "故障族识别失败"
+    assert row["entry_error"]
+
+
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():
     from scripts.evaluate_calibration import evaluate
 
