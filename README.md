@@ -87,6 +87,7 @@ python scripts/evaluate_active_algorithm.py
 python scripts/evaluate_public_cases.py
 python scripts/evaluate_ablation.py
 python scripts/evaluate_injection.py
+python scripts/evaluate_frozen_test.py
 ```
 
 ## 当前结果
@@ -101,6 +102,8 @@ python scripts/evaluate_injection.py
 | 可回答性感知信息增益 | 100.0% | 2.83 |
 
 以上结果用于验证系统机制，不能代表真实环境中的准确率。详细设置见[评测说明](docs/evaluation.md)。
+
+首次14条未见案例冻结测试中，不追问、固定顺序、随机追问、纯信息增益和完整策略的端到端Top-1分别为50.0%、64.3%、60.4%、64.3%和64.3%。其中5条在故障族识别入口失败；纯信息增益与完整策略表现相同。该结果用于暴露下一版研究问题，不能表述为真实世界总体准确率。详见[冻结测试分析](docs/frozen-evaluation-analysis.md)。
 
 最终阶段正在研究“可回答性感知”的主动诊断：理论上信息量很大、但普通用户难以确认的问题会被降低优先级；回答“不清楚”也不会被计作有效诊断证据。若置信度、首位领先差距或有效回答数不足，系统会明确标记“证据不足”，不把候选第一名冒充为确定结论。当前信息受限用户压力测试属于确定性模拟，尚不能替代真实用户实验。
 
