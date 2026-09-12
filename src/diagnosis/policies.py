@@ -53,7 +53,7 @@ class RandomPolicy:
 
 
 class InformationGainPolicy:
-    """选择效用最高的问题，即系统当前采用的方法。"""
+    """选择综合效用最高的问题，即系统当前采用的完整方法。"""
 
     name = "information_gain"
 
@@ -61,3 +61,20 @@ class InformationGainPolicy:
         self, engine: DiagnosisEngine, state: DiagnosisState
     ) -> QuestionChoice | None:
         return engine.next_question(state)
+
+
+class PureInformationGainPolicy:
+    """只按原始信息增益选问，不使用可回答率、成本或风险修正。"""
+
+    name = "pure_information_gain"
+
+    def choose(
+        self, engine: DiagnosisEngine, state: DiagnosisState
+    ) -> QuestionChoice | None:
+        choices = engine.available_questions(state, answerability_aware=False)
+        if not choices:
+            return None
+        best = max(choices, key=lambda item: (item.information_gain, item.name))
+        if best.information_gain < engine.settings.min_information_gain:
+            return None
+        return best

@@ -326,11 +326,31 @@ def test_frozen_test_seal_matches_current_cases():
 def test_frozen_test_evaluation_preflight_does_not_run_cases():
     from scripts.evaluate_frozen_test import prepare_evaluation
 
-    cases, model, seal = prepare_evaluation()
+    cases, model, seal, protocol = prepare_evaluation()
     assert len(cases) == 14
     assert len({case["expected_top_cause"] for case in cases}) == 14
     assert model["frozen"] is True
     assert seal["case_ids"] == [case["id"] for case in cases]
+    assert [item["id"] for item in protocol["protocol"]["strategies"]] == [
+        "direct_no_question",
+        "fixed_order",
+        "random_question",
+        "pure_information_gain",
+        "full_answerability_aware",
+    ]
+    assert protocol["protocol"]["random"] == {"runs": 100, "seed": 2026}
+
+
+def test_pure_information_gain_policy_uses_raw_gain_only(service):
+    from src.diagnosis.policies import PureInformationGainPolicy
+
+    snapshot = service.start("APIConnectionError: Connection refused")
+    state = DiagnosisState.from_dict(snapshot["state"])
+    choices = service.engine.available_questions(state, answerability_aware=False)
+    expected = max(choices, key=lambda item: (item.information_gain, item.name))
+    actual = PureInformationGainPolicy().choose(service.engine, state)
+    assert actual is not None
+    assert actual.name == expected.name
 
 
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():

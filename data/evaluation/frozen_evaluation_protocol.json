@@ -1,0 +1,60 @@
+{
+  "protocol_id": "debugpath-frozen-comparison-v1",
+  "status": "sealed_before_first_test_run",
+  "protocol": {
+    "model_freeze_id": "debugpath-stage2-2026-09-11",
+    "test_seal_id": "debugpath-frozen-test-v1",
+    "test_content_sha256": "cfe86f3d9c97f038d47b2fa69f70059f14624276b19f8c62a0c350151dd0acd6",
+    "case_count": 14,
+    "cause_count": 14,
+    "shared_conditions": {
+      "same_initial_hybrid_retrieval": true,
+      "same_case_order_and_answers": true,
+      "missing_answers": "unknown",
+      "max_questions": 4,
+      "same_robust_stopping_for_interactive_strategies": true
+    },
+    "strategies": [
+      {
+        "id": "direct_no_question",
+        "description": "只使用初始混合检索，不进行主动追问。"
+      },
+      {
+        "id": "fixed_order",
+        "description": "按照知识库中的固定问题顺序追问。"
+      },
+      {
+        "id": "random_question",
+        "description": "从剩余问题中随机选择，使用固定种子重复100次。"
+      },
+      {
+        "id": "pure_information_gain",
+        "description": "只按照原始信息增益选择问题，不使用可回答率、成本和风险修正。"
+      },
+      {
+        "id": "full_answerability_aware",
+        "description": "使用信息增益、可回答率、检查成本、风险和稳健停止的完整策略。"
+      }
+    ],
+    "random": {
+      "runs": 100,
+      "seed": 2026
+    },
+    "metrics": [
+      "top1",
+      "mrr",
+      "coverage",
+      "selective_accuracy",
+      "avg_questions",
+      "avg_unknown_questions",
+      "success_within_3",
+      "avg_entropy_drop",
+      "avg_cost",
+      "avg_risk",
+      "wrong_confident_stop_rate"
+    ],
+    "reporting_rule": "同时报告正确性、追问效率、可靠停止和错误自信停止；14条小样本结果不得表述为真实世界总体准确率。",
+    "run_rule": "协议、模型和测试集三重校验通过后只运行一次；结果文件不得覆盖。"
+  },
+  "content_sha256": "c92b98f43d75c09fd5d7203e9980eef8b62778fdd1933f7263a2d4403b94a655"
+}
