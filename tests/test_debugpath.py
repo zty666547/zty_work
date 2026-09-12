@@ -404,6 +404,43 @@ def test_v2_issue_router_keeps_signature_and_evidence_explanations(service):
     assert route["evidence_score"] > 0.0
 
 
+def test_v2_service_routes_previous_signature_gap_without_changing_v1(service):
+    from src.diagnosis.engine import UnknownIssueError
+    from src.diagnosis.service_v2 import DiagnosisServiceV2
+
+    report = "项目目录存在同名numpy.py，import后加载了当前目录文件"
+    with pytest.raises(UnknownIssueError):
+        service.start(report)
+
+    snapshot = DiagnosisServiceV2().start(report)
+    assert snapshot["state"]["issue_name"] == "Python模块无法导入"
+    assert snapshot["routing"]["status"] == "routed"
+    assert snapshot["routing"]["selected_issue"] == "Python模块无法导入"
+    assert snapshot["routing"]["candidates"][0]["evidence"]
+
+
+def test_v2_router_rejects_input_without_retrieval_evidence(service):
+    from src.retrieval.issue_router import IssueRouter
+
+    decision = IssueRouter(service.graph).decide("今天天气怎么样")
+    assert decision["status"] == "unsupported"
+    assert decision["selected_issue"] is None
+
+
+def test_v2_router_requests_cross_family_clarification(service):
+    from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
+    from src.retrieval.issue_router import IssueRouter
+
+    report = "服务启动后Python模块找不到"
+    decision = IssueRouter(service.graph).decide(report)
+    assert decision["status"] == "ambiguous"
+    assert decision["selected_issue"] is None
+    assert "模块无法导入" in decision["clarification"]
+    assert "服务/API" in decision["clarification"]
+    with pytest.raises(AmbiguousIssueError):
+        DiagnosisServiceV2().start(report)
+
+
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():
     from scripts.evaluate_calibration import evaluate
 
