@@ -441,6 +441,27 @@ def test_v2_router_requests_cross_family_clarification(service):
         DiagnosisServiceV2().start(report)
 
 
+def test_v2_service_continues_after_cross_family_clarification():
+    from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
+
+    service = DiagnosisServiceV2()
+    report = "服务启动后Python模块找不到"
+    with pytest.raises(AmbiguousIssueError) as captured:
+        service.start(report)
+    decision = captured.value.decision
+    snapshot = service.resolve_ambiguity(
+        report,
+        "Python模块无法导入",
+        decision,
+    )
+    assert snapshot["state"]["issue_name"] == "Python模块无法导入"
+    assert snapshot["routing"]["status"] == "routed_after_clarification"
+    assert snapshot["routing"]["clarification_answer"] == "Python模块无法导入"
+
+    with pytest.raises(ValueError):
+        service.resolve_ambiguity(report, "PyTorch无法使用GPU", decision)
+
+
 def test_v2_service_context_graph_drives_ollama_specific_plan():
     from src.diagnosis.service_v2 import DiagnosisServiceV2
 
@@ -504,6 +525,22 @@ def test_v2_demo_subgraph_contains_every_used_node_type():
         "Risk",
         "DocumentSource",
     } <= final_types
+
+
+def test_v2_stage_dot_contains_service_context_and_final_path():
+    from scripts.export_v2_demo import build_demo
+    from src.diagnosis.service_v2 import DiagnosisServiceV2
+    from src.diagnosis.trajectory_v2 import stage_dot_v2
+
+    report = build_demo()
+    service = DiagnosisServiceV2()
+    final_stage = report["trajectory"][-1]
+    previous = report["trajectory"][-2]
+    dot = stage_dot_v2(final_stage, service.graph, previous)
+    assert "Open WebUI容器访问宿主机Ollama" in dot
+    assert "Ollama /api/tags" in dot
+    assert "配置Open WebUI的Ollama宿主机地址" in dot
+    assert "修改容器配置前保留原值" in dot
 
 
 def test_v2_graph_artifact_is_deterministic_and_service_aware():

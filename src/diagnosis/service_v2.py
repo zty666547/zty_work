@@ -65,6 +65,24 @@ class DiagnosisServiceV2(DiagnosisService):
         if routing["status"] == "ambiguous":
             raise AmbiguousIssueError(routing)
 
+        return self._start_routed(report, routing)
+
+    def resolve_ambiguity(
+        self,
+        report: str,
+        selected_issue: str,
+        decision: dict,
+    ) -> dict:
+        allowed = {item["issue"] for item in decision.get("candidates", [])[:2]}
+        if decision.get("status") != "ambiguous" or selected_issue not in allowed:
+            raise ValueError("澄清结果不属于当前两个候选故障族")
+        routing = deepcopy(decision)
+        routing["status"] = "routed_after_clarification"
+        routing["selected_issue"] = selected_issue
+        routing["clarification_answer"] = selected_issue
+        return self._start_routed(report.strip(), routing)
+
+    def _start_routed(self, report: str, routing: dict) -> dict:
         issue_name = routing["selected_issue"]
         causes = self.engine.issue_causes[issue_name]
         probabilities = {

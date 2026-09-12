@@ -10,11 +10,12 @@ from src.diagnosis.engine import UnknownIssueError
 from src.diagnosis.case_export import build_case_export
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState
-from src.diagnosis.service import DiagnosisService
-from src.diagnosis.trajectory import stage_dot
+from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
+from src.diagnosis.trajectory_v2 import stage_dot_v2
 from src.extraction.llm_client import LLMClient
 
 EXAMPLES = [
+    "宿主机Ollama可以访问，但Docker中的Open WebUI连接失败",
     "ModuleNotFoundError: No module named 'pandas'",
     "torch.cuda.is_available() 返回 False，检测不到GPU",
     "Neo4j Connection refused，无法连接 localhost:7687",
@@ -23,8 +24,8 @@ EXAMPLES = [
 
 
 @st.cache_resource
-def load_service() -> DiagnosisService:
-    return DiagnosisService(settings)
+def load_service() -> DiagnosisServiceV2:
+    return DiagnosisServiceV2(settings)
 
 
 def _render_candidates(snapshot: dict) -> None:
@@ -37,7 +38,7 @@ def _render_candidates(snapshot: dict) -> None:
     st.bar_chart({row["候选原因"]: row["当前概率"] for row in rows}, horizontal=True)
 
 
-def _render_live_graph(snapshot: dict, service: DiagnosisService) -> None:
+def _render_live_graph(snapshot: dict, service: DiagnosisServiceV2) -> None:
     """在问答旁展示最新阶段，而不是等诊断结束后再回放。"""
     stages = snapshot["state"].get("trajectory", [])
     if not stages:
@@ -50,14 +51,14 @@ def _render_live_graph(snapshot: dict, service: DiagnosisService) -> None:
     st.caption(
         f"第 {stage['round']} 轮 · 当前首位：{top['name']}（{top['probability']:.1%}）"
     )
-    st.graphviz_chart(stage_dot(stage, service.graph, previous), width="stretch")
+    st.graphviz_chart(stage_dot_v2(stage, service.graph, previous), width="stretch")
     st.caption(
-        "蓝：故障；紫：当前问题；青：用户观察；黄：候选原因；"
-        "灰：本轮概率下降；绿：当前首位。节点越大，当前概率越高。"
+        "蓝：故障；灰：检索证据；黄：候选原因；紫：当前问题；青：用户观察；"
+        "橙：服务与端点；粉：部署环境；绿：最终检查与修复。"
     )
 
 
-def _render_trajectory(snapshot: dict, service: DiagnosisService) -> None:
+def _render_trajectory(snapshot: dict, service: DiagnosisServiceV2) -> None:
     stages = snapshot["state"].get("trajectory", [])
     if not stages:
         st.info("请重新开始一次诊断以记录完整轨迹。")
@@ -79,8 +80,8 @@ def _render_trajectory(snapshot: dict, service: DiagnosisService) -> None:
         st.info("停止原因：" + stage["stop_reason"] + "。当前首位原因仍需实际检查确认。")
     elif stage.get("next_question"):
         st.caption("下一问：" + stage["next_question"]["text"])
-    st.graphviz_chart(stage_dot(stage, service.graph, previous), width="stretch")
-    st.caption("蓝：故障；紫：问题；青：观察；黄：候选；灰：概率较上一阶段降低；绿：当前首位及排查路径。灰色不代表排除，负面回答也保留原图关系。")
+    st.graphviz_chart(stage_dot_v2(stage, service.graph, previous), width="stretch")
+    st.caption("每个阶段只显示实际参与当前推理的节点和关系。低概率候选仍然保留，完成后只沿最终原因展开检查、修复、风险和来源。")
     before = {c["name"]: (rank, c["probability"]) for rank, c in enumerate(previous["candidates"], 1)}
     st.dataframe([
         {"候选原因": c["name"], "上一阶段排名": before[c["name"]][0], "当前排名": rank,
@@ -111,6 +112,32 @@ def _render_evidence(snapshot: dict) -> None:
             else:
                 st.markdown(f"**{title}**")
             st.caption(item.get("text", ""))
+
+
+def _render_routing(snapshot: dict) -> None:
+    routing = snapshot.get("routing") or {}
+    candidates = routing.get("candidates") or []
+    if not candidates:
+        return
+    with st.expander("故障族检索依据", expanded=True):
+        st.dataframe(
+            [
+                {
+                    "候选故障族": item["issue"],
+                    "综合得分": round(item["score"], 3),
+                    "固定特征": round(item["signature_score"], 3),
+                    "图谱证据": round(item["evidence_score"], 3),
+                    "主要证据": "、".join(
+                        evidence["name"] for evidence in item["evidence"]
+                    ),
+                }
+                for item in candidates
+            ],
+            hide_index=True,
+            width="stretch",
+        )
+        if snapshot.get("service_context"):
+            st.info("已识别部署环境：" + snapshot["service_context"])
 
 
 def _render_case_export(snapshot: dict) -> None:
@@ -172,22 +199,49 @@ def main() -> None:
         st.info("系统只生成检查建议，不会自动执行命令。")
         if st.button("重新开始", width="stretch"):
             st.session_state.pop("diagnosis", None)
+            st.session_state.pop("pending_routing", None)
             st.rerun()
 
     diagnose_tab, graph_tab, method_tab = st.tabs(["主动诊断", "诊断轨迹", "方法说明"])
     with diagnose_tab:
+        pending = st.session_state.get("pending_routing")
         report = st.text_area(
-            "粘贴报错信息或描述现象", placeholder=EXAMPLES[0], height=120,
-            disabled="diagnosis" in st.session_state,
+            "粘贴报错信息或描述现象",
+            value=pending["report"] if pending else "",
+            placeholder=EXAMPLES[0],
+            height=120,
+            disabled="diagnosis" in st.session_state or pending is not None,
         )
         if "diagnosis" not in st.session_state:
-            st.caption("可直接尝试：" + " ｜ ".join(EXAMPLES))
-            if st.button("开始诊断", type="primary"):
-                try:
-                    st.session_state.diagnosis = service.start(report)
+            if pending:
+                decision = pending["decision"]
+                st.warning(decision["clarification"])
+                options = [item["issue"] for item in decision["candidates"][:2]]
+                selected_issue = st.radio("请选择更符合当前情况的一项", options)
+                confirm_col, cancel_col = st.columns(2)
+                if confirm_col.button("确认并进入诊断", type="primary", width="stretch"):
+                    st.session_state.diagnosis = service.resolve_ambiguity(
+                        pending["report"], selected_issue, decision
+                    )
+                    st.session_state.pop("pending_routing", None)
                     st.rerun()
-                except (ValueError, UnknownIssueError) as exc:
-                    st.warning(str(exc))
+                if cancel_col.button("重新描述故障", width="stretch"):
+                    st.session_state.pop("pending_routing", None)
+                    st.rerun()
+            else:
+                st.caption("可直接尝试：" + " ｜ ".join(EXAMPLES))
+                if st.button("开始诊断", type="primary"):
+                    try:
+                        st.session_state.diagnosis = service.start(report)
+                        st.rerun()
+                    except AmbiguousIssueError as exc:
+                        st.session_state.pending_routing = {
+                            "report": report,
+                            "decision": exc.decision,
+                        }
+                        st.rerun()
+                    except (ValueError, UnknownIssueError) as exc:
+                        st.warning(str(exc))
         else:
             previous = st.session_state.diagnosis
             state = previous["state"]
@@ -195,6 +249,7 @@ def main() -> None:
             st.session_state.diagnosis = snapshot
             state = snapshot["state"]
             st.success(f"已识别场景：{state['issue_name']}")
+            _render_routing(snapshot)
             c1, c2, c3 = st.columns(3)
             c1.metric("候选原因", len(snapshot["candidates"]))
             c2.metric("已追问", len(state["asked_questions"]))
@@ -259,9 +314,10 @@ def main() -> None:
     with method_tab:
         st.subheader("为什么不是普通问答")
         st.markdown(
-            "1. **版本化因果图谱**：原因、平台、版本、检查、修复和官方来源分别建模。\n"
-            "2. **主动询问**：同时考虑信息增益、用户可回答率、检查成本与风险。\n"
-            "3. **受控知识注入**：模型只能编排白名单声明和证据ID；技术内容由已验证模板输出。"
+            "1. **服务感知因果图谱**：将故障、原因、服务、端点、部署环境、检查、修复和来源分别建模。\n"
+            "2. **可解释入口检索**：固定错误特征与BM25图谱证据共同给出候选故障族。\n"
+            "3. **主动询问**：同时考虑信息增益、用户可回答率和检查成本，并使用稳健停止。\n"
+            "4. **受控知识注入**：模型只能编排白名单声明和证据ID；技术内容由已验证模板输出。"
         )
         st.code("Utility(q) = InformationGain(q) × Answerability(q) - CheckCost(q) - RiskCost(q)", language=None)
         st.caption("停止诊断还要求：有效回答数足够、首位概率达标，并且明显领先第二名。")

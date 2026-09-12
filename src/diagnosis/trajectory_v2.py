@@ -1,6 +1,8 @@
 """第二版逐阶段子图：记录每一步实际使用的节点和关系。"""
 from __future__ import annotations
 
+import json
+
 
 def stage_subgraph(stage: dict, graph, previous: dict | None = None) -> dict:
     nodes = {
@@ -133,3 +135,101 @@ def stage_subgraph(stage: dict, graph, previous: dict | None = None) -> dict:
         "nodes": subgraph_nodes,
         "edges": subgraph_edges,
     }
+
+
+def stage_dot_v2(stage: dict, graph, previous: dict | None = None) -> str:
+    """把结构化阶段子图转换为保持语义颜色一致的Graphviz。"""
+    subgraph = stage_subgraph(stage, graph, previous)
+    props = {
+        item["name"]: item.get("props", {})
+        for items in graph.entities.values()
+        for item in items
+    }
+    colors = {
+        "Issue": "#bfdbfe",
+        "Cause": "#fef08a",
+        "DiagnosticQuestion": "#ddd6fe",
+        "Observation": "#a5f3fc",
+        "EvidenceChunk": "#e5e7eb",
+        "Service": "#fed7aa",
+        "Endpoint": "#fdba74",
+        "DeploymentContext": "#fecdd3",
+        "DiagnosticCheck": "#bbf7d0",
+        "RepairAction": "#86efac",
+        "Risk": "#fecaca",
+        "DocumentSource": "#d1d5db",
+    }
+    shapes = {
+        "EvidenceChunk": "note",
+        "DiagnosticQuestion": "box",
+        "DiagnosticCheck": "box",
+        "RepairAction": "box",
+        "DocumentSource": "folder",
+        "Endpoint": "component",
+        "DeploymentContext": "hexagon",
+    }
+    q = lambda value: json.dumps(value, ensure_ascii=False)
+    lines = [
+        "digraph G {",
+        "rankdir=LR;",
+        'graph [bgcolor="transparent", nodesep=0.35, ranksep=0.55];',
+        'node [style="filled,rounded", fontname="Arial", fontsize=10];',
+        'edge [fontname="Arial", fontsize=8, color="#64748b"];',
+    ]
+    answer = stage.get("answer")
+    for node in subgraph["nodes"]:
+        name = node["name"]
+        entity_type = node["type"]
+        label = name
+        if entity_type == "DiagnosticQuestion":
+            label = props[name].get("text", name)
+        elif node["role"] == "user_observation" and answer:
+            answer_text = {"yes": "是", "no": "否", "unknown": "不清楚"}[answer]
+            label = f"{name}\n用户回答：{answer_text}"
+        if node["probability"] is not None:
+            label = f"{name}\n{node['probability']:.1%}"
+            change = node["probability_change"]
+            if change and abs(change) >= 0.0005:
+                label += f" ({change:+.1%})"
+        color = colors.get(entity_type, "#f8fafc")
+        penwidth = 1.2
+        if node["role"] == "final_cause":
+            color = "#4ade80"
+            penwidth = 3.0
+        elif node["role"] == "candidate_cause" and (
+            node["probability_change"] or 0
+        ) < -1e-9:
+            color = "#e5e7eb"
+        width = 1.2 + (node["probability"] or 0) * 1.5
+        lines.append(
+            f"{q(name)} [label={q(label)}, fillcolor={q(color)}, "
+            f"shape={shapes.get(entity_type, 'ellipse')}, width={width:.2f}, "
+            f"penwidth={penwidth:.1f}];"
+        )
+    relation_labels = {
+        "HAS_POSSIBLE_CAUSE": "候选原因",
+        "HAS_QUESTION": "诊断问题",
+        "CHECKS": "得到观察",
+        "OBSERVATION_SUPPORTS": "更新概率",
+        "CHUNK_SUPPORTS_CAUSE": "证据支持",
+        "CAUSE_CONTEXTUALIZED_BY": "发生于",
+        "CONTEXT_INVOLVES_CLIENT": "客户端",
+        "CLIENT_CONNECTS_TO": "连接",
+        "SERVICE_EXPOSES": "提供端点",
+        "ENDPOINT_REACHABLE_FROM": "访问环境",
+        "CONTEXT_CHECKED_BY": "上下文检查",
+        "CONTEXT_RESOLVED_BY": "上下文修复",
+        "CHECK_TARGETS_ENDPOINT": "检查端点",
+        "REPAIR_CONFIGURES_ENDPOINT": "配置端点",
+        "REPAIR_REQUIRES": "前置检查",
+        "REPAIR_HAS_RISK": "风险",
+        "CHECK_SUPPORTED_BY": "来源",
+        "REPAIR_SUPPORTED_BY": "来源",
+    }
+    for edge in subgraph["edges"]:
+        label = relation_labels.get(edge["type"], edge["type"])
+        lines.append(
+            f"{q(edge['source'])} -> {q(edge['target'])} [label={q(label)}];"
+        )
+    lines.append("}")
+    return "\n".join(lines)

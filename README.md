@@ -48,6 +48,8 @@ DebugPath 面向信息不完整的 AI 开发环境报错。
 
 页面可展示检索证据、候选原因概率、问题选择理由、诊断子图和最终排查方案。
 
+当前网页默认运行第二版流程：入口会同时展示固定错误特征和BM25图谱证据；若两个故障族得分接近，先让用户澄清，再进入主动诊断。Open WebUI容器访问宿主机Ollama的案例还会展示服务、端点与部署环境，并据此选择对应的检查和修复。
+
 “诊断轨迹”页支持逐轮回看问题、用户反馈、排名和概率变化，以及停止原因。可下载轨迹 JSON，或截取初始、中间、结束三个阶段用于答辩展示。
 
 诊断结束后可回填实际根因并下载脱敏案例 JSON。未经过检查或修复确认的记录会自动标为“未确认”，不能计入准确率；案例只在浏览器中生成，不会自动上传。
@@ -66,6 +68,7 @@ streamlit run app.py
 可以直接测试：
 
 ```text
+宿主机Ollama可以访问，但Docker中的Open WebUI连接失败
 ModuleNotFoundError: No module named 'pandas'
 torch.cuda.is_available() 返回 False
 Neo4j Connection refused
