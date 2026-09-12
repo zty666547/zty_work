@@ -375,6 +375,35 @@ def test_frozen_evaluator_counts_unrecognized_report_as_end_to_end_failure(servi
     assert row["entry_error"]
 
 
+def test_v2_issue_router_uses_graph_evidence_when_signature_is_missing(service):
+    from src.retrieval.issue_router import IssueRouter
+
+    router = IssueRouter(service.graph)
+    examples = {
+        "项目目录存在同名py文件，import加载的是当前目录文件": "Python模块无法导入",
+        "nvidia.ko内核模块没有加载，驱动无法与GPU通信": "PyTorch无法使用GPU",
+        "127.0.0.1:1933没有进程监听，需要启动本地服务": "服务或配置连接失败",
+    }
+    for report, expected in examples.items():
+        route = router.route(report)
+        assert route is not None
+        assert route["issue"] == expected
+        assert route["signature_score"] == 0.0
+        assert route["evidence_score"] > 0.0
+        assert route["evidence"]
+
+
+def test_v2_issue_router_keeps_signature_and_evidence_explanations(service):
+    from src.retrieval.issue_router import IssueRouter
+
+    route = IssueRouter(service.graph).route("ModuleNotFoundError: No module named pandas")
+    assert route is not None
+    assert route["issue"] == "Python模块无法导入"
+    assert "ModuleNotFoundError" in route["matched_signatures"]
+    assert route["signature_score"] == 1.0
+    assert route["evidence_score"] > 0.0
+
+
 def test_calibration_ablation_is_reproducible_and_scoped_to_development():
     from scripts.evaluate_calibration import evaluate
 

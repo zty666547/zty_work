@@ -1,0 +1,3593 @@
+{
+  "benchmark": "debugpath-v2-issue-router-development-v1",
+  "evaluated_at_utc": "2026-09-12T01:47:05.936280+00:00",
+  "warning": "本结果包含已经查看的首次冻结案例，只能用于第二版开发，不能作为新的无偏测试成绩。",
+  "method": "55%固定特征匹配 + 45%证据BM25聚合；无固定特征时由证据检索独立路由。",
+  "summaries": [
+    {
+      "cohort": "original_development",
+      "cases": 28,
+      "top1": 1.0
+    },
+    {
+      "cohort": "visible_frozen_feedback",
+      "cases": 14,
+      "top1": 1.0
+    }
+  ],
+  "details": [
+    {
+      "id": "public_cpython_local_shadow",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "ImportError"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E004",
+              "name": "E004-导入路径搜索",
+              "score": 1.0,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            },
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.344227279971832,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.3418947326611134,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.10927013850680381,
+          "signature_score": 0.0,
+          "evidence_score": 0.24282253001511958,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.22213873484841842,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.15936667484264488,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.11583068803934023,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.08029618420474655,
+          "signature_score": 0.0,
+          "evidence_score": 0.17843596489943678,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E026",
+              "name": "E026-Neo4j认证",
+              "score": 0.1855581625977511,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.17990482171560526,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_pip_homebrew_wrong_interpreter",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "ModuleNotFoundError"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 1.0,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E003",
+              "name": "E003-pip指定解释器",
+              "score": 0.8165039255628153,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.6524421710458176,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.2387847860381976,
+          "signature_score": 0.0,
+          "evidence_score": 0.5306328578626613,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.7338557153408486,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.42960685597964193,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.37993698306842977,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_pip_setuptools_not_installed",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "No module named",
+            "ImportError"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 1.0,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.7377024194590479,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.47878205162610954,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.15294400309995393,
+          "signature_score": 0.0,
+          "evidence_score": 0.3398755624443421,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.4251763470206172,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.3642830167531352,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.3240108080055887,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.049899301014312746,
+          "signature_score": 0.0,
+          "evidence_score": 0.11088733558736165,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.36327925349099605,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_langchain_community_not_installed",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "ModuleNotFoundError",
+            "No module named"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 1.0,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.5753907349518145,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E004",
+              "name": "E004-导入路径搜索",
+              "score": 0.5411620119002317,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.2555361505317723,
+          "signature_score": 0.0,
+          "evidence_score": 0.5678581122928273,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.44945794253173715,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.4460689176326224,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.40507985938125,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.05037717484043501,
+          "signature_score": 0.0,
+          "evidence_score": 0.11194927742318891,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E022",
+              "name": "E022-Neo4j连接URI",
+              "score": 0.31998560804450554,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_tensorflow_python312_unsupported",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "No matching distribution found",
+            "Could not find a version that satisfies"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E006",
+              "name": "E006-依赖版本约束",
+              "score": 1.0,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.9792365579518864,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.5736871650693173,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.23626458232191094,
+          "signature_score": 0.0,
+          "evidence_score": 0.5250324051598021,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.8757800755370698,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.47658910016748146,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.470626627169551,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.16920022240507948,
+          "signature_score": 0.0,
+          "evidence_score": 0.37600049423350995,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.8966991211177264,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 0.40883424430883203,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_tensorflow_python313_unsupported",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "No matching distribution found"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E006",
+              "name": "E006-依赖版本约束",
+              "score": 0.7625199692194116,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.727774109615097,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.7028544536494533,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.310010337521265,
+          "signature_score": 0.0,
+          "evidence_score": 0.6889118611583667,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 1.0,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.5949870849831297,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.5682149070027979,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.1786995726418598,
+          "signature_score": 0.0,
+          "evidence_score": 0.3971101614263551,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.657040715257135,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.58989599852064,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_conda_base_environment_leak",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "ModuleNotFoundError"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.7536204627624644,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.6350111099810483,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.4766187430334422,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.44951033977470267,
+          "signature_score": 0.0,
+          "evidence_score": 0.9989118661660059,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 1.0,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.43193932362875553,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            },
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.4191174029992447,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.15062574724396127,
+          "signature_score": 0.0,
+          "evidence_score": 0.3347238827643584,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.40299921273616274,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 0.33517985440142245,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_cpython_code_module_shadow",
+      "cohort": "original_development",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "consider renaming",
+            "same name as the standard library module"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.8341416974456479,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E005",
+              "name": "E005-检查模块来源",
+              "score": 0.7354711900927794,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            },
+            {
+              "chunk_id": "E004",
+              "name": "E004-导入路径搜索",
+              "score": 0.6882806966140531,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.3026051316820571,
+          "signature_score": 0.0,
+          "evidence_score": 0.6724558481823492,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E022",
+              "name": "E022-Neo4j连接URI",
+              "score": 1.0,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E027",
+              "name": "E027-令牌认证失败",
+              "score": 0.39780952467091596,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            },
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 0.3859478665719946,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.24161273162658728,
+          "signature_score": 0.0,
+          "evidence_score": 0.5369171813924162,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.5571652113003395,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.4476581876759361,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.4194039214980439,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_pytorch_cpu_only_build",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "torch.cuda.is_available() False"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 1.0,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.40711820449883596,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.40603877205906325,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.14669443718135733,
+          "signature_score": 0.0,
+          "evidence_score": 0.32598763818079407,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.6910095500893428,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 0.36605583813864867,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.04204644450981591,
+          "signature_score": 0.0,
+          "evidence_score": 0.09343654335514645,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.30298245825386794,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_lerobot_windows_cpu_torch",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "torch.cuda.is_available() 返回 False"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 1.0,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.7799882175891808,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.5501579833430942,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.040410380183519466,
+          "signature_score": 0.0,
+          "evidence_score": 0.08980084485226547,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.4066837624392874,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.022962926839839214,
+          "signature_score": 0.0,
+          "evidence_score": 0.05102872631075381,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E026",
+              "name": "E026-Neo4j认证",
+              "score": 0.2310953136652865,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_pytorch_driver_cuda_error_803",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "torch.cuda.is_available() 返回 False"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 0.9167236314471051,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.6736958594068472,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 0.44715754094063964,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.19416439683733686,
+          "signature_score": 0.0,
+          "evidence_score": 0.4314764374163041,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 1.0,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 0.3285263462496038,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.10384339485855036,
+          "signature_score": 0.0,
+          "evidence_score": 0.23076309968566747,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E003",
+              "name": "E003-pip指定解释器",
+              "score": 0.3617973042630427,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.34872783938191215,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_nvidia_driver_not_loaded_at_boot",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Failed to initialize NVML",
+            "Driver Not Loaded"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 1.0,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.6021905401761956,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.5749623538469529,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.33412254985252504,
+          "signature_score": 0.0,
+          "evidence_score": 0.7424945552278334,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E024",
+              "name": "E024-立即验证连接",
+              "score": 0.6303298511133848,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.39540023393528695,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E030",
+              "name": "E030-连接失败日志",
+              "score": 0.35751167331457917,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.08101012537834594,
+          "signature_score": 0.0,
+          "evidence_score": 0.18002250084076876,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.48692043368372256,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_pytorch_cuda_major_mismatch",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "PyTorch GPU",
+            "detected CUDA version",
+            "mismatches the version"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 1.0,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.840749684161202,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.8301694347929202,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.03146895419975098,
+          "signature_score": 0.0,
+          "evidence_score": 0.06993100933277996,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.4609290720775882,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_vllm_torch_cuda_mismatch",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "detected CUDA version",
+            "mismatches the version"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 1.0,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.8164309341705757,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 0.7858140767076279,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.04566440252519151,
+          "signature_score": 0.0,
+          "evidence_score": 0.10147645005598113,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.576005321852222,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.03688727557632856,
+          "signature_score": 0.0,
+          "evidence_score": 0.08197172350295236,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.46529169036807916,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_pytorch_macos_no_cuda",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "CUDA不可用",
+            "Torch not compiled with CUDA enabled"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 1.0,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.9130672597933192,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            },
+            {
+              "chunk_id": "E018",
+              "name": "E018-MPS可用性",
+              "score": 0.625250799129617,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_pytorch_apple_mps_no_cuda",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "CUDA不可用",
+            "Torch not compiled with CUDA enabled"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 1.0,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            },
+            {
+              "chunk_id": "E018",
+              "name": "E018-MPS可用性",
+              "score": 0.612151259585022,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            },
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 0.5474973875980316,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.07463223457872174,
+          "signature_score": 0.0,
+          "evidence_score": 0.1658494101749372,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.37626714800568584,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.36768299353356915,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_nvidia_docker_build_no_gpu",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "PyTorch GPU"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E015",
+              "name": "E015-容器GPU映射",
+              "score": 1.0,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.5932942094675961,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.5875100099981903,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.046557493844591624,
+          "signature_score": 0.0,
+          "evidence_score": 0.10346109743242583,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.5058101234109689,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_nvidia_wsl_cdi_missing_gpu_mount",
+      "cohort": "original_development",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Failed to initialize NVML"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E015",
+              "name": "E015-容器GPU映射",
+              "score": 1.0,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 0.7728756283828685,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.5545131395509082,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.1719529173110568,
+          "signature_score": 0.0,
+          "evidence_score": 0.3821175940245707,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.446721372885256,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E022",
+              "name": "E022-Neo4j连接URI",
+              "score": 0.35038846352052805,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.3354469341461475,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.03918572501346089,
+          "signature_score": 0.0,
+          "evidence_score": 0.08707938891880197,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.25809424386036633,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_openai_api_key_missing",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "OPENAI_API_KEY",
+            "api_key client option must be set"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 0.4265733256498409,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.3882253564102219,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E026",
+              "name": "E026-Neo4j认证",
+              "score": 0.3508507206405076,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.3001722646831394,
+          "signature_score": 0.0,
+          "evidence_score": 0.6670494770736431,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 1.0,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.10178036537745329,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.04267617456991094,
+          "signature_score": 0.0,
+          "evidence_score": 0.09483594348869098,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E003",
+              "name": "E003-pip指定解释器",
+              "score": 0.15664262406182775,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_ollama_remote_localhost_address",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Connection refused"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 1.0,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.8303045039381387,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E024",
+              "name": "E024-立即验证连接",
+              "score": 0.6575789499316631,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.17762221613643858,
+          "signature_score": 0.0,
+          "evidence_score": 0.3947160358587524,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E018",
+              "name": "E018-MPS可用性",
+              "score": 0.46382262920035816,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            },
+            {
+              "chunk_id": "E015",
+              "name": "E015-容器GPU映射",
+              "score": 0.44180111503046404,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.39572231585784934,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.13142487199332908,
+          "signature_score": 0.0,
+          "evidence_score": 0.2920552710962869,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.5568370868118744,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.4060449393576592,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_uvicorn_port_occupied",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Address already in use"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E028",
+              "name": "E028-Bolt端口",
+              "score": 1.0,
+              "supports_causes": [
+                "端口被其他进程占用"
+              ]
+            },
+            {
+              "chunk_id": "E026",
+              "name": "E026-Neo4j认证",
+              "score": 0.4335318609616896,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            },
+            {
+              "chunk_id": "E024",
+              "name": "E024-立即验证连接",
+              "score": 0.41947524099057537,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.05597091209550207,
+          "signature_score": 0.0,
+          "evidence_score": 0.12437980465667127,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.46060075746458173,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.037203014429272506,
+          "signature_score": 0.0,
+          "evidence_score": 0.08267336539838334,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.30615432167427087,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_ollama_server_stopped",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Connection refused"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 1.0,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.7907280677689577,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E027",
+              "name": "E027-令牌认证失败",
+              "score": 0.5668189280672996,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.14593387971243985,
+          "signature_score": 0.0,
+          "evidence_score": 0.32429751047208855,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.40680985844046086,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E006",
+              "name": "E006-依赖版本约束",
+              "score": 0.4006484370114931,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E003",
+              "name": "E003-pip指定解释器",
+              "score": 0.30680483526930286,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.05395316936691936,
+          "signature_score": 0.0,
+          "evidence_score": 0.11989593192648747,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.4119538761635016,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_codex_revoked_api_key",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Incorrect API key provided",
+            "401"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E027",
+              "name": "E027-令牌认证失败",
+              "score": 1.0,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            },
+            {
+              "chunk_id": "E022",
+              "name": "E022-Neo4j连接URI",
+              "score": 0.9061034028067747,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 0.7365368345113189,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.15313014679071799,
+          "signature_score": 0.0,
+          "evidence_score": 0.3402892150904844,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 0.7158226939159434,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.5353938550443778,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.06955719737844285,
+          "signature_score": 0.0,
+          "evidence_score": 0.154571549729873,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.3042666847618349,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.2640806869555844,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_openai_windows_process_missing_key",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "OPENAI_API_KEY",
+            "No API key provided"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 1.0,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E028",
+              "name": "E028-Bolt端口",
+              "score": 0.5538831777299541,
+              "supports_causes": [
+                "端口被其他进程占用"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.5121661055188235,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.3632087413684425,
+          "signature_score": 0.0,
+          "evidence_score": 0.8071305363743166,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.6378706983583138,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.5461233530502241,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.37150471493400256,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.10662751967089183,
+          "signature_score": 0.0,
+          "evidence_score": 0.23695004371309294,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 0.2954970302036356,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.27002481910121523,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_khoj_docker_ollama_address",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "APIConnectionError",
+            "Connection error"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.6228434911998354,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 0.4508191927947479,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E022",
+              "name": "E022-Neo4j连接URI",
+              "score": 0.4306897922094176,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.2263432474830676,
+          "signature_score": 0.0,
+          "evidence_score": 0.5029849944068169,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E015",
+              "name": "E015-容器GPU映射",
+              "score": 1.0,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.30241983725609817,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.09151302384258245,
+          "signature_score": 0.0,
+          "evidence_score": 0.20336227520573877,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.28968361432729234,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.23689881720199812,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_vllm_self_occupied_port",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Address already in use"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E028",
+              "name": "E028-Bolt端口",
+              "score": 1.0,
+              "supports_causes": [
+                "端口被其他进程占用"
+              ]
+            },
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 0.6687468628427592,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E024",
+              "name": "E024-立即验证连接",
+              "score": 0.6326027343539206,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.03342807827689267,
+          "signature_score": 0.0,
+          "evidence_score": 0.07428461839309482,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.3747785926500127,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_nvidia_ollama_service_not_running",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Connection refused"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 1.0,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E024",
+              "name": "E024-立即验证连接",
+              "score": 0.6880872552854297,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.5757720663987812,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.1808960775916392,
+          "signature_score": 0.0,
+          "evidence_score": 0.401991283536976,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 0.462070785711824,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.28667731484952413,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E018",
+              "name": "E018-MPS可用性",
+              "score": 0.27720012509338227,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_openai_netrc_wrong_auth_value",
+      "cohort": "original_development",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "AuthenticationError",
+            "Incorrect API key provided",
+            "OPENAI_API_KEY"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 1.0,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E028",
+              "name": "E028-Bolt端口",
+              "score": 0.947169790681409,
+              "supports_causes": [
+                "端口被其他进程占用"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.7433731261639758,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.1589664551343757,
+          "signature_score": 0.0,
+          "evidence_score": 0.3532587891875016,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.9224315513457341,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E004",
+              "name": "E004-导入路径搜索",
+              "score": 0.5738324191126102,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.11167986597631957,
+          "signature_score": 0.0,
+          "evidence_score": 0.24817747994737682,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 0.6187280034618307,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.43245326333266676,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_pydantic_missing_torch_dependency",
+      "cohort": "visible_frozen_feedback",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "ModuleNotFoundError",
+            "No module named"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 1.0,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E005",
+              "name": "E005-检查模块来源",
+              "score": 0.6181960520044111,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            },
+            {
+              "chunk_id": "E004",
+              "name": "E004-导入路径搜索",
+              "score": 0.3166439893888124,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.15091415576319916,
+          "signature_score": 0.0,
+          "evidence_score": 0.33536479058488705,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.6132911534366238,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E019",
+              "name": "E019-驱动先于工具包",
+              "score": 0.31423187427728394,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.07640581079915143,
+          "signature_score": 0.0,
+          "evidence_score": 0.16979069066478095,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.24018586735756597,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.22940658809482245,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_sklearn_installed_in_system_not_venv",
+      "cohort": "visible_frozen_feedback",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "ModuleNotFoundError"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 1.0,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.8313938104397504,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E005",
+              "name": "E005-检查模块来源",
+              "score": 0.8293055755352723,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.3115100824104753,
+          "signature_score": 0.0,
+          "evidence_score": 0.692244627578834,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 0.5994603015761759,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.5960114167433386,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            },
+            {
+              "chunk_id": "E018",
+              "name": "E018-MPS可用性",
+              "score": 0.5298965758812202,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_cpython_numpy_file_shadow",
+      "cohort": "visible_frozen_feedback",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.45,
+          "signature_score": 0.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E004",
+              "name": "E004-导入路径搜索",
+              "score": 1.0,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            },
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.3957310474040209,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E005",
+              "name": "E005-检查模块来源",
+              "score": 0.3657371044109839,
+              "supports_causes": [
+                "本地文件遮蔽第三方模块"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.21042254699803845,
+          "signature_score": 0.0,
+          "evidence_score": 0.46760565999564097,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.42059479391287286,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.290158574975568,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.26936951465074876,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.1917841026088529,
+          "signature_score": 0.0,
+          "evidence_score": 0.42618689468633975,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.3775212986313639,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E022",
+              "name": "E022-Neo4j连接URI",
+              "score": 0.2689610864618016,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E027",
+              "name": "E027-令牌认证失败",
+              "score": 0.24682486903733875,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_tensorflow_241_python39_unsupported",
+      "cohort": "visible_frozen_feedback",
+      "expected": "Python模块无法导入",
+      "predicted": "Python模块无法导入",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "Python模块无法导入",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "No matching distribution found"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 1.0,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E006",
+              "name": "E006-依赖版本约束",
+              "score": 0.8132258413581346,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.7132369673775878,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.4397748760525246,
+          "signature_score": 0.0,
+          "evidence_score": 0.9772775023389435,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.6923888018784926,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.6229047530556006,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.59882142786071,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.10030647968431344,
+          "signature_score": 0.0,
+          "evidence_score": 0.2229032881873632,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.6951356880874487,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_pytorch_conda_cpuonly_build",
+      "cohort": "visible_frozen_feedback",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Torch not compiled with CUDA enabled"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 1.0,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.9353665997348127,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.8813761355745605,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.05169120087237269,
+          "signature_score": 0.0,
+          "evidence_score": 0.11486933527193931,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.7362793621152279,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.037832658883938025,
+          "signature_score": 0.0,
+          "evidence_score": 0.08407257529764005,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.5388809987015939,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_pytorch_nvidia_kernel_driver_failed",
+      "cohort": "visible_frozen_feedback",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.45,
+          "signature_score": 0.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 1.0,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.6955233307189909,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.6759437159598175,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.13582157289566354,
+          "signature_score": 0.0,
+          "evidence_score": 0.30182571754591897,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E001",
+              "name": "E001-模块未找到异常",
+              "score": 0.7089439450124257,
+              "supports_causes": [
+                "目标包未安装"
+              ]
+            },
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.6221266034064061,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.04489199782795207,
+          "signature_score": 0.0,
+          "evidence_score": 0.09975999517322683,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E030",
+              "name": "E030-连接失败日志",
+              "score": 0.43994790293270847,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_pytorch3d_cuda121_torch117_mismatch",
+      "cohort": "visible_frozen_feedback",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "detected CUDA version",
+            "mismatches the version"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E010",
+              "name": "E010-选择CUDA构建",
+              "score": 0.7161965482418857,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.6888634747409458,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            },
+            {
+              "chunk_id": "E013",
+              "name": "E013-混合安装环境",
+              "score": 0.6699968567875895,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.094119381705083,
+          "signature_score": 0.0,
+          "evidence_score": 0.2091541815668511,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 1.0,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.05794027105207885,
+          "signature_score": 0.0,
+          "evidence_score": 0.12875615789350855,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.6156040339664678,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_video_retalking_apple_mps_not_cuda",
+      "cohort": "visible_frozen_feedback",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.45,
+          "signature_score": 0.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 1.0,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.7466980516798273,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.5910930814076363,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.12236685479351056,
+          "signature_score": 0.0,
+          "evidence_score": 0.271926343985579,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.3475948911710751,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E007",
+              "name": "E007-版本冲突检查",
+              "score": 0.32672562854438875,
+              "supports_causes": [
+                "Python版本与包不兼容"
+              ]
+            },
+            {
+              "chunk_id": "E002",
+              "name": "E002-python调用pip",
+              "score": 0.3040447351661976,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.04616243799193674,
+          "signature_score": 0.0,
+          "evidence_score": 0.1025831955376372,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.36908463070454955,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_nvidia_container_loses_gpu_after_reload",
+      "cohort": "visible_frozen_feedback",
+      "expected": "PyTorch无法使用GPU",
+      "predicted": "PyTorch无法使用GPU",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Failed to initialize NVML"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E015",
+              "name": "E015-容器GPU映射",
+              "score": 1.0,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.6042410099780424,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 0.4558594446364109,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.0974885291001878,
+          "signature_score": 0.0,
+          "evidence_score": 0.2166411757781951,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.25473056468361915,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E030",
+              "name": "E030-连接失败日志",
+              "score": 0.21893729373073778,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 0.1917743982051401,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_mcp_google_maps_env_not_exported",
+      "cohort": "visible_frozen_feedback",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "环境变量"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 1.0,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.926530617066133,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.5728495677629472,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.03276264584533538,
+          "signature_score": 0.0,
+          "evidence_score": 0.07280587965630084,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.37867726856511147,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_open_webui_docker_wrong_ollama_address",
+      "cohort": "visible_frozen_feedback",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.45,
+          "signature_score": 0.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.5736073389677675,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.5187619321694319,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E022",
+              "name": "E022-Neo4j连接URI",
+              "score": 0.4997765480968879,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.3085338410062785,
+          "signature_score": 0.0,
+          "evidence_score": 0.68563075779173,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E015",
+              "name": "E015-容器GPU映射",
+              "score": 1.0,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E012",
+              "name": "E012-驱动检查",
+              "score": 0.2591034835677561,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.2504626023739064,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_hermes_openviking_server_not_started",
+      "cohort": "visible_frozen_feedback",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 0.45,
+          "signature_score": 0.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E029",
+              "name": "E029-区分地址与服务状态",
+              "score": 1.0,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E025",
+              "name": "E025-连接被拒绝",
+              "score": 0.8398183415059026,
+              "supports_causes": [
+                "目标服务未启动"
+              ]
+            },
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.5254958667591951,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_jumpstarter_stale_process_occupies_port",
+      "cohort": "visible_frozen_feedback",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "Address already in use"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E028",
+              "name": "E028-Bolt端口",
+              "score": 1.0,
+              "supports_causes": [
+                "端口被其他进程占用"
+              ]
+            },
+            {
+              "chunk_id": "E023",
+              "name": "E023-URI不支持嵌套路径",
+              "score": 0.3498447501620726,
+              "supports_causes": [
+                "服务地址配置错误"
+              ]
+            },
+            {
+              "chunk_id": "E026",
+              "name": "E026-Neo4j认证",
+              "score": 0.3211480426569777,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Python模块无法导入",
+          "score": 0.08399913160640153,
+          "signature_score": 0.0,
+          "evidence_score": 0.1866647369031145,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E003",
+              "name": "E003-pip指定解释器",
+              "score": 0.2509244851224712,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            },
+            {
+              "chunk_id": "E008",
+              "name": "E008-当前环境查询包",
+              "score": 0.22499847887951305,
+              "supports_causes": [
+                "pip与Python指向不同环境"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.07443233949872602,
+          "signature_score": 0.0,
+          "evidence_score": 0.1654051988860578,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E009",
+              "name": "E009-PyTorch安装构建",
+              "score": 0.21699977017351108,
+              "supports_causes": [
+                "安装了CPU版PyTorch"
+              ]
+            },
+            {
+              "chunk_id": "E017",
+              "name": "E017-macOS使用MPS",
+              "score": 0.20471958518630082,
+              "supports_causes": [
+                "当前平台不提供CUDA"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_huggingface_stale_env_token_invalid",
+      "cohort": "visible_frozen_feedback",
+      "expected": "服务或配置连接失败",
+      "predicted": "服务或配置连接失败",
+      "passed": true,
+      "candidates": [
+        {
+          "issue": "服务或配置连接失败",
+          "score": 1.0,
+          "signature_score": 1.0,
+          "evidence_score": 1.0,
+          "matched_signatures": [
+            "环境变量"
+          ],
+          "evidence": [
+            {
+              "chunk_id": "E027",
+              "name": "E027-令牌认证失败",
+              "score": 1.0,
+              "supports_causes": [
+                "认证信息无效"
+              ]
+            },
+            {
+              "chunk_id": "E020",
+              "name": "E020-进程环境变量",
+              "score": 0.8983993186426099,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            },
+            {
+              "chunk_id": "E021",
+              "name": "E021-Neo4j环境配置",
+              "score": 0.8151283283696371,
+              "supports_causes": [
+                "必需环境变量缺失"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "PyTorch无法使用GPU",
+          "score": 0.26912048337873257,
+          "signature_score": 0.0,
+          "evidence_score": 0.5980455186194057,
+          "matched_signatures": [],
+          "evidence": [
+            {
+              "chunk_id": "E016",
+              "name": "E016-容器可见设备变量",
+              "score": 0.7302989610403948,
+              "supports_causes": [
+                "容器未获得GPU设备"
+              ]
+            },
+            {
+              "chunk_id": "E011",
+              "name": "E011-CUDA可用性检查",
+              "score": 0.5530087166532759,
+              "supports_causes": [
+                "NVIDIA驱动不可用"
+              ]
+            },
+            {
+              "chunk_id": "E014",
+              "name": "E014-CUDA初始化错误802",
+              "score": 0.3147674995191716,
+              "supports_causes": [
+                "PyTorch与CUDA构建不匹配"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "development_id": "debugpath-v2-development-2026-09-12",
+  "base_model_freeze_id": "debugpath-stage2-2026-09-11",
+  "purpose": "改进故障族入口检索、服务感知图谱与可回答性感知选问。",
+  "data_policy": {
+    "original_development_cases": 28,
+    "first_frozen_cases_now_visible": 14,
+    "first_frozen_cases_role": "只作为第二版开发反馈，不再作为无偏测试集",
+    "new_external_test_required": true,
+    "new_external_test_status": "not_collected"
+  },
+  "implementation_policy": {
+    "v1_frozen_files_remain_unchanged": true,
+    "new_components_are_opt_in_until_v2_freeze": true
+  },
+  "status": "development_open"
+}
