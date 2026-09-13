@@ -14,6 +14,7 @@ from src.diagnosis.models import DiagnosisState
 from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
 from src.diagnosis.trajectory_v2 import stage_dot_v2, storyboard_dot_v2
 from src.extraction.llm_client import LLMClient
+from src.graph.visualization_v2 import graph_structure_summary, schema_overview_dot
 
 EXAMPLES = [
     "宿主机Ollama可以访问，但Docker中的Open WebUI连接失败",
@@ -205,8 +206,8 @@ def main() -> None:
             st.session_state.pop("question_timer_started_at", None)
             st.rerun()
 
-    diagnose_tab, graph_tab, story_tab, method_tab = st.tabs(
-        ["主动诊断", "诊断轨迹", "固定案例", "方法说明"]
+    diagnose_tab, graph_tab, structure_tab, story_tab, method_tab = st.tabs(
+        ["主动诊断", "诊断轨迹", "图谱结构", "固定案例", "方法说明"]
     )
     with diagnose_tab:
         pending = st.session_state.get("pending_routing")
@@ -332,6 +333,30 @@ def main() -> None:
             st.info("开始一次诊断后，这里会显示问题、候选原因和下一条主动询问。")
         node_count = sum(len(items) for items in service.graph.entities.values())
         st.caption(f"知识库规模：{node_count} 个节点，{len(service.graph.relations)} 条受控关系。")
+
+    with structure_tab:
+        structure = graph_structure_summary(service.graph)
+        st.subheader("知识图谱由四层节点组成")
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("节点", structure["node_count"])
+        c2.metric("关系", structure["relation_count"])
+        c3.metric("节点类型", structure["node_type_count"])
+        c4.metric("关系类型", structure["relation_type_count"])
+        st.graphviz_chart(schema_overview_dot(service.graph), width="stretch")
+        st.caption(
+            "红色粗边表示真正参与概率更新的观察→原因关系；其他边负责候选组织、"
+            "证据追溯、环境限定和方案约束。"
+        )
+        st.dataframe(structure["nodes"], hide_index=True, width="stretch")
+        st.subheader("因果关系怎样进入推理")
+        st.markdown(
+            "- `HAS_POSSIBLE_CAUSE`：建立候选原因，不能证明原因成立。\n"
+            "- `CHUNK_SUPPORTS_CAUSE`：检索证据支持初始排序。\n"
+            "- `OBSERVATION_SUPPORTS`：保存条件概率，用户回答后通过贝叶斯公式更新原因概率。\n"
+            "- 环境、检查、修复、风险和来源关系：把最终原因约束为可执行且可追溯的方案。"
+        )
+        with st.expander("查看全部27类受控关系"):
+            st.dataframe(structure["relations"], hide_index=True, width="stretch")
 
     with story_tab:
         demo_path = settings.raw_dir.parent / "demo" / "open_webui_ollama_trajectory.json"

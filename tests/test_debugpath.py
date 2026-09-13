@@ -580,6 +580,25 @@ def test_v2_demo_routes_with_only_context_specific_evidence():
     assert all(item["service_overlap"] == 2 for item in evidence)
 
 
+def test_v2_graph_structure_view_covers_complete_schema_and_counts():
+    from src.diagnosis.service_v2 import DiagnosisServiceV2
+    from src.graph.schema_v2 import ENTITY_TYPES_V2, RELATION_SIGNATURES_V2
+    from src.graph.visualization_v2 import graph_structure_summary, schema_overview_dot
+
+    service = DiagnosisServiceV2()
+    summary = graph_structure_summary(service.graph)
+    assert summary["node_count"] == 147
+    assert summary["relation_count"] == 378
+    assert {item["节点类型"] for item in summary["nodes"]} == set(ENTITY_TYPES_V2)
+    assert {item["关系类型"] for item in summary["relations"]} == set(
+        RELATION_SIGNATURES_V2
+    )
+    dot = schema_overview_dot(service.graph)
+    assert all(entity_type in dot for entity_type in ENTITY_TYPES_V2)
+    assert "条件概率更新" in dot
+    assert "#dc2626" in dot
+
+
 def test_v2_feedback_export_and_calibration_are_separate_from_graph_parameters():
     from src.diagnosis.calibration import (
         build_case_export_v2,
