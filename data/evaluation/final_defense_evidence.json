@@ -1,0 +1,77 @@
+{
+  "graph": {
+    "nodes": 147,
+    "relations": 378,
+    "node_types": 15,
+    "relation_types": 27,
+    "evidence_chunks": 33,
+    "node_type_counts": {
+      "Issue": 3,
+      "Cause": 14,
+      "DiagnosticQuestion": 16,
+      "Observation": 16,
+      "DiagnosticCheck": 15,
+      "RepairAction": 15,
+      "Risk": 4,
+      "DocumentSource": 17,
+      "Package": 4,
+      "Platform": 3,
+      "VersionConstraint": 3,
+      "EvidenceChunk": 33,
+      "Service": 2,
+      "Endpoint": 1,
+      "DeploymentContext": 1
+    }
+  },
+  "demo": {
+    "scenario": "Open WebUI容器无法连接宿主机Ollama",
+    "expected_cause": "服务地址配置错误",
+    "stage_count": 3,
+    "top_probabilities": [
+      0.56,
+      0.9522724284524697,
+      0.9688538113392638
+    ],
+    "entropies": [
+      1.8495384825090397,
+      0.36404650320294846,
+      0.2495177183111023
+    ],
+    "first_question": "宿主机访问Ollama正常，但Open WebUI容器使用当前地址访问失败吗？",
+    "first_question_information_gain": 0.7334379700282105,
+    "first_question_answerability": 0.9,
+    "first_question_utility": 0.6400941730253895,
+    "stop_reason": "置信度、领先差距与有效证据达到停止条件"
+  },
+  "development_behavior": {
+    "reviewed_confirmed_cases": 42,
+    "changed_first_questions": 15,
+    "original_development_pure_top1": 0.9642857142857143,
+    "original_development_full_top1": 1.0,
+    "claim_boundary": "全部案例均已被开发者查看；结果只解释算法行为，不是第二版无偏测试成绩。"
+  },
+  "first_frozen_test": {
+    "cases": 14,
+    "entry_failures": 5,
+    "top1": {
+      "direct_no_question": 0.5,
+      "fixed_order": 0.6428571428571429,
+      "random_question": 0.6035714285714285,
+      "pure_information_gain": 0.6428571428571429,
+      "full_answerability_aware": 0.6428571428571429
+    },
+    "claim_boundary": "14条公开确认案例的一次性未见对比测试；每类原因1条，样本量较小，不代表真实世界总体准确率。"
+  },
+  "knowledge_injection": {
+    "valid_cases": 9,
+    "invalid_cases": 24,
+    "valid_acceptance_rate": 1.0,
+    "invalid_rejection_rate": 1.0,
+    "claim_boundary": "只验证声明与证据白名单的程序边界，不等同于开放式大模型安全评测。"
+  },
+  "case_pool": {
+    "development": 28,
+    "viewed_frozen_test": 14,
+    "unconfirmed": 3
+  }
+}

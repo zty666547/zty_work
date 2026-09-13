@@ -63,7 +63,10 @@ def evaluate() -> dict:
         "confirmed_cases": len(confirmed),
         "frozen_test_cases": len(split["frozen_test_ids"]),
         "unconfirmed_cases": len(pending),
-        "warning": "结果来自已查看的开发集，只能用于调整算法；冻结测试集收集完成前不得报告最终性能。",
+        "warning": (
+            "指标只来自28条已查看开发案例；14条首次冻结测试已在独立脚本中执行且结果已被查看。"
+            "两部分都不能再次作为第二版新的无偏测试集。"
+        ),
         "metrics": [summarize(name, details[name]) for name, _ in algorithms],
         "details": details,
         "unconfirmed_ids": [case["id"] for case in pending],
@@ -84,7 +87,10 @@ def main() -> None:
             f"平均追问={row['avg_questions']:.2f}, "
             f"平均无法回答={row['avg_unknown_questions']:.2f}"
         )
-    print("注意：当前是开发集结果，冻结测试集收集完成前不得作为最终算法结论。")
+    print(
+        "注意：当前指标只来自28条已查看开发案例；"
+        "14条首次冻结测试已执行且结果已被查看，不能再次作为第二版无偏测试集。"
+    )
     OUTPUT.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

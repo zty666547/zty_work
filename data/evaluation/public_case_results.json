@@ -1,10 +1,10 @@
 {
   "benchmark": "public_real_case_development_set",
   "development_cases": 28,
-  "confirmed_cases": 28,
-  "frozen_test_cases": 0,
+  "confirmed_cases": 42,
+  "frozen_test_cases": 14,
   "unconfirmed_cases": 3,
-  "warning": "结果来自已查看的开发集，只能用于调整算法；冻结测试集收集完成前不得报告最终性能。",
+  "warning": "指标只来自28条已查看开发案例；14条首次冻结测试已在独立脚本中执行且结果已被查看。两部分都不能再次作为第二版新的无偏测试集。",
   "metrics": [
     {
       "algorithm": "legacy_information_gain",
