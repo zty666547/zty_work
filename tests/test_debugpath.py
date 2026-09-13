@@ -599,6 +599,21 @@ def test_v2_graph_structure_view_covers_complete_schema_and_counts():
     assert "#dc2626" in dot
 
 
+def test_v2_algorithm_explanation_is_derived_from_fixed_trajectory():
+    from config.settings import Settings
+    from scripts.export_v2_demo import build_demo
+    from src.diagnosis.explanation_v2 import build_algorithm_explanation
+
+    explanation = build_algorithm_explanation(build_demo(), Settings())
+    choice = explanation["question_selection"]
+    assert choice["calculated_utility"] == pytest.approx(choice["utility"])
+    assert explanation["retrieval"]["candidate_count"] == 5
+    assert explanation["probability_update"]["before"] == pytest.approx(0.56)
+    assert explanation["probability_update"]["p_observation_given_top_cause"] == 0.97
+    assert explanation["stopping"]["final_probability"] > 0.96
+    assert explanation["stopping"]["informative_answers"] == 2
+
+
 def test_v2_feedback_export_and_calibration_are_separate_from_graph_parameters():
     from src.diagnosis.calibration import (
         build_case_export_v2,

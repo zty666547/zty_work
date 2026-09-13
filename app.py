@@ -9,6 +9,7 @@ import time
 from config.settings import settings
 from src.diagnosis.engine import UnknownIssueError
 from src.diagnosis.calibration import build_case_export_v2
+from src.diagnosis.explanation_v2 import build_algorithm_explanation
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
@@ -394,16 +395,51 @@ def main() -> None:
             st.write("风险：" + plan["risk"] + f"（{plan['risk_level']}）")
 
     with method_tab:
-        st.subheader("为什么不是普通问答")
-        st.markdown(
-            "1. **服务感知因果图谱**：将故障、原因、服务、端点、部署环境、检查、修复和来源分别建模。\n"
-            "2. **可解释入口检索**：固定错误特征与BM25图谱证据共同给出候选故障族。\n"
-            "3. **主动询问**：同时考虑信息增益、用户可回答率和检查成本，并使用稳健停止。\n"
-            "4. **受控知识注入**：模型只能编排白名单声明和证据ID；技术内容由已验证模板输出。"
+        demo_path = settings.raw_dir.parent / "demo" / "open_webui_ollama_trajectory.json"
+        algorithm = build_algorithm_explanation(
+            json.loads(demo_path.read_text(encoding="utf-8")), settings
         )
-        st.code("Utility(q) = InformationGain(q) × Answerability(q) - CheckCost(q) - RiskCost(q)", language=None)
-        st.caption("停止诊断还要求：有效回答数足够、首位概率达标，并且明显领先第二名。")
-        st.caption("候选概率用于决定排查顺序，不替代真实运行结果或专业判断。")
+        st.subheader("算法只做三个连续动作")
+        st.markdown("### ① 初始检索形成候选")
+        retrieval = algorithm["retrieval"]
+        st.write(
+            f"固定特征与BM25证据共同形成{retrieval['candidate_count']}个候选原因；"
+            f"首位是“{retrieval['cause']}”，初始概率为{retrieval['probability']:.1%}。"
+        )
+        st.caption("实际召回：" + "、".join(retrieval["evidence"]))
+
+        st.markdown("### ② 选择最值得问的问题")
+        choice = algorithm["question_selection"]
+        st.code(
+            "问题效用 = 信息增益 × 可回答率 − 0.02 × 检查成本 − 0.05 × 风险成本",
+            language=None,
+        )
+        st.write("系统选择：" + choice["question"])
+        st.write(
+            f"{choice['information_gain']:.3f} × {choice['answerability']:.0%} "
+            f"− 0.02 × {choice['cost']:.0f} − 0.05 × {choice['risk_cost']:.0f} "
+            f"= **{choice['utility']:.3f}**"
+        )
+
+        st.markdown("### ③ 根据观察更新并稳健停止")
+        update = algorithm["probability_update"]
+        st.write(
+            f"用户回答“{update['answer']}”；图谱中的条件概率 "
+            f"P(该观察｜首位原因)={update['p_observation_given_top_cause']:.2f}。"
+        )
+        p1, p2, e1, e2 = st.columns(4)
+        p1.metric("更新前", f"{update['before']:.1%}")
+        p2.metric("第一次更新后", f"{update['after_first']:.1%}")
+        e1.metric("更新前熵", f"{update['initial_entropy']:.3f} bit")
+        e2.metric("更新后熵", f"{update['after_first_entropy']:.3f} bit")
+        stopping = algorithm["stopping"]
+        st.success(
+            f"第二次有效回答后达到{stopping['final_probability']:.1%}；"
+            f"同时满足概率≥{stopping['confidence_threshold']:.0%}、"
+            f"领先差距≥{stopping['margin_threshold']:.0%}、"
+            f"有效回答≥{stopping['minimum_answers']}，因此停止。"
+        )
+        st.caption("候选概率决定排查顺序，不替代实际检查结果；当前参数仍需真实案例继续校准。")
 
 
 if __name__ == "__main__":
