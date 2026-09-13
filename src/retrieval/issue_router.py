@@ -18,6 +18,11 @@ class IssueRouter:
         self.graph = graph
         self.evidence_top_k = evidence_top_k
         self.retriever = EvidenceRetriever(graph)
+        self.service_names = [
+            item["name"]
+            for item in graph.entities.get("Service", [])
+            if item.get("name")
+        ]
         self.issue_terms: dict[str, list[str]] = {}
         for item in graph.entities.get("Issue", []):
             props = item.get("props") or {}
@@ -53,19 +58,30 @@ class IssueRouter:
 
         evidence_raw: dict[str, float] = defaultdict(float)
         evidence_by_issue: dict[str, list[dict]] = defaultdict(list)
-        for hit in self.retriever.search(report, top_k=self.evidence_top_k):
+        matched_services = [
+            name for name in self.service_names if name.casefold() in normalized
+        ]
+        hits = self.retriever.search(report, top_k=self.evidence_top_k)
+        for hit in hits:
+            evidence_text = f"{hit['name']} {hit.get('text', '')}".casefold()
+            service_overlap = sum(
+                name.casefold() in evidence_text for name in matched_services
+            )
+            contextual_score = float(hit["score"]) * (1 + 0.5 * service_overlap)
             issues = {
                 self.cause_to_issue[cause]
                 for cause in hit["supports_causes"]
                 if cause in self.cause_to_issue
             }
             for issue in issues:
-                evidence_raw[issue] += float(hit["score"])
+                evidence_raw[issue] += contextual_score
                 evidence_by_issue[issue].append(
                     {
                         "chunk_id": hit["chunk_id"],
                         "name": hit["name"],
-                        "score": hit["score"],
+                        "score": contextual_score,
+                        "base_score": hit["score"],
+                        "service_overlap": service_overlap,
                         "supports_causes": hit["supports_causes"],
                     }
                 )

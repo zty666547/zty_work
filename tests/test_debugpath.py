@@ -541,6 +541,43 @@ def test_v2_stage_dot_contains_service_context_and_final_path():
     assert "Ollama /api/tags" in dot
     assert "配置Open WebUI的Ollama宿主机地址" in dot
     assert "修改容器配置前保留原值" in dot
+    assert "【原因】" in dot
+    assert "【部署环境】" in dot
+
+
+def test_v2_storyboard_keeps_one_skeleton_and_accumulates_used_nodes():
+    from scripts.export_v2_demo import build_demo
+    from src.diagnosis.service_v2 import DiagnosisServiceV2
+    from src.diagnosis.trajectory_v2 import storyboard_dot_v2
+
+    report = build_demo()
+    service = DiagnosisServiceV2()
+    dots = [
+        storyboard_dot_v2(report["trajectory"], index, service.graph)
+        for index in range(3)
+    ]
+    declarations = [
+        {
+            line.split(" [", 1)[0]
+            for line in dot.splitlines()
+            if " [label=" in line and "->" not in line
+        }
+        for dot in dots
+    ]
+    assert declarations[0] == declarations[1] == declarations[2]
+    assert "O-宿主机正常但容器访问失败" in dots[2]
+    assert "O-必需变量缺失" in dots[2]
+    assert dots[0].count("style=invis") > dots[1].count("style=invis")
+    assert dots[1].count("style=invis") > dots[2].count("style=invis")
+
+
+def test_v2_demo_routes_with_only_context_specific_evidence():
+    from scripts.export_v2_demo import build_demo
+
+    report = build_demo()
+    evidence = report["routing"]["candidates"][0]["evidence"]
+    assert {item["chunk_id"] for item in evidence} == {"E031", "E032", "E033"}
+    assert all(item["service_overlap"] == 2 for item in evidence)
 
 
 def test_v2_feedback_export_and_calibration_are_separate_from_graph_parameters():
@@ -589,8 +626,8 @@ def test_v2_graph_artifact_is_deterministic_and_service_aware():
     second = prepare()["artifact"]
     assert first["format"] == "debugpath-graph-v2"
     assert first["content_sha256"] == second["content_sha256"]
-    assert first["stats"]["nodes"] == 144
-    assert first["stats"]["relationships"] == 366
+    assert first["stats"]["nodes"] == 147
+    assert first["stats"]["relationships"] == 378
     assert first["stats"]["entity_types"]["Service"] == 2
     assert first["stats"]["entity_types"]["Endpoint"] == 1
     assert first["stats"]["entity_types"]["DeploymentContext"] == 1

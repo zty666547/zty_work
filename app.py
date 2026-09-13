@@ -12,7 +12,7 @@ from src.diagnosis.calibration import build_case_export_v2
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
-from src.diagnosis.trajectory_v2 import stage_dot_v2
+from src.diagnosis.trajectory_v2 import stage_dot_v2, storyboard_dot_v2
 from src.extraction.llm_client import LLMClient
 
 EXAMPLES = [
@@ -205,7 +205,9 @@ def main() -> None:
             st.session_state.pop("question_timer_started_at", None)
             st.rerun()
 
-    diagnose_tab, graph_tab, method_tab = st.tabs(["主动诊断", "诊断轨迹", "方法说明"])
+    diagnose_tab, graph_tab, story_tab, method_tab = st.tabs(
+        ["主动诊断", "诊断轨迹", "固定案例", "方法说明"]
+    )
     with diagnose_tab:
         pending = st.session_state.get("pending_routing")
         report = st.text_area(
@@ -330,6 +332,41 @@ def main() -> None:
             st.info("开始一次诊断后，这里会显示问题、候选原因和下一条主动询问。")
         node_count = sum(len(items) for items in service.graph.entities.values())
         st.caption(f"知识库规模：{node_count} 个节点，{len(service.graph.relations)} 条受控关系。")
+
+    with story_tab:
+        demo_path = settings.raw_dir.parent / "demo" / "open_webui_ollama_trajectory.json"
+        demo = json.loads(demo_path.read_text(encoding="utf-8"))
+        stages = demo["trajectory"]
+        labels = ["① 初始检索", "② 第一次回答后", "③ 稳健停止与方案"]
+        selected_label = st.radio("选择截图阶段", labels, horizontal=True)
+        stage_index = labels.index(selected_label)
+        stage = stages[stage_index]
+        top = stage["candidates"][0]
+        st.subheader(labels[stage_index] + f"：{top['name']} {top['probability']:.1%}")
+        if stage_index == 0:
+            st.info("根据报错文本与证据片段形成5个候选原因，并选择第一条主动询问。")
+        else:
+            question = stage["question"]
+            answer_text = {
+                "yes": question["yes_label"],
+                "no": question["no_label"],
+                "unknown": "暂时无法确认",
+            }[stage["answer"]]
+            st.info(f"系统询问：{question['text']}　用户回答：{answer_text}")
+        st.graphviz_chart(
+            storyboard_dot_v2(stages, stage_index, service.graph),
+            width="stretch",
+        )
+        st.caption(
+            "节点直接标注中文类型；蓝色粗边表示本阶段新进入的节点；绿色表示最终原因。"
+            "三个阶段共用完整图骨架，未进入当前阶段的节点隐藏，因此截图切换时位置保持稳定。"
+        )
+        if stage_index == len(stages) - 1:
+            plan = demo["final"]["plan"]
+            st.success("停止原因：" + demo["final"]["stop_reason"])
+            st.write("检查：" + plan["check"])
+            st.write("修复：" + plan["repair"])
+            st.write("风险：" + plan["risk"] + f"（{plan['risk_level']}）")
 
     with method_tab:
         st.subheader("为什么不是普通问答")

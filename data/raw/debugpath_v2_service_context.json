@@ -118,6 +118,44 @@
           "url": "https://docs.ollama.com/api/tags"
         }
       }
+    ],
+    "EvidenceChunk": [
+      {
+        "name": "E031-Open WebUI容器连接宿主机Ollama",
+        "props": {
+          "chunk_id": "E031",
+          "text": "Open WebUI运行在Docker容器而Ollama运行在宿主机时，容器中的localhost指向容器自身。应使用host.docker.internal和Ollama的11434端口配置OLLAMA_BASE_URL。",
+          "keywords": ["Open WebUI", "Ollama", "Docker", "host.docker.internal", "OLLAMA_BASE_URL", "宿主机"],
+          "source_title": "Open WebUI Quick Start",
+          "url": "https://docs.openwebui.com/getting-started/quick-start/",
+          "section": "Connecting to Ollama from Docker",
+          "platforms": ["macos", "windows", "linux"]
+        }
+      },
+      {
+        "name": "E032-Ollama模型列表端点",
+        "props": {
+          "chunk_id": "E032",
+          "text": "Ollama提供GET /api/tags端点列出本地模型。可从Open WebUI容器请求该端点，验证容器配置的Ollama地址是否真实可达。",
+          "keywords": ["Ollama", "/api/tags", "GET", "模型列表", "连接检查"],
+          "source_title": "Ollama List models API",
+          "url": "https://docs.ollama.com/api/tags",
+          "section": "List models",
+          "platforms": ["macos", "windows", "linux"]
+        }
+      },
+      {
+        "name": "E033-Docker容器访问宿主机",
+        "props": {
+          "chunk_id": "E033",
+          "text": "Docker Desktop容器访问宿主机服务时可以使用host.docker.internal。对于容器中的Open WebUI与宿主机Ollama，该名称避免把容器自身的localhost误认为Ollama地址。",
+          "keywords": ["Docker", "Open WebUI", "Ollama", "host.docker.internal", "localhost", "宿主机"],
+          "source_title": "Docker networking how-tos",
+          "url": "https://docs.docker.com/desktop/features/networking/networking-how-tos/",
+          "section": "Connect to the host from a container",
+          "platforms": ["macos", "windows", "linux"]
+        }
+      }
     ]
   },
   "relations": [
@@ -141,6 +179,18 @@
     {"source": "配置Open WebUI的Ollama宿主机地址", "target": "修改容器配置前保留原值", "type": "REPAIR_HAS_RISK"},
     {"source": "从Open WebUI容器检查Ollama端点", "target": "Docker容器访问宿主机文档", "type": "CHECK_SUPPORTED_BY"},
     {"source": "从Open WebUI容器检查Ollama端点", "target": "Ollama模型列表API文档", "type": "CHECK_SUPPORTED_BY"},
-    {"source": "配置Open WebUI的Ollama宿主机地址", "target": "Open WebUI快速开始文档", "type": "REPAIR_SUPPORTED_BY"}
+    {"source": "配置Open WebUI的Ollama宿主机地址", "target": "Open WebUI快速开始文档", "type": "REPAIR_SUPPORTED_BY"},
+    {"source": "Open WebUI快速开始文档", "target": "E031-Open WebUI容器连接宿主机Ollama", "type": "SOURCE_CONTAINS_CHUNK"},
+    {"source": "E031-Open WebUI容器连接宿主机Ollama", "target": "服务地址配置错误", "type": "CHUNK_SUPPORTS_CAUSE"},
+    {"source": "E031-Open WebUI容器连接宿主机Ollama", "target": "从Open WebUI容器检查Ollama端点", "type": "CHUNK_SUPPORTS_CHECK"},
+    {"source": "E031-Open WebUI容器连接宿主机Ollama", "target": "配置Open WebUI的Ollama宿主机地址", "type": "CHUNK_SUPPORTS_REPAIR"},
+    {"source": "Ollama模型列表API文档", "target": "E032-Ollama模型列表端点", "type": "SOURCE_CONTAINS_CHUNK"},
+    {"source": "E032-Ollama模型列表端点", "target": "服务地址配置错误", "type": "CHUNK_SUPPORTS_CAUSE"},
+    {"source": "E032-Ollama模型列表端点", "target": "从Open WebUI容器检查Ollama端点", "type": "CHUNK_SUPPORTS_CHECK"},
+    {"source": "E032-Ollama模型列表端点", "target": "配置Open WebUI的Ollama宿主机地址", "type": "CHUNK_SUPPORTS_REPAIR"},
+    {"source": "Docker容器访问宿主机文档", "target": "E033-Docker容器访问宿主机", "type": "SOURCE_CONTAINS_CHUNK"},
+    {"source": "E033-Docker容器访问宿主机", "target": "服务地址配置错误", "type": "CHUNK_SUPPORTS_CAUSE"},
+    {"source": "E033-Docker容器访问宿主机", "target": "从Open WebUI容器检查Ollama端点", "type": "CHUNK_SUPPORTS_CHECK"},
+    {"source": "E033-Docker容器访问宿主机", "target": "配置Open WebUI的Ollama宿主机地址", "type": "CHUNK_SUPPORTS_REPAIR"}
   ]
 }
