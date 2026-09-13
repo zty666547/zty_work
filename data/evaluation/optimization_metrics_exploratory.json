@@ -1,0 +1,5741 @@
+{
+  "benchmark": "debugpath_graph_optimization_posthoc_ablation_v1",
+  "variants": [
+    "original",
+    "likelihood_only",
+    "new_question_only",
+    "combined"
+  ],
+  "evaluation_mode": "oracle_issue_family",
+  "metric_definitions": {
+    "mrr_at_5": "正确原因排名倒数的平均值；每个故障族最多5个候选原因",
+    "brier": "多分类Brier分数，越低越好；只衡量当前候选原因分布",
+    "success_within_3": "正确且满足置信停止条件，并在3个诊断问题内结束",
+    "target_margin": "正确原因概率减去最高竞争原因概率"
+  },
+  "warning": "冻结案例已经在此前正式评测中被查看；本报告仅做事后机制分析，不得表述为新的未见测试，也不得据此继续调整参数。新增4例仅用于验证两项已固定优化的目标机制，不代表总体准确率。",
+  "summaries": {
+    "development": {
+      "original": {
+        "cases": 28,
+        "top1": 0.8928571428571429,
+        "mrr_at_5": 0.9464285714285714,
+        "brier": 0.21871385921547631,
+        "log_loss": 0.427566476902216,
+        "avg_target_probability": 0.68260574468204,
+        "avg_target_margin": 0.46664838538442976,
+        "coverage": 0.2857142857142857,
+        "resolved_accuracy": 0.2857142857142857,
+        "avg_questions": 3.5,
+        "median_questions": 4.0,
+        "success_within_3": 0.25
+      },
+      "likelihood_only": {
+        "cases": 28,
+        "top1": 0.9285714285714286,
+        "mrr_at_5": 0.9642857142857143,
+        "brier": 0.2005496997937801,
+        "log_loss": 0.4031059845773656,
+        "avg_target_probability": 0.6946754216804881,
+        "avg_target_margin": 0.4863075790874221,
+        "coverage": 0.2857142857142857,
+        "resolved_accuracy": 0.2857142857142857,
+        "avg_questions": 3.5,
+        "median_questions": 4.0,
+        "success_within_3": 0.25
+      },
+      "new_question_only": {
+        "cases": 28,
+        "top1": 0.9642857142857143,
+        "mrr_at_5": 0.9821428571428571,
+        "brier": 0.16624130670866397,
+        "log_loss": 0.36351364613972487,
+        "avg_target_probability": 0.7171347456985414,
+        "avg_target_margin": 0.532998239287691,
+        "coverage": 0.2857142857142857,
+        "resolved_accuracy": 0.2857142857142857,
+        "avg_questions": 3.5,
+        "median_questions": 4.0,
+        "success_within_3": 0.25
+      },
+      "combined": {
+        "cases": 28,
+        "top1": 1.0,
+        "mrr_at_5": 1.0,
+        "brier": 0.14807714728696775,
+        "log_loss": 0.3390531538148744,
+        "avg_target_probability": 0.7292044226969894,
+        "avg_target_margin": 0.5526574329906833,
+        "coverage": 0.2857142857142857,
+        "resolved_accuracy": 0.2857142857142857,
+        "avg_questions": 3.5,
+        "median_questions": 4.0,
+        "success_within_3": 0.25
+      }
+    },
+    "previously_viewed_frozen": {
+      "original": {
+        "cases": 14,
+        "top1": 1.0,
+        "mrr_at_5": 1.0,
+        "brier": 0.15817022945564005,
+        "log_loss": 0.33535375602487166,
+        "avg_target_probability": 0.7343854740779329,
+        "avg_target_margin": 0.5449140826116045,
+        "coverage": 0.2857142857142857,
+        "resolved_accuracy": 0.2857142857142857,
+        "avg_questions": 3.4285714285714284,
+        "median_questions": 4.0,
+        "success_within_3": 0.2857142857142857
+      },
+      "likelihood_only": {
+        "cases": 14,
+        "top1": 1.0,
+        "mrr_at_5": 1.0,
+        "brier": 0.13460813293340176,
+        "log_loss": 0.30672761068691434,
+        "avg_target_probability": 0.7500638670059259,
+        "avg_target_margin": 0.5772582876812876,
+        "coverage": 0.2857142857142857,
+        "resolved_accuracy": 0.2857142857142857,
+        "avg_questions": 3.4285714285714284,
+        "median_questions": 4.0,
+        "success_within_3": 0.2857142857142857
+      },
+      "new_question_only": {
+        "cases": 14,
+        "top1": 1.0,
+        "mrr_at_5": 1.0,
+        "brier": 0.1457335912457558,
+        "log_loss": 0.31901453428982357,
+        "avg_target_probability": 0.7462743807964799,
+        "avg_target_margin": 0.5691540920047707,
+        "coverage": 0.35714285714285715,
+        "resolved_accuracy": 0.35714285714285715,
+        "avg_questions": 3.4285714285714284,
+        "median_questions": 4.0,
+        "success_within_3": 0.2857142857142857
+      },
+      "combined": {
+        "cases": 14,
+        "top1": 1.0,
+        "mrr_at_5": 1.0,
+        "brier": 0.12217149472351752,
+        "log_loss": 0.29038838895186625,
+        "avg_target_probability": 0.761952773724473,
+        "avg_target_margin": 0.601498297074454,
+        "coverage": 0.35714285714285715,
+        "resolved_accuracy": 0.35714285714285715,
+        "avg_questions": 3.4285714285714284,
+        "median_questions": 4.0,
+        "success_within_3": 0.2857142857142857
+      }
+    },
+    "targeted_validation": {
+      "original": {
+        "cases": 4,
+        "top1": 0.5,
+        "mrr_at_5": 0.75,
+        "brier": 0.3962836850066574,
+        "log_loss": 0.5965296901927417,
+        "avg_target_probability": 0.5652424739320696,
+        "avg_target_margin": 0.15167056070808876,
+        "coverage": 0.0,
+        "resolved_accuracy": 0.0,
+        "avg_questions": 4.0,
+        "median_questions": 4.0,
+        "success_within_3": 0.0
+      },
+      "likelihood_only": {
+        "cases": 4,
+        "top1": 0.5,
+        "mrr_at_5": 0.75,
+        "brier": 0.3148980266225851,
+        "log_loss": 0.4692329439080244,
+        "avg_target_probability": 0.6628255421695557,
+        "avg_target_margin": 0.35097139362590063,
+        "coverage": 0.5,
+        "resolved_accuracy": 0.5,
+        "avg_questions": 3.25,
+        "median_questions": 3.5,
+        "success_within_3": 0.5
+      },
+      "new_question_only": {
+        "cases": 4,
+        "top1": 1.0,
+        "mrr_at_5": 1.0,
+        "brier": 0.16431633859158223,
+        "log_loss": 0.3506579654079334,
+        "avg_target_probability": 0.7060874924504748,
+        "avg_target_margin": 0.43500527742223316,
+        "coverage": 0.0,
+        "resolved_accuracy": 0.0,
+        "avg_questions": 4.0,
+        "median_questions": 4.0,
+        "success_within_3": 0.0
+      },
+      "combined": {
+        "cases": 4,
+        "top1": 1.0,
+        "mrr_at_5": 1.0,
+        "brier": 0.08293068020750995,
+        "log_loss": 0.22336121912321605,
+        "avg_target_probability": 0.8036705606879607,
+        "avg_target_margin": 0.634306110340045,
+        "coverage": 0.5,
+        "resolved_accuracy": 0.5,
+        "avg_questions": 3.25,
+        "median_questions": 3.5,
+        "success_within_3": 0.5
+      }
+    }
+  },
+  "details": {
+    "development": {
+      "original": [
+        {
+          "id": "public_cpython_local_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.345972370161739,
+          "expected_probability": 0.9095084899526259,
+          "target_margin": 0.8753473622672073,
+          "brier": 0.011010844087484957,
+          "log_loss": 0.09485094632027637,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_homebrew_wrong_interpreter",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43598843698650436,
+          "expected_probability": 0.7167233119917686,
+          "target_margin": 0.5381373781821743,
+          "brier": 0.11766398462352,
+          "log_loss": 0.33306540966351916,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-包是否可见": "unknown",
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_setuptools_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3141346449467743,
+          "expected_probability": 0.7693034990756851,
+          "target_margin": 0.607622714759094,
+          "brier": 0.08177718406090996,
+          "log_loss": 0.2622697201385564,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "unknown",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "public_langchain_community_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.38173937085070886,
+          "expected_probability": 0.57371600727989,
+          "target_margin": 0.2182038016810781,
+          "brier": 0.31061197091868964,
+          "log_loss": 0.5556207659335273,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python312_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39207611130510767,
+          "expected_probability": 0.43448889201554913,
+          "target_margin": 0.04505445714723377,
+          "brier": 0.498062194967483,
+          "log_loss": 0.833584899584955,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "目标包未安装",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.34251207612162116,
+          "expected_probability": 0.37840858922187054,
+          "target_margin": -0.06764179839500395,
+          "brier": 0.6117754359730107,
+          "log_loss": 0.971780743272729,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "public_conda_base_environment_leak",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3718445826571096,
+          "expected_probability": 0.6588083296294917,
+          "target_margin": 0.4304479073594935,
+          "brier": 0.1749782906492441,
+          "log_loss": 0.41732263711940215,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-包是否可见": "unknown",
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_cpython_code_module_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31965263605243655,
+          "expected_probability": 0.8992637244595287,
+          "target_margin": 0.839245583862496,
+          "brier": 0.014612116997392417,
+          "log_loss": 0.1061789344049607,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cpu_only_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26670129217853794,
+          "expected_probability": 0.49300171199778176,
+          "target_margin": 0.23657582019994788,
+          "brier": 0.34571529465989886,
+          "log_loss": 0.7072426323333431,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown"
+          }
+        },
+        {
+          "id": "public_lerobot_windows_cpu_torch",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 3,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3179718129580833,
+          "expected_probability": 0.8176460007964179,
+          "target_margin": 0.7038302992954921,
+          "brier": 0.04876763048928456,
+          "log_loss": 0.2013257979103997,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_driver_cuda_error_803",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3446193448915346,
+          "expected_probability": 0.4654175796859341,
+          "target_margin": 0.05464281383583153,
+          "brier": 0.4674621981768942,
+          "log_loss": 0.7648202555442825,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否有NVIDIA硬件": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_driver_not_loaded_at_boot",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4209926718278973,
+          "expected_probability": 0.6329250788549697,
+          "target_margin": 0.43601256234626373,
+          "brier": 0.1844166451731567,
+          "log_loss": 0.45740322268183137,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cuda_major_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.11000000000000001,
+          "expected_probability": 0.44935687714622097,
+          "target_margin": 0.0776161878707109,
+          "brier": 0.45748474046044174,
+          "log_loss": 0.7999378803409897,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_vllm_torch_cuda_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 3,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2470825583455446,
+          "expected_probability": 0.6487689744479406,
+          "target_margin": 0.40982869039843656,
+          "brier": 0.1867460019433726,
+          "log_loss": 0.4326785972257898,
+          "stop_reason": "剩余问题的信息增益不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_macos_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.18774242683568354,
+          "expected_probability": 0.9753874382279627,
+          "target_margin": 0.9676207175397545,
+          "brier": 0.0007648644691758535,
+          "log_loss": 0.024920514374348574,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_apple_mps_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.27108419301042985,
+          "expected_probability": 0.9852765234806758,
+          "target_margin": 0.9803799271166632,
+          "brier": 0.0002748524129985305,
+          "log_loss": 0.01483294271045581,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_nvidia_docker_build_no_gpu",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.285970653669564,
+          "expected_probability": 0.8641306309894798,
+          "target_margin": 0.788748054277844,
+          "brier": 0.02732113006372501,
+          "log_loss": 0.14603132833177176,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_wsl_cdi_missing_gpu_mount",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31421929496103507,
+          "expected_probability": 0.692628070574242,
+          "target_margin": 0.455378645074761,
+          "brier": 0.1537833956473436,
+          "log_loss": 0.36726211856244756,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "yes"
+          }
+        },
+        {
+          "id": "public_openai_api_key_missing",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3861127468346179,
+          "expected_probability": 0.9424025096212937,
+          "target_margin": 0.9171161275967468,
+          "brier": 0.004411170378048819,
+          "log_loss": 0.059322803077649984,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-变量是否缺失": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_remote_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4008069630169291,
+          "expected_probability": 0.3567108754652355,
+          "target_margin": -0.16376687766051656,
+          "brier": 0.6992680151618743,
+          "log_loss": 1.03082969797292,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_uvicorn_port_occupied",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2783391496492139,
+          "expected_probability": 0.7262241377139693,
+          "target_margin": 0.6297008613618185,
+          "brier": 0.09683887083355404,
+          "log_loss": 0.31989658217096123,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_server_stopped",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32850643927495626,
+          "expected_probability": 0.5066266607368917,
+          "target_margin": 0.15886386310217754,
+          "brier": 0.3768650293709765,
+          "log_loss": 0.6799809159992807,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-变量是否缺失": "unknown",
+            "Q-是否认证失败": "unknown"
+          }
+        },
+        {
+          "id": "public_codex_revoked_api_key",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.24592981298962846,
+          "expected_probability": 0.8835460710318781,
+          "target_margin": 0.8137573915897123,
+          "brier": 0.020265686722609505,
+          "log_loss": 0.12381184253567541,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        },
+        {
+          "id": "public_openai_windows_process_missing_key",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.4304999767673584,
+          "expected_probability": 0.9327644635687496,
+          "target_margin": 0.9048776465172952,
+          "brier": 0.006059291333435126,
+          "log_loss": 0.0696025606288065,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_khoj_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.41324689687416205,
+          "expected_probability": 0.37177941570966305,
+          "target_margin": -0.13229502658025832,
+          "brier": 0.6636201632898084,
+          "log_loss": 0.9894545691067651,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_vllm_self_occupied_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.23872308902018252,
+          "expected_probability": 0.6840456190262186,
+          "target_margin": 0.5666169076770282,
+          "brier": 0.12927862484124866,
+          "log_loss": 0.37973066910078895,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_ollama_service_not_running",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32022180641423337,
+          "expected_probability": 0.5504999197207858,
+          "target_margin": 0.15414136061980738,
+          "brier": 0.36094777507727793,
+          "log_loss": 0.5969284686490482,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-是否认证失败": "unknown"
+          }
+        },
+        {
+          "id": "public_openai_netrc_wrong_auth_value",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.0825,
+          "expected_probability": 0.7936014486744011,
+          "target_margin": 0.6200914117207428,
+          "brier": 0.07320465525047724,
+          "log_loss": 0.2311738975665662,
+          "stop_reason": "达到最大追问轮数",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-端口是否被占用",
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "no",
+            "Q-端口是否被占用": "unknown",
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ],
+      "likelihood_only": [
+        {
+          "id": "public_cpython_local_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.345972370161739,
+          "expected_probability": 0.9095084899526259,
+          "target_margin": 0.8753473622672073,
+          "brier": 0.011010844087484957,
+          "log_loss": 0.09485094632027637,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_homebrew_wrong_interpreter",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43598843698650436,
+          "expected_probability": 0.7167233119917686,
+          "target_margin": 0.5381373781821743,
+          "brier": 0.11766398462352,
+          "log_loss": 0.33306540966351916,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-包是否可见": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_setuptools_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3141346449467743,
+          "expected_probability": 0.5325292121658777,
+          "target_margin": 0.11283265808518705,
+          "brier": 0.3958316385090999,
+          "log_loss": 0.6301175243757611,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "yes",
+            "Q-包是否可见": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_langchain_community_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.38173937085070886,
+          "expected_probability": 0.5236015841937212,
+          "target_margin": 0.199143574150907,
+          "brier": 0.347494241320454,
+          "log_loss": 0.6470242193709059,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python312_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39207611130510767,
+          "expected_probability": 0.7423457014457354,
+          "target_margin": 0.5649142509716784,
+          "brier": 0.10338941621244217,
+          "log_loss": 0.29794023940136155,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持",
+            "Q-解释器是否一致"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-Python版本是否受支持": "no",
+            "Q-解释器是否一致": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.34251207612162116,
+          "expected_probability": 0.6953914457442052,
+          "target_margin": 0.4768061156684158,
+          "brier": 0.14691502607060233,
+          "log_loss": 0.3632803606859272,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持",
+            "Q-解释器是否一致"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-Python版本是否受支持": "no",
+            "Q-解释器是否一致": "unknown"
+          }
+        },
+        {
+          "id": "public_conda_base_environment_leak",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3718445826571096,
+          "expected_probability": 0.6588083296294917,
+          "target_margin": 0.4304479073594935,
+          "brier": 0.1749782906492441,
+          "log_loss": 0.41732263711940215,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-包是否可见": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_cpython_code_module_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31965263605243655,
+          "expected_probability": 0.8992637244595287,
+          "target_margin": 0.839245583862496,
+          "brier": 0.014612116997392417,
+          "log_loss": 0.1061789344049607,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cpu_only_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26670129217853794,
+          "expected_probability": 0.49300171199778176,
+          "target_margin": 0.23657582019994788,
+          "brier": 0.34571529465989886,
+          "log_loss": 0.7072426323333431,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown"
+          }
+        },
+        {
+          "id": "public_lerobot_windows_cpu_torch",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 3,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3179718129580833,
+          "expected_probability": 0.8176460007964179,
+          "target_margin": 0.7038302992954921,
+          "brier": 0.04876763048928456,
+          "log_loss": 0.2013257979103997,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_driver_cuda_error_803",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3446193448915346,
+          "expected_probability": 0.4654175796859341,
+          "target_margin": 0.05464281383583153,
+          "brier": 0.4674621981768942,
+          "log_loss": 0.7648202555442825,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否有NVIDIA硬件": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_driver_not_loaded_at_boot",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4209926718278973,
+          "expected_probability": 0.6329250788549697,
+          "target_margin": 0.43601256234626373,
+          "brier": 0.1844166451731567,
+          "log_loss": 0.45740322268183137,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cuda_major_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.11000000000000001,
+          "expected_probability": 0.44935687714622097,
+          "target_margin": 0.0776161878707109,
+          "brier": 0.45748474046044174,
+          "log_loss": 0.7999378803409897,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_vllm_torch_cuda_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 3,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2470825583455446,
+          "expected_probability": 0.6487689744479406,
+          "target_margin": 0.40982869039843656,
+          "brier": 0.1867460019433726,
+          "log_loss": 0.4326785972257898,
+          "stop_reason": "剩余问题的信息增益不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_macos_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.18774242683568354,
+          "expected_probability": 0.9753874382279627,
+          "target_margin": 0.9676207175397545,
+          "brier": 0.0007648644691758535,
+          "log_loss": 0.024920514374348574,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_apple_mps_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.27108419301042985,
+          "expected_probability": 0.9852765234806758,
+          "target_margin": 0.9803799271166632,
+          "brier": 0.0002748524129985305,
+          "log_loss": 0.01483294271045581,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_nvidia_docker_build_no_gpu",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.285970653669564,
+          "expected_probability": 0.8641306309894798,
+          "target_margin": 0.788748054277844,
+          "brier": 0.02732113006372501,
+          "log_loss": 0.14603132833177176,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_wsl_cdi_missing_gpu_mount",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31421929496103507,
+          "expected_probability": 0.692628070574242,
+          "target_margin": 0.455378645074761,
+          "brier": 0.1537833956473436,
+          "log_loss": 0.36726211856244756,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "yes"
+          }
+        },
+        {
+          "id": "public_openai_api_key_missing",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3861127468346179,
+          "expected_probability": 0.9424025096212937,
+          "target_margin": 0.9171161275967468,
+          "brier": 0.004411170378048819,
+          "log_loss": 0.059322803077649984,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-变量是否缺失": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_remote_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4008069630169291,
+          "expected_probability": 0.3567108754652355,
+          "target_margin": -0.16376687766051656,
+          "brier": 0.6992680151618743,
+          "log_loss": 1.03082969797292,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_uvicorn_port_occupied",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2783391496492139,
+          "expected_probability": 0.7262241377139693,
+          "target_margin": 0.6297008613618185,
+          "brier": 0.09683887083355404,
+          "log_loss": 0.31989658217096123,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_server_stopped",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32850643927495626,
+          "expected_probability": 0.5066266607368917,
+          "target_margin": 0.15886386310217754,
+          "brier": 0.3768650293709765,
+          "log_loss": 0.6799809159992807,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-变量是否缺失": "unknown",
+            "Q-是否认证失败": "unknown"
+          }
+        },
+        {
+          "id": "public_codex_revoked_api_key",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.24592981298962846,
+          "expected_probability": 0.8835460710318781,
+          "target_margin": 0.8137573915897123,
+          "brier": 0.020265686722609505,
+          "log_loss": 0.12381184253567541,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        },
+        {
+          "id": "public_openai_windows_process_missing_key",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.4304999767673584,
+          "expected_probability": 0.9327644635687496,
+          "target_margin": 0.9048776465172952,
+          "brier": 0.006059291333435126,
+          "log_loss": 0.0696025606288065,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_khoj_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.41324689687416205,
+          "expected_probability": 0.37177941570966305,
+          "target_margin": -0.13229502658025832,
+          "brier": 0.6636201632898084,
+          "log_loss": 0.9894545691067651,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_vllm_self_occupied_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.23872308902018252,
+          "expected_probability": 0.6840456190262186,
+          "target_margin": 0.5666169076770282,
+          "brier": 0.12927862484124866,
+          "log_loss": 0.37973066910078895,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_ollama_service_not_running",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32022180641423337,
+          "expected_probability": 0.5504999197207858,
+          "target_margin": 0.15414136061980738,
+          "brier": 0.36094777507727793,
+          "log_loss": 0.5969284686490482,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-是否认证失败": "unknown"
+          }
+        },
+        {
+          "id": "public_openai_netrc_wrong_auth_value",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.0825,
+          "expected_probability": 0.7936014486744011,
+          "target_margin": 0.6200914117207428,
+          "brier": 0.07320465525047724,
+          "log_loss": 0.2311738975665662,
+          "stop_reason": "达到最大追问轮数",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-端口是否被占用",
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "no",
+            "Q-端口是否被占用": "unknown",
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ],
+      "new_question_only": [
+        {
+          "id": "public_cpython_local_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.345972370161739,
+          "expected_probability": 0.9095084899526259,
+          "target_margin": 0.8753473622672073,
+          "brier": 0.011010844087484957,
+          "log_loss": 0.09485094632027637,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_homebrew_wrong_interpreter",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43598843698650436,
+          "expected_probability": 0.7167233119917686,
+          "target_margin": 0.5381373781821743,
+          "brier": 0.11766398462352,
+          "log_loss": 0.33306540966351916,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-包是否可见": "unknown",
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_setuptools_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3141346449467743,
+          "expected_probability": 0.7693034990756851,
+          "target_margin": 0.607622714759094,
+          "brier": 0.08177718406090996,
+          "log_loss": 0.2622697201385564,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "unknown",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "public_langchain_community_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.38173937085070886,
+          "expected_probability": 0.57371600727989,
+          "target_margin": 0.2182038016810781,
+          "brier": 0.31061197091868964,
+          "log_loss": 0.5556207659335273,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python312_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39207611130510767,
+          "expected_probability": 0.43448889201554913,
+          "target_margin": 0.04505445714723377,
+          "brier": 0.498062194967483,
+          "log_loss": 0.833584899584955,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "目标包未安装",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.34251207612162116,
+          "expected_probability": 0.37840858922187054,
+          "target_margin": -0.06764179839500395,
+          "brier": 0.6117754359730107,
+          "log_loss": 0.971780743272729,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "public_conda_base_environment_leak",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3718445826571096,
+          "expected_probability": 0.6588083296294917,
+          "target_margin": 0.4304479073594935,
+          "brier": 0.1749782906492441,
+          "log_loss": 0.41732263711940215,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-包是否可见": "unknown",
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_cpython_code_module_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31965263605243655,
+          "expected_probability": 0.8992637244595287,
+          "target_margin": 0.839245583862496,
+          "brier": 0.014612116997392417,
+          "log_loss": 0.1061789344049607,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cpu_only_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26670129217853794,
+          "expected_probability": 0.49300171199778176,
+          "target_margin": 0.23657582019994788,
+          "brier": 0.34571529465989886,
+          "log_loss": 0.7072426323333431,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown"
+          }
+        },
+        {
+          "id": "public_lerobot_windows_cpu_torch",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 3,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3179718129580833,
+          "expected_probability": 0.8176460007964179,
+          "target_margin": 0.7038302992954921,
+          "brier": 0.04876763048928456,
+          "log_loss": 0.2013257979103997,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_driver_cuda_error_803",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3446193448915346,
+          "expected_probability": 0.4654175796859341,
+          "target_margin": 0.05464281383583153,
+          "brier": 0.4674621981768942,
+          "log_loss": 0.7648202555442825,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否有NVIDIA硬件": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_driver_not_loaded_at_boot",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4209926718278973,
+          "expected_probability": 0.6329250788549697,
+          "target_margin": 0.43601256234626373,
+          "brier": 0.1844166451731567,
+          "log_loss": 0.45740322268183137,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cuda_major_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.11000000000000001,
+          "expected_probability": 0.44935687714622097,
+          "target_margin": 0.0776161878707109,
+          "brier": 0.45748474046044174,
+          "log_loss": 0.7999378803409897,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_vllm_torch_cuda_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 3,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2470825583455446,
+          "expected_probability": 0.6487689744479406,
+          "target_margin": 0.40982869039843656,
+          "brier": 0.1867460019433726,
+          "log_loss": 0.4326785972257898,
+          "stop_reason": "剩余问题的信息增益不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_macos_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.18774242683568354,
+          "expected_probability": 0.9753874382279627,
+          "target_margin": 0.9676207175397545,
+          "brier": 0.0007648644691758535,
+          "log_loss": 0.024920514374348574,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_apple_mps_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.27108419301042985,
+          "expected_probability": 0.9852765234806758,
+          "target_margin": 0.9803799271166632,
+          "brier": 0.0002748524129985305,
+          "log_loss": 0.01483294271045581,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_nvidia_docker_build_no_gpu",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.285970653669564,
+          "expected_probability": 0.8641306309894798,
+          "target_margin": 0.788748054277844,
+          "brier": 0.02732113006372501,
+          "log_loss": 0.14603132833177176,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_wsl_cdi_missing_gpu_mount",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31421929496103507,
+          "expected_probability": 0.692628070574242,
+          "target_margin": 0.455378645074761,
+          "brier": 0.1537833956473436,
+          "log_loss": 0.36726211856244756,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "yes"
+          }
+        },
+        {
+          "id": "public_openai_api_key_missing",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3861127468346179,
+          "expected_probability": 0.9424025096212937,
+          "target_margin": 0.9171161275967468,
+          "brier": 0.004411170378048819,
+          "log_loss": 0.059322803077649984,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-变量是否缺失": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_remote_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4008069630169291,
+          "expected_probability": 0.6497614846059868,
+          "target_margin": 0.37283421617015544,
+          "brier": 0.20352603934651126,
+          "log_loss": 0.4311499301939112,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        },
+        {
+          "id": "public_uvicorn_port_occupied",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2783391496492139,
+          "expected_probability": 0.7262241377139693,
+          "target_margin": 0.6297008613618185,
+          "brier": 0.09683887083355404,
+          "log_loss": 0.31989658217096123,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_server_stopped",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32850643927495626,
+          "expected_probability": 0.6723199379560832,
+          "target_margin": 0.5184868292463218,
+          "brier": 0.15181748691144598,
+          "log_loss": 0.39702095360881834,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-目标主机本机检查是否成功": "no",
+            "Q-变量是否缺失": "unknown"
+          }
+        },
+        {
+          "id": "public_codex_revoked_api_key",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.24592981298962846,
+          "expected_probability": 0.8835460710318781,
+          "target_margin": 0.8137573915897123,
+          "brier": 0.020265686722609505,
+          "log_loss": 0.12381184253567541,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        },
+        {
+          "id": "public_openai_windows_process_missing_key",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.4304999767673584,
+          "expected_probability": 0.9327644635687496,
+          "target_margin": 0.9048776465172952,
+          "brier": 0.006059291333435126,
+          "log_loss": 0.0696025606288065,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_khoj_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.41324689687416205,
+          "expected_probability": 0.6642452527557519,
+          "target_margin": 0.40117985093040925,
+          "brier": 0.18603451198751758,
+          "log_loss": 0.40910384114117837,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        },
+        {
+          "id": "public_vllm_self_occupied_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.23872308902018252,
+          "expected_probability": 0.6840456190262186,
+          "target_margin": 0.5666169076770282,
+          "brier": 0.12927862484124866,
+          "log_loss": 0.37973066910078895,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_ollama_service_not_running",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32022180641423337,
+          "expected_probability": 0.7661022247767898,
+          "target_margin": 0.582238332425637,
+          "brier": 0.0900914744637169,
+          "log_loss": 0.2664396654343528,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-目标主机本机检查是否成功": "no",
+            "Q-变量是否缺失": "unknown"
+          }
+        },
+        {
+          "id": "public_openai_netrc_wrong_auth_value",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.0825,
+          "expected_probability": 0.7936014486744011,
+          "target_margin": 0.6200914117207428,
+          "brier": 0.07320465525047724,
+          "log_loss": 0.2311738975665662,
+          "stop_reason": "达到最大追问轮数",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-端口是否被占用",
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "no",
+            "Q-端口是否被占用": "unknown",
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ],
+      "combined": [
+        {
+          "id": "public_cpython_local_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.345972370161739,
+          "expected_probability": 0.9095084899526259,
+          "target_margin": 0.8753473622672073,
+          "brier": 0.011010844087484957,
+          "log_loss": 0.09485094632027637,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_homebrew_wrong_interpreter",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43598843698650436,
+          "expected_probability": 0.7167233119917686,
+          "target_margin": 0.5381373781821743,
+          "brier": 0.11766398462352,
+          "log_loss": 0.33306540966351916,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-包是否可见": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pip_setuptools_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3141346449467743,
+          "expected_probability": 0.5325292121658777,
+          "target_margin": 0.11283265808518705,
+          "brier": 0.3958316385090999,
+          "log_loss": 0.6301175243757611,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "yes",
+            "Q-包是否可见": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_langchain_community_not_installed",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.38173937085070886,
+          "expected_probability": 0.5236015841937212,
+          "target_margin": 0.199143574150907,
+          "brier": 0.347494241320454,
+          "log_loss": 0.6470242193709059,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python312_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39207611130510767,
+          "expected_probability": 0.7423457014457354,
+          "target_margin": 0.5649142509716784,
+          "brier": 0.10338941621244217,
+          "log_loss": 0.29794023940136155,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持",
+            "Q-解释器是否一致"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-Python版本是否受支持": "no",
+            "Q-解释器是否一致": "unknown"
+          }
+        },
+        {
+          "id": "public_tensorflow_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.34251207612162116,
+          "expected_probability": 0.6953914457442052,
+          "target_margin": 0.4768061156684158,
+          "brier": 0.14691502607060233,
+          "log_loss": 0.3632803606859272,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持",
+            "Q-解释器是否一致"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-Python版本是否受支持": "no",
+            "Q-解释器是否一致": "unknown"
+          }
+        },
+        {
+          "id": "public_conda_base_environment_leak",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3718445826571096,
+          "expected_probability": 0.6588083296294917,
+          "target_margin": 0.4304479073594935,
+          "brier": 0.1749782906492441,
+          "log_loss": 0.41732263711940215,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-包是否可见",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "no",
+            "Q-包是否可见": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_cpython_code_module_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31965263605243655,
+          "expected_probability": 0.8992637244595287,
+          "target_margin": 0.839245583862496,
+          "brier": 0.014612116997392417,
+          "log_loss": 0.1061789344049607,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cpu_only_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26670129217853794,
+          "expected_probability": 0.49300171199778176,
+          "target_margin": 0.23657582019994788,
+          "brier": 0.34571529465989886,
+          "log_loss": 0.7072426323333431,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown"
+          }
+        },
+        {
+          "id": "public_lerobot_windows_cpu_torch",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 3,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3179718129580833,
+          "expected_probability": 0.8176460007964179,
+          "target_margin": 0.7038302992954921,
+          "brier": 0.04876763048928456,
+          "log_loss": 0.2013257979103997,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_driver_cuda_error_803",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3446193448915346,
+          "expected_probability": 0.4654175796859341,
+          "target_margin": 0.05464281383583153,
+          "brier": 0.4674621981768942,
+          "log_loss": 0.7648202555442825,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否有NVIDIA硬件": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_driver_not_loaded_at_boot",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4209926718278973,
+          "expected_probability": 0.6329250788549697,
+          "target_margin": 0.43601256234626373,
+          "brier": 0.1844166451731567,
+          "log_loss": 0.45740322268183137,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_cuda_major_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.11000000000000001,
+          "expected_probability": 0.44935687714622097,
+          "target_margin": 0.0776161878707109,
+          "brier": 0.45748474046044174,
+          "log_loss": 0.7999378803409897,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "unknown",
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_vllm_torch_cuda_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 3,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2470825583455446,
+          "expected_probability": 0.6487689744479406,
+          "target_margin": 0.40982869039843656,
+          "brier": 0.1867460019433726,
+          "log_loss": 0.4326785972257898,
+          "stop_reason": "剩余问题的信息增益不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "yes",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "public_pytorch_macos_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.18774242683568354,
+          "expected_probability": 0.9753874382279627,
+          "target_margin": 0.9676207175397545,
+          "brier": 0.0007648644691758535,
+          "log_loss": 0.024920514374348574,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_pytorch_apple_mps_no_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.27108419301042985,
+          "expected_probability": 0.9852765234806758,
+          "target_margin": 0.9803799271166632,
+          "brier": 0.0002748524129985305,
+          "log_loss": 0.01483294271045581,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "public_nvidia_docker_build_no_gpu",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.285970653669564,
+          "expected_probability": 0.8641306309894798,
+          "target_margin": 0.788748054277844,
+          "brier": 0.02732113006372501,
+          "log_loss": 0.14603132833177176,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-PyTorch是否包含CUDA": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_wsl_cdi_missing_gpu_mount",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.31421929496103507,
+          "expected_probability": 0.692628070574242,
+          "target_margin": 0.455378645074761,
+          "brier": 0.1537833956473436,
+          "log_loss": 0.36726211856244756,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "unknown",
+            "Q-是否有NVIDIA硬件": "yes"
+          }
+        },
+        {
+          "id": "public_openai_api_key_missing",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3861127468346179,
+          "expected_probability": 0.9424025096212937,
+          "target_margin": 0.9171161275967468,
+          "brier": 0.004411170378048819,
+          "log_loss": 0.059322803077649984,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-变量是否缺失": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_remote_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4008069630169291,
+          "expected_probability": 0.6497614846059868,
+          "target_margin": 0.37283421617015544,
+          "brier": 0.20352603934651126,
+          "log_loss": 0.4311499301939112,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        },
+        {
+          "id": "public_uvicorn_port_occupied",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2783391496492139,
+          "expected_probability": 0.7262241377139693,
+          "target_margin": 0.6297008613618185,
+          "brier": 0.09683887083355404,
+          "log_loss": 0.31989658217096123,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_ollama_server_stopped",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32850643927495626,
+          "expected_probability": 0.6723199379560832,
+          "target_margin": 0.5184868292463218,
+          "brier": 0.15181748691144598,
+          "log_loss": 0.39702095360881834,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-目标主机本机检查是否成功": "no",
+            "Q-变量是否缺失": "unknown"
+          }
+        },
+        {
+          "id": "public_codex_revoked_api_key",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.24592981298962846,
+          "expected_probability": 0.8835460710318781,
+          "target_margin": 0.8137573915897123,
+          "brier": 0.020265686722609505,
+          "log_loss": 0.12381184253567541,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        },
+        {
+          "id": "public_openai_windows_process_missing_key",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.4304999767673584,
+          "expected_probability": 0.9327644635687496,
+          "target_margin": 0.9048776465172952,
+          "brier": 0.006059291333435126,
+          "log_loss": 0.0696025606288065,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "public_khoj_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.41324689687416205,
+          "expected_probability": 0.6642452527557519,
+          "target_margin": 0.40117985093040925,
+          "brier": 0.18603451198751758,
+          "log_loss": 0.40910384114117837,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "unknown",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        },
+        {
+          "id": "public_vllm_self_occupied_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.23872308902018252,
+          "expected_probability": 0.6840456190262186,
+          "target_margin": 0.5666169076770282,
+          "brier": 0.12927862484124866,
+          "log_loss": 0.37973066910078895,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝",
+            "Q-变量是否缺失",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "unknown",
+            "Q-是否连接被拒绝": "no",
+            "Q-变量是否缺失": "unknown",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "public_nvidia_ollama_service_not_running",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.32022180641423337,
+          "expected_probability": 0.7661022247767898,
+          "target_margin": 0.582238332425637,
+          "brier": 0.0900914744637169,
+          "log_loss": 0.2664396654343528,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-目标主机本机检查是否成功": "no",
+            "Q-变量是否缺失": "unknown"
+          }
+        },
+        {
+          "id": "public_openai_netrc_wrong_auth_value",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.0825,
+          "expected_probability": 0.7936014486744011,
+          "target_margin": 0.6200914117207428,
+          "brier": 0.07320465525047724,
+          "log_loss": 0.2311738975665662,
+          "stop_reason": "达到最大追问轮数",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-端口是否被占用",
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "no",
+            "Q-端口是否被占用": "unknown",
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ]
+    },
+    "previously_viewed_frozen": {
+      "original": [
+        {
+          "id": "test_pydantic_missing_torch_dependency",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39966511620279543,
+          "expected_probability": 0.6148456166000439,
+          "target_margin": 0.30613150749366375,
+          "brier": 0.24658331550133214,
+          "log_loss": 0.48638407260753097,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_sklearn_installed_in_system_not_venv",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3351982936493164,
+          "expected_probability": 0.7180337761026322,
+          "target_margin": 0.472199475308153,
+          "brier": 0.14059278874011916,
+          "log_loss": 0.331238669114678,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_cpython_numpy_file_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4311340599399567,
+          "expected_probability": 0.9350640278106355,
+          "target_margin": 0.9015192694285001,
+          "brier": 0.0058543436173251725,
+          "log_loss": 0.06714027309616964,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_tensorflow_241_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.37312375664351394,
+          "expected_probability": 0.42775120982582493,
+          "target_margin": 0.06917970848878607,
+          "brier": 0.49610490219283787,
+          "log_loss": 0.8492135378659089,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch_conda_cpuonly_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3204048618739975,
+          "expected_probability": 0.6807203520443655,
+          "target_margin": 0.5293317063674436,
+          "brier": 0.1389757241993803,
+          "log_loss": 0.3846037002762528,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch_nvidia_kernel_driver_failed",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3293028894958216,
+          "expected_probability": 0.6532675685727083,
+          "target_margin": 0.4263433525315755,
+          "brier": 0.17808608898635903,
+          "log_loss": 0.4257684808401721,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch3d_cuda121_torch117_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26328365099187445,
+          "expected_probability": 0.49313996514813135,
+          "target_margin": 0.02055155483295057,
+          "brier": 0.4809805634091562,
+          "log_loss": 0.7069622402670519,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器",
+            "Q-是否为macOS"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "no",
+            "Q-是否为macOS": "no"
+          }
+        },
+        {
+          "id": "test_video_retalking_apple_mps_not_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.16696538878756745,
+          "expected_probability": 0.9710403620314327,
+          "target_margin": 0.9606096586566006,
+          "brier": 0.001086605016456921,
+          "log_loss": 0.029387244066114055,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "test_nvidia_container_loses_gpu_after_reload",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3752957230159384,
+          "expected_probability": 0.7667828037736867,
+          "target_margin": 0.5947476722139889,
+          "brier": 0.0862994099287776,
+          "log_loss": 0.2655516940223549,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_mcp_google_maps_env_not_exported",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.31347535064493404,
+          "expected_probability": 0.9051389949544912,
+          "target_margin": 0.8684124890938982,
+          "brier": 0.011909767447818085,
+          "log_loss": 0.09966676149019622,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "test_open_webui_docker_wrong_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.6696208764155589,
+          "target_margin": 0.47156963885176595,
+          "brier": 0.16261043654272625,
+          "log_loss": 0.4010435828502869,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-宿主机正常但容器访问失败",
+            "Q-变量是否缺失",
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-宿主机正常但容器访问失败": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "unknown"
+          }
+        },
+        {
+          "id": "test_hermes_openviking_server_not_started",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2982728222159314,
+          "expected_probability": 0.6475776559427523,
+          "target_margin": 0.31621851636250775,
+          "brier": 0.2343383203934282,
+          "log_loss": 0.43451656064178795,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "test_jumpstarter_stale_process_occupies_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3132404205631515,
+          "expected_probability": 0.870905125493916,
+          "target_margin": 0.8107745413813854,
+          "brier": 0.023028003633541967,
+          "log_loss": 0.13822223401666908,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "test_huggingface_stale_env_token_invalid",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3182676004191719,
+          "expected_probability": 0.9275083023748806,
+          "target_margin": 0.8812080655512433,
+          "brier": 0.007932942769702163,
+          "log_loss": 0.07525353319302978,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ],
+      "likelihood_only": [
+        {
+          "id": "test_pydantic_missing_torch_dependency",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39966511620279543,
+          "expected_probability": 0.5599830077121011,
+          "target_margin": 0.27881542568311973,
+          "brier": 0.2888572646481902,
+          "log_loss": 0.5798488390845596,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_sklearn_installed_in_system_not_venv",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3351982936493164,
+          "expected_probability": 0.6830889126335842,
+          "target_margin": 0.44921873715351646,
+          "brier": 0.15981026439623292,
+          "log_loss": 0.38113024833260173,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_cpython_numpy_file_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4311340599399567,
+          "expected_probability": 0.9350640278106355,
+          "target_margin": 0.9015192694285001,
+          "brier": 0.0058543436173251725,
+          "log_loss": 0.06714027309616964,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_tensorflow_241_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.37312375664351394,
+          "expected_probability": 0.7370561831747189,
+          "target_margin": 0.5722953994295314,
+          "brier": 0.10474412607852987,
+          "log_loss": 0.3050911574395541,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-包是否可见"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-包是否可见": "no"
+          }
+        },
+        {
+          "id": "test_pytorch_conda_cpuonly_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3204048618739975,
+          "expected_probability": 0.6807203520443655,
+          "target_margin": 0.5293317063674436,
+          "brier": 0.1389757241993803,
+          "log_loss": 0.3846037002762528,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch_nvidia_kernel_driver_failed",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3293028894958216,
+          "expected_probability": 0.6532675685727083,
+          "target_margin": 0.4263433525315755,
+          "brier": 0.17808608898635903,
+          "log_loss": 0.4257684808401721,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch3d_cuda121_torch117_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26328365099187445,
+          "expected_probability": 0.49313996514813135,
+          "target_margin": 0.02055155483295057,
+          "brier": 0.4809805634091562,
+          "log_loss": 0.7069622402670519,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器",
+            "Q-是否为macOS"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "no",
+            "Q-是否为macOS": "no"
+          }
+        },
+        {
+          "id": "test_video_retalking_apple_mps_not_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.16696538878756745,
+          "expected_probability": 0.9710403620314327,
+          "target_margin": 0.9606096586566006,
+          "brier": 0.001086605016456921,
+          "log_loss": 0.029387244066114055,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "test_nvidia_container_loses_gpu_after_reload",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3752957230159384,
+          "expected_probability": 0.7667828037736867,
+          "target_margin": 0.5947476722139889,
+          "brier": 0.0862994099287776,
+          "log_loss": 0.2655516940223549,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_mcp_google_maps_env_not_exported",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.31347535064493404,
+          "expected_probability": 0.9051389949544912,
+          "target_margin": 0.8684124890938982,
+          "brier": 0.011909767447818085,
+          "log_loss": 0.09966676149019622,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "test_open_webui_docker_wrong_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.6696208764155589,
+          "target_margin": 0.47156963885176595,
+          "brier": 0.16261043654272625,
+          "log_loss": 0.4010435828502869,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-宿主机正常但容器访问失败",
+            "Q-变量是否缺失",
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-宿主机正常但容器访问失败": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "unknown"
+          }
+        },
+        {
+          "id": "test_hermes_openviking_server_not_started",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2982728222159314,
+          "expected_probability": 0.6475776559427523,
+          "target_margin": 0.31621851636250775,
+          "brier": 0.2343383203934282,
+          "log_loss": 0.43451656064178795,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "test_jumpstarter_stale_process_occupies_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3132404205631515,
+          "expected_probability": 0.870905125493916,
+          "target_margin": 0.8107745413813854,
+          "brier": 0.023028003633541967,
+          "log_loss": 0.13822223401666908,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "test_huggingface_stale_env_token_invalid",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3182676004191719,
+          "expected_probability": 0.9275083023748806,
+          "target_margin": 0.8812080655512433,
+          "brier": 0.007932942769702163,
+          "log_loss": 0.07525353319302978,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ],
+      "new_question_only": [
+        {
+          "id": "test_pydantic_missing_torch_dependency",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39966511620279543,
+          "expected_probability": 0.6148456166000439,
+          "target_margin": 0.30613150749366375,
+          "brier": 0.24658331550133214,
+          "log_loss": 0.48638407260753097,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_sklearn_installed_in_system_not_venv",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3351982936493164,
+          "expected_probability": 0.7180337761026322,
+          "target_margin": 0.472199475308153,
+          "brier": 0.14059278874011916,
+          "log_loss": 0.331238669114678,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_cpython_numpy_file_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4311340599399567,
+          "expected_probability": 0.9350640278106355,
+          "target_margin": 0.9015192694285001,
+          "brier": 0.0058543436173251725,
+          "log_loss": 0.06714027309616964,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_tensorflow_241_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.37312375664351394,
+          "expected_probability": 0.42775120982582493,
+          "target_margin": 0.06917970848878607,
+          "brier": 0.49610490219283787,
+          "log_loss": 0.8492135378659089,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch_conda_cpuonly_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3204048618739975,
+          "expected_probability": 0.6807203520443655,
+          "target_margin": 0.5293317063674436,
+          "brier": 0.1389757241993803,
+          "log_loss": 0.3846037002762528,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch_nvidia_kernel_driver_failed",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3293028894958216,
+          "expected_probability": 0.6532675685727083,
+          "target_margin": 0.4263433525315755,
+          "brier": 0.17808608898635903,
+          "log_loss": 0.4257684808401721,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch3d_cuda121_torch117_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26328365099187445,
+          "expected_probability": 0.49313996514813135,
+          "target_margin": 0.02055155483295057,
+          "brier": 0.4809805634091562,
+          "log_loss": 0.7069622402670519,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器",
+            "Q-是否为macOS"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "no",
+            "Q-是否为macOS": "no"
+          }
+        },
+        {
+          "id": "test_video_retalking_apple_mps_not_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.16696538878756745,
+          "expected_probability": 0.9710403620314327,
+          "target_margin": 0.9606096586566006,
+          "brier": 0.001086605016456921,
+          "log_loss": 0.029387244066114055,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "test_nvidia_container_loses_gpu_after_reload",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3752957230159384,
+          "expected_probability": 0.7667828037736867,
+          "target_margin": 0.5947476722139889,
+          "brier": 0.0862994099287776,
+          "log_loss": 0.2655516940223549,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_mcp_google_maps_env_not_exported",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.31347535064493404,
+          "expected_probability": 0.9051389949544912,
+          "target_margin": 0.8684124890938982,
+          "brier": 0.011909767447818085,
+          "log_loss": 0.09966676149019622,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "test_open_webui_docker_wrong_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.6696208764155589,
+          "target_margin": 0.47156963885176595,
+          "brier": 0.16261043654272625,
+          "log_loss": 0.4010435828502869,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-宿主机正常但容器访问失败",
+            "Q-变量是否缺失",
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-宿主机正常但容器访问失败": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "unknown"
+          }
+        },
+        {
+          "id": "test_hermes_openviking_server_not_started",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2982728222159314,
+          "expected_probability": 0.8140223500024109,
+          "target_margin": 0.6555786478668357,
+          "brier": 0.060225385455048505,
+          "log_loss": 0.20576745635111468,
+          "stop_reason": "达到最大追问轮数",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-目标主机本机检查是否成功"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-目标主机本机检查是否成功": "no"
+          }
+        },
+        {
+          "id": "test_jumpstarter_stale_process_occupies_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3132404205631515,
+          "expected_probability": 0.870905125493916,
+          "target_margin": 0.8107745413813854,
+          "brier": 0.023028003633541967,
+          "log_loss": 0.13822223401666908,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "test_huggingface_stale_env_token_invalid",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3182676004191719,
+          "expected_probability": 0.9275083023748806,
+          "target_margin": 0.8812080655512433,
+          "brier": 0.007932942769702163,
+          "log_loss": 0.07525353319302978,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ],
+      "combined": [
+        {
+          "id": "test_pydantic_missing_torch_dependency",
+          "family": "python_import",
+          "expected": "目标包未安装",
+          "predicted": "目标包未安装",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.39966511620279543,
+          "expected_probability": 0.5599830077121011,
+          "target_margin": 0.27881542568311973,
+          "brier": 0.2888572646481902,
+          "log_loss": 0.5798488390845596,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_sklearn_installed_in_system_not_venv",
+          "family": "python_import",
+          "expected": "pip与Python指向不同环境",
+          "predicted": "pip与Python指向不同环境",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3351982936493164,
+          "expected_probability": 0.6830889126335842,
+          "target_margin": 0.44921873715351646,
+          "brier": 0.15981026439623292,
+          "log_loss": 0.38113024833260173,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "no",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_cpython_numpy_file_shadow",
+          "family": "python_import",
+          "expected": "本地文件遮蔽第三方模块",
+          "predicted": "本地文件遮蔽第三方模块",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4311340599399567,
+          "expected_probability": 0.9350640278106355,
+          "target_margin": 0.9015192694285001,
+          "brier": 0.0058543436173251725,
+          "log_loss": 0.06714027309616964,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "yes",
+            "Q-包是否可见": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "unknown"
+          }
+        },
+        {
+          "id": "test_tensorflow_241_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.37312375664351394,
+          "expected_probability": 0.7370561831747189,
+          "target_margin": 0.5722953994295314,
+          "brier": 0.10474412607852987,
+          "log_loss": 0.3050911574395541,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-包是否可见"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "unknown",
+            "Q-解释器是否一致": "unknown",
+            "Q-Python版本是否受支持": "no",
+            "Q-包是否可见": "no"
+          }
+        },
+        {
+          "id": "test_pytorch_conda_cpuonly_build",
+          "family": "pytorch_gpu",
+          "expected": "安装了CPU版PyTorch",
+          "predicted": "安装了CPU版PyTorch",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3204048618739975,
+          "expected_probability": 0.6807203520443655,
+          "target_margin": 0.5293317063674436,
+          "brier": 0.1389757241993803,
+          "log_loss": 0.3846037002762528,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "no",
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-是否运行在容器": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch_nvidia_kernel_driver_failed",
+          "family": "pytorch_gpu",
+          "expected": "NVIDIA驱动不可用",
+          "predicted": "NVIDIA驱动不可用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3293028894958216,
+          "expected_probability": 0.6532675685727083,
+          "target_margin": 0.4263433525315755,
+          "brier": 0.17808608898635903,
+          "log_loss": 0.4257684808401721,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-nvidia-smi是否成功",
+            "Q-是否运行在容器",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否为macOS": "no",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否运行在容器": "unknown",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_pytorch3d_cuda121_torch117_mismatch",
+          "family": "pytorch_gpu",
+          "expected": "PyTorch与CUDA构建不匹配",
+          "predicted": "PyTorch与CUDA构建不匹配",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.26328365099187445,
+          "expected_probability": 0.49313996514813135,
+          "target_margin": 0.02055155483295057,
+          "brier": 0.4809805634091562,
+          "log_loss": 0.7069622402670519,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-nvidia-smi是否成功",
+            "Q-PyTorch是否包含CUDA",
+            "Q-是否运行在容器",
+            "Q-是否为macOS"
+          ],
+          "answers": {
+            "Q-nvidia-smi是否成功": "unknown",
+            "Q-PyTorch是否包含CUDA": "yes",
+            "Q-是否运行在容器": "no",
+            "Q-是否为macOS": "no"
+          }
+        },
+        {
+          "id": "test_video_retalking_apple_mps_not_cuda",
+          "family": "pytorch_gpu",
+          "expected": "当前平台不提供CUDA",
+          "predicted": "当前平台不提供CUDA",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.16696538878756745,
+          "expected_probability": 0.9710403620314327,
+          "target_margin": 0.9606096586566006,
+          "brier": 0.001086605016456921,
+          "log_loss": 0.029387244066114055,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否为macOS",
+            "Q-是否有NVIDIA硬件"
+          ],
+          "answers": {
+            "Q-是否为macOS": "yes",
+            "Q-是否有NVIDIA硬件": "no"
+          }
+        },
+        {
+          "id": "test_nvidia_container_loses_gpu_after_reload",
+          "family": "pytorch_gpu",
+          "expected": "容器未获得GPU设备",
+          "predicted": "容器未获得GPU设备",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3752957230159384,
+          "expected_probability": 0.7667828037736867,
+          "target_margin": 0.5947476722139889,
+          "brier": 0.0862994099287776,
+          "log_loss": 0.2655516940223549,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否运行在容器",
+            "Q-nvidia-smi是否成功",
+            "Q-是否为macOS",
+            "Q-PyTorch是否包含CUDA"
+          ],
+          "answers": {
+            "Q-是否运行在容器": "yes",
+            "Q-nvidia-smi是否成功": "no",
+            "Q-是否为macOS": "no",
+            "Q-PyTorch是否包含CUDA": "unknown"
+          }
+        },
+        {
+          "id": "test_mcp_google_maps_env_not_exported",
+          "family": "service_config",
+          "expected": "必需环境变量缺失",
+          "predicted": "必需环境变量缺失",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.31347535064493404,
+          "expected_probability": 0.9051389949544912,
+          "target_margin": 0.8684124890938982,
+          "brier": 0.011909767447818085,
+          "log_loss": 0.09966676149019622,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-变量是否缺失": "yes",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "test_open_webui_docker_wrong_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.6696208764155589,
+          "target_margin": 0.47156963885176595,
+          "brier": 0.16261043654272625,
+          "log_loss": 0.4010435828502869,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-宿主机正常但容器访问失败",
+            "Q-变量是否缺失",
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-宿主机正常但容器访问失败": "unknown",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "unknown"
+          }
+        },
+        {
+          "id": "test_hermes_openviking_server_not_started",
+          "family": "service_config",
+          "expected": "目标服务未启动",
+          "predicted": "目标服务未启动",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.2982728222159314,
+          "expected_probability": 0.8140223500024109,
+          "target_margin": 0.6555786478668357,
+          "brier": 0.060225385455048505,
+          "log_loss": 0.20576745635111468,
+          "stop_reason": "达到最大追问轮数",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-目标主机本机检查是否成功"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-目标主机本机检查是否成功": "no"
+          }
+        },
+        {
+          "id": "test_jumpstarter_stale_process_occupies_port",
+          "family": "service_config",
+          "expected": "端口被其他进程占用",
+          "predicted": "端口被其他进程占用",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3132404205631515,
+          "expected_probability": 0.870905125493916,
+          "target_margin": 0.8107745413813854,
+          "brier": 0.023028003633541967,
+          "log_loss": 0.13822223401666908,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-端口是否被占用"
+          ],
+          "answers": {
+            "Q-是否认证失败": "no",
+            "Q-端口是否被占用": "yes"
+          }
+        },
+        {
+          "id": "test_huggingface_stale_env_token_invalid",
+          "family": "service_config",
+          "expected": "认证信息无效",
+          "predicted": "认证信息无效",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3182676004191719,
+          "expected_probability": 0.9275083023748806,
+          "target_margin": 0.8812080655512433,
+          "brier": 0.007932942769702163,
+          "log_loss": 0.07525353319302978,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否认证失败",
+            "Q-是否连接被拒绝"
+          ],
+          "answers": {
+            "Q-是否认证失败": "yes",
+            "Q-是否连接被拒绝": "no"
+          }
+        }
+      ]
+    },
+    "targeted_validation": {
+      "original": [
+        {
+          "id": "target_openinterpreter_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3291591923120728,
+          "expected_probability": 0.6220552605032609,
+          "target_margin": 0.2929096867664029,
+          "brier": 0.2534366631904032,
+          "log_loss": 0.47472634693645466,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "no"
+          }
+        },
+        {
+          "id": "target_torchvision_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.751342944811063,
+          "target_margin": 0.5176663444159556,
+          "brier": 0.11663350347004588,
+          "log_loss": 0.2858930805710409,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "no"
+          }
+        },
+        {
+          "id": "target_openhands_docker_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4216829106964951,
+          "expected_probability": 0.43227492834519377,
+          "target_margin": -0.12505060705614857,
+          "brier": 0.6329894466581756,
+          "log_loss": 0.8386934849533849,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "target_browser_use_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43725531556741226,
+          "expected_probability": 0.4552967620687609,
+          "target_margin": -0.07884318129385481,
+          "brier": 0.5820751267080049,
+          "log_loss": 0.7868058483100865,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        }
+      ],
+      "likelihood_only": [
+        {
+          "id": "target_openinterpreter_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 3,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3291591923120728,
+          "expected_probability": 0.88131249079652,
+          "target_margin": 0.7831387436129129,
+          "brier": 0.02402144504623886,
+          "log_loss": 0.12634301582761287,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "no"
+          }
+        },
+        {
+          "id": "target_torchvision_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.8824179874677479,
+          "target_margin": 0.824640619240693,
+          "brier": 0.020506088077921085,
+          "log_loss": 0.12508942654101327,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "no",
+            "Q-Python版本是否受支持": "no"
+          }
+        },
+        {
+          "id": "target_openhands_docker_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4216829106964951,
+          "expected_probability": 0.43227492834519377,
+          "target_margin": -0.12505060705614857,
+          "brier": 0.6329894466581756,
+          "log_loss": 0.8386934849533849,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        },
+        {
+          "id": "target_browser_use_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "目标服务未启动",
+          "rank": 2,
+          "reciprocal_rank": 0.5,
+          "passed": false,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43725531556741226,
+          "expected_probability": 0.4552967620687609,
+          "target_margin": -0.07884318129385481,
+          "brier": 0.5820751267080049,
+          "log_loss": 0.7868058483100865,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-变量是否缺失",
+            "Q-是否认证失败"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-变量是否缺失": "no",
+            "Q-是否认证失败": "no"
+          }
+        }
+      ],
+      "new_question_only": [
+        {
+          "id": "target_openinterpreter_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.3291591923120728,
+          "expected_probability": 0.6220552605032609,
+          "target_margin": 0.2929096867664029,
+          "brier": 0.2534366631904032,
+          "log_loss": 0.47472634693645466,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "no"
+          }
+        },
+        {
+          "id": "target_torchvision_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.751342944811063,
+          "target_margin": 0.5176663444159556,
+          "brier": 0.11663350347004588,
+          "log_loss": 0.2858930805710409,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-包是否可见",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持",
+            "Q-是否存在同名文件"
+          ],
+          "answers": {
+            "Q-包是否可见": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "no",
+            "Q-是否存在同名文件": "no"
+          }
+        },
+        {
+          "id": "target_openhands_docker_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4216829106964951,
+          "expected_probability": 0.7163706134728046,
+          "target_margin": 0.446588847420253,
+          "brier": 0.15330607216607398,
+          "log_loss": 0.33355762935661526,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        },
+        {
+          "id": "target_browser_use_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43725531556741226,
+          "expected_probability": 0.7345811510147704,
+          "target_margin": 0.48285623108632125,
+          "brier": 0.13388911553980584,
+          "log_loss": 0.3084548047676228,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        }
+      ],
+      "combined": [
+        {
+          "id": "target_openinterpreter_python39_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 3,
+          "success_within_3": true,
+          "initial_expected_probability": 0.3291591923120728,
+          "expected_probability": 0.88131249079652,
+          "target_margin": 0.7831387436129129,
+          "brier": 0.02402144504623886,
+          "log_loss": 0.12634301582761287,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-解释器是否一致",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "no",
+            "Q-解释器是否一致": "yes",
+            "Q-Python版本是否受支持": "no"
+          }
+        },
+        {
+          "id": "target_torchvision_python313_unsupported",
+          "family": "python_import",
+          "expected": "Python版本与包不兼容",
+          "predicted": "Python版本与包不兼容",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": true,
+          "resolved_correctly": true,
+          "questions": 2,
+          "success_within_3": true,
+          "initial_expected_probability": 0.56,
+          "expected_probability": 0.8824179874677479,
+          "target_margin": 0.824640619240693,
+          "brier": 0.020506088077921085,
+          "log_loss": 0.12508942654101327,
+          "stop_reason": "置信度、领先差距与有效证据达到停止条件",
+          "asked_questions": [
+            "Q-是否存在同名文件",
+            "Q-Python版本是否受支持"
+          ],
+          "answers": {
+            "Q-是否存在同名文件": "no",
+            "Q-Python版本是否受支持": "no"
+          }
+        },
+        {
+          "id": "target_openhands_docker_localhost_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.4216829106964951,
+          "expected_probability": 0.7163706134728046,
+          "target_margin": 0.446588847420253,
+          "brier": 0.15330607216607398,
+          "log_loss": 0.33355762935661526,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        },
+        {
+          "id": "target_browser_use_docker_ollama_address",
+          "family": "service_config",
+          "expected": "服务地址配置错误",
+          "predicted": "服务地址配置错误",
+          "rank": 1,
+          "reciprocal_rank": 1.0,
+          "passed": true,
+          "decision_sufficient": false,
+          "resolved_correctly": false,
+          "questions": 4,
+          "success_within_3": false,
+          "initial_expected_probability": 0.43725531556741226,
+          "expected_probability": 0.7345811510147704,
+          "target_margin": 0.48285623108632125,
+          "brier": 0.13388911553980584,
+          "log_loss": 0.3084548047676228,
+          "stop_reason": "达到最大追问轮数，但有效证据不足",
+          "asked_questions": [
+            "Q-是否连接被拒绝",
+            "Q-端口是否被占用",
+            "Q-目标主机本机检查是否成功",
+            "Q-变量是否缺失"
+          ],
+          "answers": {
+            "Q-是否连接被拒绝": "yes",
+            "Q-端口是否被占用": "no",
+            "Q-目标主机本机检查是否成功": "yes",
+            "Q-变量是否缺失": "no"
+          }
+        }
+      ]
+    }
+  }
+}

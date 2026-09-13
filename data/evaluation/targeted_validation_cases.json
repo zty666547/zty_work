@@ -1,0 +1,75 @@
+{
+  "benchmark": "debugpath_targeted_graph_optimization_validation_v1",
+  "selection_rule": "在现有模型与两项优化固定后，选择未进入原42例数据集的公开确认记录；2例验证Python版本条件概率，2例验证容器到宿主机服务地址问题。",
+  "scope": "针对性机制验证，不代表DebugPath在所有AI开发环境故障上的总体准确率。",
+  "cases": [
+    {
+      "id": "target_openinterpreter_python39_unsupported",
+      "split": "targeted_validation",
+      "family": "python_import",
+      "report": "Python 3.9环境执行pip install open-interpreter时提示Could not find a version that satisfies the requirement和No matching distribution found；项目要求Python 3.10或更高版本",
+      "expected_top_cause": "Python版本与包不兼容",
+      "answers": {
+        "Q-包是否可见": "no",
+        "Q-解释器是否一致": "yes",
+        "Q-是否存在同名文件": "no",
+        "Q-Python版本是否受支持": "no"
+      },
+      "source_url": "https://github.com/openinterpreter/openinterpreter/issues/170",
+      "root_cause_status": "confirmed",
+      "confirmation": "项目协作者将No matching distribution错误归因于不受支持的Python版本，并明确要求Python 3.10或更高版本。"
+    },
+    {
+      "id": "target_torchvision_python313_unsupported",
+      "split": "targeted_validation",
+      "family": "python_import",
+      "report": "Arch Linux使用Python 3.13.1安装torch、torchvision和torchaudio时，torchvision提示No matching distribution found；对应发布版本没有完整的Python 3.13组件支持",
+      "expected_top_cause": "Python版本与包不兼容",
+      "answers": {
+        "Q-包是否可见": "no",
+        "Q-解释器是否一致": "yes",
+        "Q-是否存在同名文件": "no",
+        "Q-Python版本是否受支持": "no"
+      },
+      "source_url": "https://github.com/pytorch/pytorch/issues/144757",
+      "root_cause_status": "confirmed",
+      "confirmation": "维护者说明PyTorch 2.5对Python 3.13的支持仅限部分组件，torchvision和torchaudio需要后续版本或源码构建。"
+    },
+    {
+      "id": "target_openhands_docker_localhost_address",
+      "split": "targeted_validation",
+      "family": "service_config",
+      "report": "Docker化OpenHands连接宿主机Ollama时持续使用http://localhost:11434/v1并出现连接失败；宿主机Ollama本身可用，容器中的持久化UI地址覆盖了环境变量",
+      "expected_top_cause": "服务地址配置错误",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "yes",
+        "Q-是否认证失败": "no",
+        "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "yes",
+        "Q-端口是否被占用": "no"
+      },
+      "source_url": "https://github.com/OpenHands/OpenHands/issues/8318",
+      "root_cause_status": "confirmed",
+      "confirmation": "Issue明确定位为容器内持久化localhost地址错误，并给出改为host.docker.internal后的恢复方法。"
+    },
+    {
+      "id": "target_browser_use_docker_ollama_address",
+      "split": "targeted_validation",
+      "family": "service_config",
+      "report": "browser-use Web UI运行在Docker中，连接宿主机Ollama时返回Errno 111 Connection refused；宿主机服务存在，但容器仍使用localhost形式的端点",
+      "expected_top_cause": "服务地址配置错误",
+      "answers": {
+        "Q-变量是否缺失": "no",
+        "Q-是否连接被拒绝": "yes",
+        "Q-是否认证失败": "no",
+        "Q-健康检查是否成功": "no",
+        "Q-目标主机本机检查是否成功": "yes",
+        "Q-端口是否被占用": "no"
+      },
+      "source_url": "https://github.com/browser-use/web-ui/issues/164",
+      "root_cause_status": "confirmed",
+      "confirmation": "维护者解释容器内localhost指向容器自身，要求把OLLAMA_ENDPOINT改为host.docker.internal:11434。"
+    }
+  ]
+}
