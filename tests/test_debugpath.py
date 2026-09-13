@@ -543,6 +543,45 @@ def test_v2_stage_dot_contains_service_context_and_final_path():
     assert "修改容器配置前保留原值" in dot
 
 
+def test_v2_feedback_export_and_calibration_are_separate_from_graph_parameters():
+    from src.diagnosis.calibration import (
+        build_case_export_v2,
+        calibrate_question_observations,
+    )
+    from src.diagnosis.service_v2 import DiagnosisServiceV2
+
+    service = DiagnosisServiceV2()
+    snapshot = service.start("ModuleNotFoundError: No module named 'pandas'")
+    question = snapshot["question"]
+    snapshot = service.answer_with_feedback(
+        snapshot["state"], question["name"], "unknown", response_seconds=12.5
+    )
+    exported = build_case_export_v2(snapshot)
+    assert exported["schema_version"] == "debugpath-case-v2"
+    assert exported["question_observations"] == [
+        {
+            "question": question["name"],
+            "answer": "unknown",
+            "informative": False,
+            "response_seconds": 12.5,
+            "recorded_by": "web_auto",
+        }
+    ]
+
+    insufficient = calibrate_question_observations([exported], minimum_samples=2)
+    assert not insufficient["questions"][0]["eligible_for_recommendation"]
+    assert insufficient["questions"][0]["recommended_answerability"] is None
+
+    sufficient = calibrate_question_observations(
+        [exported, exported], minimum_samples=2
+    )
+    row = sufficient["questions"][0]
+    assert row["eligible_for_recommendation"]
+    assert row["recommended_answerability"] == 0.25
+    assert row["recommended_cost"] == 1
+    assert sufficient["method"]["risk"].startswith("不从回答耗时推断")
+
+
 def test_v2_graph_artifact_is_deterministic_and_service_aware():
     from scripts.prepare_graph_v2 import prepare
 

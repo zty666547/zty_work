@@ -109,6 +109,27 @@ class DiagnosisServiceV2(DiagnosisService):
         self._record(state, "initial")
         return self.snapshot(state)
 
+    def answer_with_feedback(
+        self,
+        state_value: dict,
+        question_name: str,
+        answer: str,
+        *,
+        response_seconds: float | None = None,
+    ) -> dict:
+        """提交答案并把非诊断性的交互观测附加到第二版轨迹。"""
+        snapshot = super().answer(state_value, question_name, answer)
+        state = DiagnosisState.from_dict(snapshot["state"])
+        if state.trajectory and state.trajectory[-1].get("event") == "answer":
+            seconds = None
+            if response_seconds is not None:
+                seconds = max(0.0, min(float(response_seconds), 3600.0))
+            state.trajectory[-1]["feedback"] = {
+                "response_seconds": seconds,
+                "recorded_by": "web_auto" if seconds is not None else "not_recorded",
+            }
+        return self.snapshot(state)
+
     def _record(
         self,
         state: DiagnosisState,

@@ -4,10 +4,11 @@ from __future__ import annotations
 import streamlit as st
 import json
 import pandas as pd
+import time
 
 from config.settings import settings
 from src.diagnosis.engine import UnknownIssueError
-from src.diagnosis.case_export import build_case_export
+from src.diagnosis.calibration import build_case_export_v2
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
@@ -147,7 +148,7 @@ def _render_case_export(snapshot: dict) -> None:
     with st.expander("记录真实排查结果"):
         st.caption(
             "用于后续真实案例评测。内容只在当前页面生成并下载，不会自动上传；"
-            "密钥、邮箱、IP 和个人目录会自动脱敏。"
+            "问题回答耗时会随案例保存，密钥、邮箱、IP 和个人目录会自动脱敏。"
         )
         options = ["尚未确认", *[item["name"] for item in snapshot["candidates"]]]
         selected = st.selectbox(
@@ -165,7 +166,7 @@ def _render_case_export(snapshot: dict) -> None:
             placeholder="例如：执行了哪项检查，修复后是否恢复。请不要粘贴账号或密钥。",
             key=f"case-note-{session_id}",
         )
-        payload = build_case_export(
+        payload = build_case_export_v2(
             snapshot,
             actual_cause=None if selected == "尚未确认" else selected,
             confirmed=confirmed,
@@ -200,6 +201,8 @@ def main() -> None:
         if st.button("重新开始", width="stretch"):
             st.session_state.pop("diagnosis", None)
             st.session_state.pop("pending_routing", None)
+            st.session_state.pop("question_timer_name", None)
+            st.session_state.pop("question_timer_started_at", None)
             st.rerun()
 
     diagnose_tab, graph_tab, method_tab = st.tabs(["主动诊断", "诊断轨迹", "方法说明"])
@@ -224,6 +227,8 @@ def main() -> None:
                         pending["report"], selected_issue, decision
                     )
                     st.session_state.pop("pending_routing", None)
+                    st.session_state.pop("question_timer_name", None)
+                    st.session_state.pop("question_timer_started_at", None)
                     st.rerun()
                 if cancel_col.button("重新描述故障", width="stretch"):
                     st.session_state.pop("pending_routing", None)
@@ -262,6 +267,10 @@ def main() -> None:
                     st.subheader("系统选择的下一问")
                     st.write(question["text"])
                     st.caption(question["reason"])
+                    st.caption("页面记录本题从显示到提交的耗时，仅用于校准问题成本，不会自动上传。")
+                    if st.session_state.get("question_timer_name") != question["name"]:
+                        st.session_state.question_timer_name = question["name"]
+                        st.session_state.question_timer_started_at = time.time()
                     answer_label = st.radio(
                         "请选择观察结果",
                         [question["yes_label"], question["no_label"], "暂时无法确认"],
@@ -274,7 +283,18 @@ def main() -> None:
                     }[answer_label]
                     submit_col, stop_col = st.columns(2)
                     if submit_col.button("提交观察结果", type="primary", width="stretch"):
-                        st.session_state.diagnosis = service.answer(state, question["name"], answer)
+                        started_at = st.session_state.get(
+                            "question_timer_started_at", time.time()
+                        )
+                        response_seconds = max(0.0, min(time.time() - started_at, 3600.0))
+                        st.session_state.diagnosis = service.answer_with_feedback(
+                            state,
+                            question["name"],
+                            answer,
+                            response_seconds=response_seconds,
+                        )
+                        st.session_state.pop("question_timer_name", None)
+                        st.session_state.pop("question_timer_started_at", None)
                         st.rerun()
                     if stop_col.button("结束追问，查看当前方案", width="stretch"):
                         st.session_state.diagnosis = service.complete(state)
