@@ -9,7 +9,7 @@ import time
 from config.settings import settings
 from src.diagnosis.engine import UnknownIssueError
 from src.diagnosis.calibration import build_case_export_v2
-from src.diagnosis.explanation_v2 import build_algorithm_explanation
+from src.diagnosis.explanation_v2 import build_algorithm_explanation, injection_flow_dot
 from src.diagnosis.generator import render_offline, render_with_llm
 from src.diagnosis.models import DiagnosisState
 from src.diagnosis.service_v2 import AmbiguousIssueError, DiagnosisServiceV2
@@ -440,6 +440,26 @@ def main() -> None:
             f"有效回答≥{stopping['minimum_answers']}，因此停止。"
         )
         st.caption("候选概率决定排查顺序，不替代实际检查结果；当前参数仍需真实案例继续校准。")
+
+        st.divider()
+        st.subheader("知识注入：大模型只整理，不决定技术事实")
+        st.graphviz_chart(injection_flow_dot(), width="stretch")
+        plan = json.loads(demo_path.read_text(encoding="utf-8"))["final"]["plan"]
+        st.write(
+            f"本案例注入内容来自图谱：原因“{plan['cause']}”、检查、修复、"
+            f"{plan['risk_level']}风险和{len(plan['sources'])}个来源。"
+        )
+        st.markdown(
+            "- DeepSeek可以调整声明顺序、选择已经召回的证据、强调诊断/检查/安全。\n"
+            "- DeepSeek不能新增原因、命令、修复操作或来源链接。\n"
+            "- 未知ID、遗漏声明、重复证据和非法结构会触发确定性离线答案。"
+        )
+        injection_path = settings.raw_dir.parent / "evaluation" / "injection_results.json"
+        injection = json.loads(injection_path.read_text(encoding="utf-8"))
+        valid_col, invalid_col = st.columns(2)
+        valid_col.metric("合法编排通过", f"{injection['valid_cases']}/{injection['valid_cases']}")
+        invalid_col.metric("非法结构被拒绝", f"{injection['invalid_cases']}/{injection['invalid_cases']}")
+        st.caption("该实验只验证程序白名单边界，不等同于开放式大模型安全评测。")
 
 
 if __name__ == "__main__":

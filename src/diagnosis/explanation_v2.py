@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import Any
+import json
 
 
 def build_algorithm_explanation(demo: dict[str, Any], settings) -> dict[str, Any]:
@@ -68,3 +69,32 @@ def build_algorithm_explanation(demo: dict[str, Any], settings) -> dict[str, Any
             "stop_reason": demo["final"]["stop_reason"],
         },
     }
+
+
+def injection_flow_dot() -> str:
+    """知识注入只保留一条可验证的约束链。"""
+    nodes = [
+        ("graph", "① 图谱推理结果\n原因、概率、来源", "#dbeafe"),
+        ("plan", "② 已验证方案\n检查、修复、风险", "#bbf7d0"),
+        ("manifest", "③ 声明/证据白名单\nC1… + E031…", "#fef08a"),
+        ("llm", "④ DeepSeek只负责\n排序与表达侧重", "#ddd6fe"),
+        ("guard", "⑤ 程序校验\n合法输出或离线回退", "#fecaca"),
+    ]
+    q = lambda value: json.dumps(value, ensure_ascii=False)
+    lines = [
+        "digraph Injection {", "rankdir=LR;",
+        'graph [bgcolor="transparent", nodesep=0.35, ranksep=0.45];',
+        'node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10, color="#64748b"];',
+        'edge [fontname="Arial", fontsize=9, color="#64748b"];',
+    ]
+    for name, label, color in nodes:
+        lines.append(f"{q(name)} [label={q(label)}, fillcolor={q(color)}];")
+    for source, target, label in [
+        ("graph", "plan", "构建并验证"),
+        ("plan", "manifest", "编号和约束"),
+        ("manifest", "llm", "只传允许内容"),
+        ("llm", "guard", "只接收JSON决策"),
+    ]:
+        lines.append(f"{q(source)} -> {q(target)} [label={q(label)}];")
+    lines.append("}")
+    return "\n".join(lines)

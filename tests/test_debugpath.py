@@ -614,6 +614,16 @@ def test_v2_algorithm_explanation_is_derived_from_fixed_trajectory():
     assert explanation["stopping"]["informative_answers"] == 2
 
 
+def test_injection_explanation_keeps_llm_out_of_technical_decisions():
+    from src.diagnosis.explanation_v2 import injection_flow_dot
+
+    dot = injection_flow_dot()
+    assert "图谱推理结果" in dot
+    assert "声明/证据白名单" in dot
+    assert "DeepSeek只负责" in dot
+    assert "程序校验" in dot
+
+
 def test_v2_feedback_export_and_calibration_are_separate_from_graph_parameters():
     from src.diagnosis.calibration import (
         build_case_export_v2,
