@@ -236,7 +236,8 @@ DeepSeek 不能新增原因、命令、修复操作或链接。程序会拒绝�
 | `scripts/evaluate_ablation.py` | 比较文本、图谱和主动询问的贡献 | 消融实验 |
 | `scripts/evaluate_injection.py` | 测试合法和非法知识编排 | 注入实验 |
 | `tests/` | 自动检查图谱、诊断、轨迹和网页行为 | 工程验证 |
-| `presentation/` | 答辩PPT、大纲和5分钟演讲稿 | 答辩材料 |
+| `final-output/` | 最终答辩PPT | 答辩材料 |
+| `presentation/` | 完整大纲和5分钟演讲稿 | 答辩材料 |
 
 ### 阅读代码的推荐顺序
 

@@ -125,7 +125,7 @@ python scripts/evaluate_frozen_test.py
 ## 答辩展示
 
 - [最终答辩事实清单](docs/final-defense-evidence.md)：统一图谱规模、算法公式、固定轨迹、实验结果和结论边界。
-- [5分钟网页幻灯片](presentation/index.html)：方向键翻页，按 `P` 进入演讲者模式，按 `B` 切换静态模式。
+- [最终答辩PPT](final-output/DebugPath_最终答辩.pptx)
 - [完整展示大纲](presentation/大纲-v2.md)
 - [5分钟答辩演讲稿](presentation/5分钟演讲稿.md)
 - [小组答辩速查手册](docs/team-defense-guide.md)：项目现状、代码结构、实验边界和针对性问答。
@@ -158,6 +158,6 @@ Neo4j 构建与演示方法见[Neo4j 演示](docs/neo4j_demo.md)。
 - 系统只展示检查命令，不会自动执行。
 - 知识库外的问题会明确拒绝，不让大模型自由补全。
 
-更多内容见[系统架构](docs/architecture.md)、[数据字典](docs/data_dictionary.md)、[答辩方案](docs/midterm_defense.md)和[修改记录](CHANGELOG.md)。培养方案旧版本保留在 `archive/curriculum-graphrag-v1` 分支和同名标签中。
+更多内容见[系统架构](docs/architecture.md)、[数据字典](docs/data_dictionary.md)、[最终答辩事实清单](docs/final-defense-evidence.md)和[修改记录](CHANGELOG.md)。培养方案旧版本保留在 `archive/curriculum-graphrag-v1` 分支和同名标签中。
 
 第二阶段的节点、关系、概率语义与扩展约束见[因果图谱设计](docs/causal_graph_design.md)。逐原因案例缺口可通过`python scripts/audit_second_stage.py`重新生成。
